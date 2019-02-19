@@ -65,8 +65,14 @@ Ext.define('EcoAlpsWater.Application', {
         var main = viewport.down('#main');
         var panel = main.down(panel_id);
         if (panel_id == 'new_sample') {
-            panel.activateCard(parseInt(param));
+            panel.useHash = true;
+            panel.controller.activateCard(parseInt(param));
         }
+        main.items.items.forEach(function(e, i) {
+            if (panel_id == e.itemId) {
+                main.setActiveItem(i);
+            }
+        });
     },
 
     launch: function () {

@@ -1212,9 +1212,7 @@ Ext.define('EcoAlpsWater.view.main.NewSample', {
     controller: 'new_sample',
     
     bodyPadding: 15,
-
-    defaultListenerScope: true,
-
+    
     bbar: [
         {
             itemId: 'import_from_file',

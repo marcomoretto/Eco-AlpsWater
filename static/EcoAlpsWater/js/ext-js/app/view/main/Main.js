@@ -13,7 +13,8 @@ Ext.define('EcoAlpsWater.view.main.Main', {
     requires: [
         'Ext.plugin.Viewport',
         'EcoAlpsWater.view.main.MainController',
-        'EcoAlpsWater.view.main.NewSample'
+        'EcoAlpsWater.view.main.NewSample',
+        'EcoAlpsWater.view.main.Samples'
     ],
 
     controller: 'main',
@@ -78,22 +79,36 @@ Ext.define('EcoAlpsWater.view.main.Main', {
 
     items: [{
         title: 'Add new sample',
+        itemId: 'new_sample',
         glyph: 'xf0fe',
         layout: 'fit',
         items: [{
             xtype: 'new_sample'
-        }]
+        }],
+        listeners: {
+            beforeActivate: 'beforeActivate'
+        }
     }, {
         title: 'Show all samples',
         glyph: 'f03a',
+        layout: 'fit',
+        itemId: 'samples',
         items: [{
-            xtype: 'mainlist'
-        }]
+            xtype: 'samples'
+        }],
+        listeners: {
+            beforeActivate: 'beforeActivate'
+        }
     }, {
         title: 'User informations',
+        itemId: 'user',
         glyph: 'xf007',
-        bind: {
-            html: '{loremIpsum}'
+        layout: 'fit',
+        items: [{
+            xtype: 'user'
+        }],
+        listeners: {
+            beforeActivate: 'beforeActivate'
         }
     }]
 });

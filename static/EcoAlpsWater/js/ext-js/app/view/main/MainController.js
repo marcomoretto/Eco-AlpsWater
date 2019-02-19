@@ -19,5 +19,13 @@ Ext.define('EcoAlpsWater.view.main.MainController', {
                 console.log('Server error', reponse);
             }
         });
+    },
+
+    beforeActivate: function(me) {
+        var panel = me.down('[xtype="' + me.itemId + '"]');
+        if (!panel.useHash) {
+            window.location.hash = '#view/' + panel.xtype + '/0';
+        }
+        panel.useHash = false;
     }
 });
