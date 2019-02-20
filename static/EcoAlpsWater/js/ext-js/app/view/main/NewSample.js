@@ -1235,6 +1235,13 @@ Ext.define('EcoAlpsWater.view.main.NewSample', {
             itemId: 'card-next',
             text: 'Next &raquo;',
             handler: 'showNext'
+        },
+        {
+            itemId: 'save_sample',
+            text: 'Save sample',
+            handler: 'saveSample',
+            disabled: true,
+            hidden: true
         }
     ],
 

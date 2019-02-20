@@ -1,6 +1,22 @@
 /**
  * This view is an example list of people.
  */
+Ext.define('EcoAlpsWater.LiveFilter', {
+    extend: 'Ext.form.field.Text',
+    xtype: 'eaw_livefilter',
+    requires: [
+        'Ext.form.field.Text'
+    ],
+
+    labelWidth:'auto',
+
+    listeners: {
+        change: function (me, newValue, oldValue, eOpts) {
+
+        }
+    }
+});
+
 Ext.define('EcoAlpsWater.Paging', {
     extend: 'Ext.toolbar.Paging',
     xtype: 'eaw_paging',
@@ -23,11 +39,51 @@ Ext.define('EcoAlpsWater.view.main.Samples', {
 
     title: 'Samples',
 
+    controller: 'samples',
+
     selModel: {
         mode: 'MULTI'
     },
 
     dockedItems: [{
+        xtype: 'toolbar',
+        defaults: {
+            xtype: 'button',
+            scale: 'small'
+        },
+        overflowHandler: 'menu',
+        dock: 'top',
+        items: [{
+            xtype: 'fieldset',
+            title: 'Advanced search',
+            defaultType: 'textfield',
+            defaults: {
+                anchor: '100%'
+            },
+            collapsible: true,
+            collapsed: true,
+            items: [],
+            flex: 1,
+            listeners: {
+                beforecollapse : 'onAdvancedSearchCollapse',
+                beforeexpand : 'onAdvancedSearchExpand'
+            }
+        }]
+    },{
+        xtype: 'toolbar',
+        defaults: {
+            xtype: 'button',
+            scale: 'small'
+        },
+        overflowHandler: 'menu',
+        dock: 'top',
+        items: ['->',
+            {
+                xtype: 'eaw_livefilter',
+                fieldLabel: 'Filter',
+                name: 'filter'
+        }]
+    },{
         xtype: 'toolbar',
         defaults: {
             xtype: 'button',
@@ -79,73 +135,6 @@ Ext.define('EcoAlpsWater.view.main.Samples', {
             dock: 'bottom',
             displayInfo: true
         }],
-
-    tbar: [{
-        xtype: 'container',
-        layout: 'vbox',
-        margin: '0 0 10 0',
-        items: [{
-            xtype: 'fieldset',
-            title: 'Advanced search',
-            defaultType: 'textfield',
-            defaults: {
-                anchor: '100%'
-            },
-            collapsible: true,
-            collapsed: true,
-            items: []
-        }, {
-            xtype: 'textfield',
-            fieldLabel: 'filter'
-        }]
-    }],
-
-    /*bbar: {
-        defaults: {
-            xtype: 'button',
-            scale: 'small'
-        },
-        overflowHandler: 'menu',
-        items: ['->', {
-            text: 'View details',
-            glyph: 'f06e'
-        }, {
-           text: 'Clone sample',
-            itemId: 'clone_sample',
-            name: 'clone_sample',
-            glyph: 'xf24d'
-        }, {
-            text: 'Download',
-            itemId: 'data_collection_menu_item',
-            iconCls: null,
-            glyph: 'xf019',
-            menu: {
-                xtype: 'menu',
-                plain: true,
-                items: [{
-                    text: 'Environmental and meta-data',
-                    itemId: 'env_meta_data',
-                    iconCls: null,
-                    glyph: 'f03e',
-                    listeners: {
-                        click: {
-                            //fn: 'onAction'
-                        }
-                    }
-                }, {
-                    text: 'Sequence file',
-                    itemId: 'sequence_file',
-                    iconCls: null,
-                    glyph: 'f15c',
-                    listeners: {
-                        click: {
-                            //fn: 'onAction',
-                        }
-                    }
-                }]
-            }
-        }]
-    },*/
 
     columns: [{
         text: 'Sample ID',

@@ -55,7 +55,22 @@ Ext.define('EcoAlpsWater.view.main.NewSampleController', {
 
         var cardNum = me.items.items.length - 1;
 
+        var end = index >= cardNum;
         me.down('#card-prev').setDisabled(index <= 0);
-        me.down('#card-next').setDisabled(index >= cardNum);
+        me.down('#card-next').setDisabled(end);
+        me.down('#card-next').setHidden(end);
+        me.down('#save_sample').setDisabled(!end);
+        me.down('#save_sample').setHidden(!end);
     },
+
+    saveSample: function (me) {
+        Ext.MessageBox.show({
+            title: 'Save new sample',
+            msg: "Once saved, you will not be able to further modify sample data. Do you want to continue and save the sample information into the database?",
+            buttons: Ext.MessageBox.YESNO,
+            icon: Ext.MessageBox.INFO,
+            fn: function () {
+            }
+        });
+    }
 });
