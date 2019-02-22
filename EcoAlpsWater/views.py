@@ -1,12 +1,11 @@
 import json
 
 from django.contrib.auth import authenticate, login, logout
-from django.core.exceptions import ValidationError
 from django.http import HttpResponse
 from django.shortcuts import render
 
 # Create your views here.
-from EcoAlpsWater.decorator import forward_exception_to_http
+from EcoAlpsWater.lib.decorator import forward_exception_to_http
 
 
 def index(request):

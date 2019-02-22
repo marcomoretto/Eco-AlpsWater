@@ -245,8 +245,39 @@ Ext.define('EcoAlpsWater.view.main.NewSampleStep1', {
         },
 
         items: [
-            ,
             {
+                xtype: 'container',
+                layout: 'hbox',
+                margin: '0 0 5 0',
+                items: [
+                    {
+                        xtype: 'combobox',
+                        fieldLabel: 'Biological element',
+                        name: 'biological_element',
+                        itemId: 'biological_element',
+                        valueField: 'id',
+                        displayField: 'name',
+                        typeAhead: true,
+                        queryMode: 'local',
+                        emptyText: 'Select a biological element...',
+                        allowBlank: false,
+                        flex: 15,
+                        margin: '0 5 0 0'
+                        },
+                    {
+                        xtype: 'button',
+                        flex: 1,
+                        glyph: 'xf27a',
+                        tooltip: 'Add comment',
+                        tooltipType: 'title',
+                        listeners: {
+                            click: {
+                                fn: 'onAddComment',
+                            }
+                        }
+                    }
+                ]
+            }, {
                 xtype: 'container',
                 layout: 'hbox',
                 margin: '0 0 5 0',
@@ -640,7 +671,7 @@ Ext.define('EcoAlpsWater.view.main.NewSampleStep2', {
                 items: [
                     {
                         xtype: 'numberfield',
-                        fieldLabel: 'Oxygen concentration',
+                        fieldLabel: 'Oxygen percentage',
                         name: 'oxygen_percentage',
                         itemId: 'oxygen_percentage',
                         decimalPrecision: 5,
@@ -736,7 +767,7 @@ Ext.define('EcoAlpsWater.view.main.NewSampleStep2', {
                         xtype: 'numberfield',
                         fieldLabel: 'Total alkalinity',
                         name: 'total_alkalinity',
-                        itemId: 'oxygen_percentage',
+                        itemId: 'total_alkalinity',
                         decimalPrecision: 5,
                         allowBlank: true,
                         flex: 15,
