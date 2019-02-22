@@ -31,6 +31,91 @@ Ext.define('EcoAlpsWater.Paging', {
     }
 });
 
+Ext.define('EcoAlpsWater.AdvancedSearchField', {
+    extend: 'Ext.Container',
+    xtype: 'eaw_advanced_search_field',
+
+    layout: 'hbox',
+    margin: '0 0 5 0',
+    items: [
+        {
+            xtype: 'combobox',
+            fieldLabel: '',
+            name: 'field_name',
+            itemId: 'field_name',
+            valueField: 'id',
+            displayField: 'name',
+            typeAhead: true,
+            queryMode: 'local',
+            emptyText: 'Field name',
+            allowBlank: false,
+            flex: 5,
+            margin: '0 5 0 0'
+        }, {
+            xtype: 'combobox',
+            fieldLabel: '',
+            name: 'field_contains',
+            itemId: 'field_contains',
+            valueField: 'id',
+            displayField: 'name',
+            typeAhead: true,
+            queryMode: 'local',
+            emptyText: 'Contains',
+            allowBlank: false,
+            flex: 5,
+            margin: '0 5 0 0',
+            store: Ext.create('Ext.data.Store', {
+                fields: ['id', 'name'],
+                data : [
+                    {"id": "contains", "name": "CONTAINS"},
+                    {"id": "doesnt_contain", "name": "DOESN'T CONTAIN"}
+                ]
+            })
+        }, {
+            xtype: 'textfield',
+            ieldLabel: '',
+            name: 'field_value',
+            itemId: 'field_value',
+            emptyText: 'Value',
+            flex: 5,
+            margin: '0 5 0 0',
+            allowBlank: false,
+        }, {
+            xtype: 'combobox',
+            fieldLabel: '',
+            name: 'field_and_or',
+            itemId: 'field_and_or',
+            valueField: 'id',
+            displayField: 'name',
+            typeAhead: true,
+            queryMode: 'local',
+            emptyText: 'AND/OR',
+            allowBlank: true,
+            flex: 5,
+            margin: '0 5 0 0',
+            store: Ext.create('Ext.data.Store', {
+                fields: ['id', 'name'],
+                data : [
+                    {"id": "and", "name": "AND"},
+                    {"id": "or", "name": "OR"}
+                ]
+            })
+        }, {
+            xtype: 'button',
+            flex: 1,
+            glyph: 'xf056',
+            tooltip: 'Remove',
+            tooltipType: 'title',
+            listeners: {
+                click: {
+                    fn: 'onRemoveAdvancedSearchField'
+                }
+            }
+        }
+    ]
+
+});
+
 Ext.define('EcoAlpsWater.view.main.Samples', {
     extend: 'Ext.grid.Panel',
     xtype: 'samples',
@@ -62,7 +147,27 @@ Ext.define('EcoAlpsWater.view.main.Samples', {
             },
             collapsible: true,
             collapsed: true,
-            items: [],
+            items: [{
+                xtype: 'eaw_advanced_search_field',
+            }, {
+                xtype: 'panel',
+                layout: 'hbox',
+                itemId: 'buttons',
+                bbar: ['->', {
+                    xtype: 'button',
+                    glyph: 'xf055',
+                    text: 'Add search field',
+                    listeners: {
+                        click: {
+                            fn: 'onAddAdvancedSearchField'
+                        }
+                    }
+                }, {
+                    xtype: 'button',
+                    glyph: 'xf002',
+                    text: 'Search'
+                }]
+            }],
             flex: 1,
             listeners: {
                 beforecollapse : 'onAdvancedSearchCollapse',
@@ -93,12 +198,16 @@ Ext.define('EcoAlpsWater.view.main.Samples', {
         dock: 'bottom',
         items: ['->', {
             text: 'View details',
-            glyph: 'f06e'
+            glyph: 'f06e',
+            itemId: 'view_details',
+            name: 'view_details',
+            disabled: true
         }, {
-           text: 'Clone sample',
+            text: 'Clone sample',
             itemId: 'clone_sample',
             name: 'clone_sample',
-            glyph: 'xf24d'
+            glyph: 'xf24d',
+            disabled: true
         }, {
             text: 'Download',
             itemId: 'data_collection_menu_item',
@@ -108,6 +217,16 @@ Ext.define('EcoAlpsWater.view.main.Samples', {
                 xtype: 'menu',
                 plain: true,
                 items: [{
+                    text: 'Barcode',
+                    itemId: 'barcode',
+                    iconCls: null,
+                    glyph: 'f02a',
+                    listeners: {
+                        click: {
+                            //fn: 'onAction'
+                        }
+                    }
+                }, {
                     text: 'Environmental and meta-data',
                     itemId: 'env_meta_data',
                     iconCls: null,

@@ -1,7 +1,56 @@
-from pyftpdlib.handlers import FTPHandler
+import os
+from stat import S_IREAD, S_IRGRP, S_IROTH
+
+from pyftpdlib.filesystems import AbstractedFS
+from pyftpdlib.handlers import FTPHandler, PassiveDTP, DTPHandler
+import logging
+
+PassiveDTP.timeout = 200
 
 
-class MyHandler(FTPHandler):
+def file_invalid(filename, mode):
+    invalid = ('sencha' in filename and 'wb' in mode) or (os.path.isfile(filename) and os.path.exists(filename))
+    return invalid
+
+
+class EcoAlpsWaterFilesystem(AbstractedFS):
+
+    def open(self, filename, mode):
+        self.cmd_channel.server._ignored_files = None
+        if file_invalid(filename, mode):
+            self.cmd_channel.server._ignored_files = (self.cmd_channel.username, filename)
+            return open('/dev/null', mode)
+        return AbstractedFS.open(self, filename, mode)
+
+
+class EcoAlpsWaterDTPHandler(DTPHandler):
+
+    def handle_close(self):
+        resp_msg = "226 Transfer complete."
+        if hasattr(self.cmd_channel.server, '_ignored_files') and self.cmd_channel.server._ignored_files is not None:
+            username = self.cmd_channel.server._ignored_files[0]
+            filename = os.path.basename(self.cmd_channel.server._ignored_files[1])
+            if username == self.cmd_channel.username:
+                resp_msg = "226 " + filename + " is an invalid file and won't be saved!"
+        logger = logging.getLogger('pyftpdlib')
+
+        if not self._closed:
+            if self.receive:
+                self.transfer_finished = True
+            else:
+                self.transfer_finished = len(self.producer_fifo) == 0
+            try:
+                if self.transfer_finished:
+                    self._resp = (resp_msg, logger.debug)
+                else:
+                    tot_bytes = self.get_transmitted_bytes()
+                    self._resp = ("426 Transfer aborted; %d bytes transmitted."
+                                  % tot_bytes, logger.debug)
+            finally:
+                self.close()
+
+
+class EcoAlpsWaterHandler(FTPHandler):
     def on_connect(self):
         pass
 
@@ -23,7 +72,8 @@ class MyHandler(FTPHandler):
 
     def on_file_received(self, file):
         # do something when a file has been received
-        pass
+        if file != '/dev/null':
+            os.chmod(file, S_IREAD|S_IRGRP|S_IROTH)
 
     def on_incomplete_file_sent(self, file):
         # do something when a file is partially sent

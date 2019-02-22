@@ -72,5 +72,17 @@ Ext.define('EcoAlpsWater.view.main.NewSampleController', {
             fn: function () {
             }
         });
+    },
+
+    onAddComment: function(me) {
+        var fieldLabel = me.up('container').down('field').fieldLabel;
+        Ext.MessageBox.show({
+            title: 'Comment',
+            msg: 'Add a comment for the field ' + fieldLabel,
+            width:300,
+            buttons: Ext.MessageBox.OKCANCEL,
+            multiline: true,
+            //fn: showResultText,
+        });
     }
 });

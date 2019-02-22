@@ -40,7 +40,8 @@ INSTALLED_APPS = [
     'django_ftpserver',
 ]
 
-FTPSERVER_HANDLER = 'EcoAlpsWater.ftp_handler.MyHandler'
+FTPSERVER_HANDLER = 'EcoAlpsWater.ftp_handler.EcoAlpsWaterHandler'
+FTPSERVER_FILESYSTEM = 'EcoAlpsWater.ftp_handler.EcoAlpsWaterFilesystem'
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
@@ -79,8 +80,12 @@ WSGI_APPLICATION = 'EcoAlpsWater_.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
+        'ENGINE': 'django.db.backends.postgresql',
+        'NAME': os.environ['DB_NAME'],
+        'USER': os.environ['DB_USER'],
+        'PASSWORD': os.environ['DB_PASS'],
+        'HOST': os.environ['DB_SERVICE'],
+        'PORT': os.environ['DB_PORT']
     }
 }
 
@@ -125,3 +130,9 @@ STATIC_URL = '/static/'
 STATICFILES_DIRS = [
     os.path.join(BASE_DIR, 'static')
 ]
+
+EMAIL_USE_TLS = True
+EMAIL_HOST = 'smtp.gmail.com'
+EMAIL_PORT = 587
+EMAIL_HOST_USER = 'marco.moretto@gmail.com'
+EMAIL_HOST_PASSWORD = 'oQWmbB74Puyp'

@@ -28,6 +28,8 @@ Ext.define('EcoAlpsWater.Application', {
         // TODO: add global / shared stores here
     ],
 
+    appProperty: 'current',
+
     checkLogin: function(pn, ac, ar) {
         var action = ar;
         if (ar == undefined) {
@@ -75,9 +77,44 @@ Ext.define('EcoAlpsWater.Application', {
         });
     },
 
+    showMessage: function(type, title, message) {
+        switch (type) {
+            case 'error':
+                Ext.MessageBox.show({
+                    title: title,
+                    msg: message,
+                    buttons: Ext.MessageBox.OK,
+                    icon: Ext.MessageBox.ERROR,
+                    fn: function () {
+                    }
+                });
+                break;
+            case 'info':
+                Ext.MessageBox.show({
+                    title: title,
+                    msg: message,
+                    buttons: Ext.MessageBox.OK,
+                    icon: Ext.MessageBox.INFO,
+                    fn: function () {
+                    }
+                });
+                break;
+        }
+    },
+
+    checkHttpResponse: function (message) {
+        var response = JSON.parse(message.responseText);
+        if (!response.success) {
+            this.showMessage(response.type, response.title, response.message);
+            return false;
+        }
+        return true;
+    },
+
     launch: function () {
         var viewPort = Ext.widget('viewport', {
             layout: 'fit'
         });
     }
 });
+

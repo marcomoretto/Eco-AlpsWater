@@ -71,21 +71,24 @@ Ext.define('EcoAlpsWater.view.main.User', {
         fieldLabel: 'User name',
         name: 'user_name',
         itemId: 'user_name',
-        emptyText: 'Name'
+        emptyText: 'Name',
+        readOnly: true
     }, {
         xtype: 'textfield',
         allowBlank: false,
-        fieldLabel: 'Institution',
-        name: 'institution',
-        itemId: 'intitution',
-        emptyText: 'Institution'
+        fieldLabel: 'Institute',
+        name: 'institute',
+        itemId: 'institute',
+        emptyText: 'Institute',
+        readOnly: true
     }, {
         xtype: 'textfield',
         allowBlank: false,
         fieldLabel: 'E-mail',
         name: 'e_mail',
         itemId: 'e_mail',
-        emptyText: 'E-mail'
+        emptyText: 'E-mail',
+        readOnly: true
     }],
 
     bbar: ['->', {
@@ -97,6 +100,10 @@ Ext.define('EcoAlpsWater.view.main.User', {
             click: 'onChangePassword'
         }
     }],
+
+    listeners: {
+        afterrender: 'onUserAfterRender'
+    },
 
     initComponent: function () {
         this.callParent();

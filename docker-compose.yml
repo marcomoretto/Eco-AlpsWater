@@ -1,0 +1,101 @@
+version: '2'
+
+services:
+  nginx:
+    build: ./nginx/
+    ports:
+      - "80:80"
+    volumes_from:
+      - web
+    links:
+      - web:web
+    networks:
+      static-network:
+        ipv4_address: 172.25.0.2
+
+  postgres:
+    image: postgres:latest
+    volumes_from:
+      - pg_data
+    volumes:
+      - ./postgres/docker-entrypoint-initdb.d:/docker-entrypoint-initdb.d
+    env_file:
+      - env
+    expose:
+      - "5432"
+    ports:
+      - "5432:5432"
+    networks:
+      static-network:
+        ipv4_address: 172.25.0.3
+
+  web:
+    build: .
+    env_file: env
+    expose:
+      - "80"
+    links:
+      - postgres:postgres
+    volumes_from:
+      - web_data
+    volumes:
+      - .:/app
+    command: gunicorn eaw.wsgi:application -w 2 -b :8000
+    networks:
+      static-network:
+        ipv4_address: 172.25.0.4
+
+  ftp:
+    build: .
+    env_file: env
+    ports:
+      - "21:21"
+    expose:
+      - "21"
+    links:
+      - postgres:postgres
+    volumes_from:
+      - ftp_data
+    volumes:
+      - .:/app
+    command: python manage.py eaw_ftp_server 0.0.0.0:21
+    networks:
+      static-network:
+        ipv4_address: 172.25.0.5
+
+  pg_data:
+    restart: always
+    image: alpine
+    volumes:
+      - ./postgres-data:/var/lib/postgresql/data
+    command: "true"
+    networks:
+      static-network:
+        ipv4_address: 172.25.0.11
+
+  ftp_data:
+    restart: always
+    image: alpine
+    volumes:
+      - ./ftp-data:/home
+    command: "true"
+    networks:
+      static-network:
+        ipv4_address: 172.25.0.13
+
+  web_data:
+    restart: always
+    image: alpine
+    volumes:
+      - /app
+    command: "true"
+    networks:
+      static-network:
+        ipv4_address: 172.25.0.12
+
+networks:
+  static-network:
+    ipam:
+      config:
+        - subnet: 172.25.0.0/16
+          gateway: 172.25.0.1
