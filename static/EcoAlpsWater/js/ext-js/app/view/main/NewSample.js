@@ -25,7 +25,7 @@ Ext.define('EcoAlpsWater.view.main.NewSampleStep0', {
         items: [
             { allowBlank:true, fieldLabel: 'Sample ID', name: 'sample_id', itemId: 'sample_id', emptyText: 'Automatically generated', readOnly: true},
             { allowBlank:true, fieldLabel: 'Sample code', name: 'sample_code', itemId: 'sample_code', emptyText: 'Automatically generated', readOnly: true },
-            { allowBlank:true, fieldLabel: 'Lake code', name: 'lake_code', itemId: 'lake_code', emptyText: 'Automatically generated', readOnly: true },
+            { allowBlank:true, fieldLabel: 'Water body code', name: 'water_body_code', itemId: 'water_body_code', emptyText: 'Automatically generated', readOnly: true },
             { allowBlank:true, fieldLabel: 'Security cap code', name: 'cap_code', itemId: 'cap_code', emptyText: 'Automatically generated', readOnly: true },
             {
                 xtype: 'container',
@@ -34,17 +34,101 @@ Ext.define('EcoAlpsWater.view.main.NewSampleStep0', {
                 items: [
                     {
                         xtype: 'combobox',
-                        fieldLabel: 'Lake',
-                        name: 'lake',
-                        itemId: 'lake',
+                        fieldLabel: 'Biological element',
+                        name: 'biological_element',
+                        itemId: 'biological_element',
                         valueField: 'id',
                         displayField: 'name',
                         typeAhead: true,
                         queryMode: 'local',
-                        emptyText: 'Select a lake...',
+                        emptyText: 'Select a biological element...',
                         allowBlank: false,
                         flex: 15,
-                        margin: '0 5 0 0'
+                        margin: '0 5 0 0',
+                        store: Ext.data.Store(),
+                        listeners: {
+                            change: {
+                                fn: 'onFieldChange',
+                            }
+                        }
+                        },
+                    {
+                        xtype: 'button',
+                        flex: 1,
+                        glyph: 'xf27a',
+                        tooltip: 'Add comment',
+                        tooltipType: 'title',
+                        listeners: {
+                            click: {
+                                fn: 'onAddComment',
+                            }
+                        }
+                    }
+                ]
+            },{
+                xtype: 'container',
+                layout: 'hbox',
+                margin: '0 0 5 0',
+                items: [
+                    {
+                        xtype: 'combobox',
+                        fieldLabel: 'Water body',
+                        name: 'water_body',
+                        itemId: 'water_body',
+                        valueField: 'id',
+                        displayField: 'name',
+                        typeAhead: true,
+                        queryMode: 'local',
+                        emptyText: 'Select a water body type...',
+                        allowBlank: false,
+                        flex: 15,
+                        margin: '0 5 0 0',
+                        store: Ext.data.Store(),
+                        listeners: {
+                            change: {
+                                fn: 'onComboValueChange',
+                                extraArgs: ['water_body', 'water_body_name', true]
+                            }
+                        }
+                    },
+                    {
+                        xtype: 'button',
+                        flex: 1,
+                        glyph: 'xf27a',
+                        tooltip: 'Add comment',
+                        tooltipType: 'title',
+                        listeners: {
+                            click: {
+                                fn: 'onAddComment',
+                            }
+                        }
+                    }
+                ]
+            },{
+                xtype: 'container',
+                layout: 'hbox',
+                margin: '0 0 5 0',
+                items: [
+                    {
+                        xtype: 'combobox',
+                        fieldLabel: 'Water body name',
+                        name: 'water_body_name',
+                        itemId: 'water_body_name',
+                        valueField: 'id',
+                        displayField: 'name',
+                        typeAhead: true,
+                        queryMode: 'local',
+                        emptyText: 'Select a name...',
+                        allowBlank: false,
+                        flex: 15,
+                        margin: '0 5 0 0',
+                        store: Ext.data.Store(),
+                        listeners: {
+                            change: {
+                                fn: 'onComboValueChange',
+                                extraArgs: ['water_body_name', 'station', true]
+                            }
+                        }
                     },
                     {
                         xtype: 'button',
@@ -77,36 +161,8 @@ Ext.define('EcoAlpsWater.view.main.NewSampleStep0', {
                         emptyText: 'Select a station...',
                         allowBlank: false,
                         flex: 15,
-                        margin: '0 5 0 0'
-                        },
-                    {
-                        xtype: 'button',
-                        flex: 1,
-                        glyph: 'xf27a',
-                        tooltip: 'Add comment',
-                        tooltipType: 'title',
-                        listeners: {
-                            click: {
-                                fn: 'onAddComment',
-                            }
-                        }
-                    }
-                ]
-            },
-            {
-                xtype: 'container',
-                layout: 'hbox',
-                margin: '0 0 5 0',
-                items: [
-                    {
-                        xtype: 'datefield',
-                        fieldLabel: 'Sampling date',
-                        name: 'sampling_date',
-                        itemId: 'sampling_date',
-                        allowBlank: false,
-                        maxValue: new Date(),
-                        flex: 15,
-                        margin: '0 5 0 0'
+                        margin: '0 5 0 0',
+                        store: Ext.data.Store()
                         },
                     {
                         xtype: 'button',
@@ -135,7 +191,12 @@ Ext.define('EcoAlpsWater.view.main.NewSampleStep0', {
                         decimalPrecision: 5,
                         allowBlank: false,
                         flex: 15,
-                        margin: '0 5 0 0'
+                        margin: '0 5 0 0',
+                        listeners: {
+                            change: {
+                                fn: 'onFieldChange',
+                            }
+                        }
                         },
                     {
                         xtype: 'button',
@@ -168,40 +229,13 @@ Ext.define('EcoAlpsWater.view.main.NewSampleStep0', {
                         emptyText: 'Select a depth type...',
                         allowBlank: false,
                         flex: 15,
-                        margin: '0 5 0 0'
-                        },
-                    {
-                        xtype: 'button',
-                        flex: 1,
-                        glyph: 'xf27a',
-                        tooltip: 'Add comment',
-                        tooltipType: 'title',
+                        margin: '0 5 0 0',
+                        store: Ext.data.Store(),
                         listeners: {
-                            click: {
-                                fn: 'onAddComment',
+                            change: {
+                                fn: 'onFieldChange',
                             }
                         }
-                    }
-                ]
-            },
-            {
-                xtype: 'container',
-                layout: 'hbox',
-                margin: '0 0 5 0',
-                items: [
-                    {
-                        xtype: 'combobox',
-                        fieldLabel: 'eDNA marker',
-                        name: 'edna_marker',
-                        itemId: 'edna_marker',
-                        valueField: 'id',
-                        displayField: 'name',
-                        typeAhead: true,
-                        queryMode: 'local',
-                        emptyText: 'Select a eDNA marker ...',
-                        allowBlank: false,
-                        flex: 15,
-                        margin: '0 5 0 0'
                         },
                     {
                         xtype: 'button',
@@ -244,25 +278,58 @@ Ext.define('EcoAlpsWater.view.main.NewSampleStep1', {
             anchor: '100%'
         },
 
-        items: [
-            {
+        items: [{
                 xtype: 'container',
                 layout: 'hbox',
                 margin: '0 0 5 0',
                 items: [
                     {
                         xtype: 'combobox',
-                        fieldLabel: 'Biological element',
-                        name: 'biological_element',
-                        itemId: 'biological_element',
+                        fieldLabel: 'eDNA marker',
+                        name: 'edna_marker',
+                        itemId: 'edna_marker',
                         valueField: 'id',
                         displayField: 'name',
                         typeAhead: true,
                         queryMode: 'local',
-                        emptyText: 'Select a biological element...',
+                        emptyText: 'Select a eDNA marker ...',
                         allowBlank: false,
                         flex: 15,
-                        margin: '0 5 0 0'
+                        margin: '0 5 0 0',
+                        store: Ext.data.Store()
+                        },
+                    {
+                        xtype: 'button',
+                        flex: 1,
+                        glyph: 'xf27a',
+                        tooltip: 'Add comment',
+                        tooltipType: 'title',
+                        listeners: {
+                            click: {
+                                fn: 'onAddComment',
+                            }
+                        }
+                    }
+                ]
+            },
+            {
+                xtype: 'container',
+                layout: 'hbox',
+                margin: '0 0 5 0',
+                items: [
+                    {
+                        xtype: 'datefield',
+                        fieldLabel: 'Sampling date',
+                        name: 'sampling_date',
+                        itemId: 'sampling_date',
+                        allowBlank: false,
+                        flex: 15,
+                        margin: '0 5 0 0',
+                        listeners: {
+                            change: {
+                                fn: 'onFieldChange',
+                            }
+                        }
                         },
                     {
                         xtype: 'button',
@@ -323,7 +390,8 @@ Ext.define('EcoAlpsWater.view.main.NewSampleStep1', {
                         emptyText: 'Select a mixing type...',
                         allowBlank: true,
                         flex: 15,
-                        margin: '0 5 0 0'
+                        margin: '0 5 0 0',
+                        store: Ext.data.Store()
                         },
                     {
                         xtype: 'button',
@@ -492,34 +560,6 @@ Ext.define('EcoAlpsWater.view.main.NewSampleStep1', {
                         }
                     }
                 ]
-            }, {
-                xtype: 'container',
-                layout: 'hbox',
-                margin: '0 0 5 0',
-                items: [
-                    {
-                        xtype: 'numberfield',
-                        fieldLabel: 'Field conductivity',
-                        name: 'conductivity_ph',
-                        itemId: 'conductivity_ph',
-                        decimalPrecision: 5,
-                        allowBlank: true,
-                        flex: 15,
-                        margin: '0 5 0 0'
-                        },
-                    {
-                        xtype: 'button',
-                        flex: 1,
-                        glyph: 'xf27a',
-                        tooltip: 'Add comment',
-                        tooltipType: 'title',
-                        listeners: {
-                            click: {
-                                fn: 'onAddComment',
-                            }
-                        }
-                    }
-                ]
             }
         ]
     }],
@@ -551,7 +591,35 @@ Ext.define('EcoAlpsWater.view.main.NewSampleStep2', {
             anchor: '100%'
         },
 
-        items: [{
+        items: [ {
+                xtype: 'container',
+                layout: 'hbox',
+                margin: '0 0 5 0',
+                items: [
+                    {
+                        xtype: 'numberfield',
+                        fieldLabel: 'Field conductivity',
+                        name: 'conductivity_ph',
+                        itemId: 'conductivity_ph',
+                        decimalPrecision: 5,
+                        allowBlank: true,
+                        flex: 15,
+                        margin: '0 5 0 0'
+                        },
+                    {
+                        xtype: 'button',
+                        flex: 1,
+                        glyph: 'xf27a',
+                        tooltip: 'Add comment',
+                        tooltipType: 'title',
+                        listeners: {
+                            click: {
+                                fn: 'onAddComment',
+                            }
+                        }
+                    }
+                ]
+            }, {
                 xtype: 'container',
                 layout: 'hbox',
                 margin: '0 0 5 0',
@@ -1285,7 +1353,8 @@ Ext.define('EcoAlpsWater.view.main.NewSampleStep4', {
                         emptyText: 'Select a DNA extraction kit...',
                         allowBlank: true,
                         flex: 15,
-                        margin: '0 5 0 0'
+                        margin: '0 5 0 0',
+                        store: Ext.data.Store()
                         },
                     {
                         xtype: 'button',
@@ -1349,7 +1418,8 @@ Ext.define('EcoAlpsWater.view.main.NewSampleStep5', {
                         emptyText: 'Select a temperature profile...',
                         allowBlank: true,
                         flex: 15,
-                        margin: '0 5 0 0'
+                        margin: '0 5 0 0',
+                        store: Ext.data.Store()
                         },
                     {
                         xtype: 'button',
@@ -1381,7 +1451,8 @@ Ext.define('EcoAlpsWater.view.main.NewSampleStep5', {
                         emptyText: 'Select a phytoplankton countings...',
                         allowBlank: true,
                         flex: 15,
-                        margin: '0 5 0 0'
+                        margin: '0 5 0 0',
+                        store: Ext.data.Store()
                         },
                     {
                         xtype: 'button',
@@ -1413,7 +1484,8 @@ Ext.define('EcoAlpsWater.view.main.NewSampleStep5', {
                         emptyText: 'Select a phytoplankton countings...',
                         allowBlank: true,
                         flex: 15,
-                        margin: '0 5 0 0'
+                        margin: '0 5 0 0',
+                        store: Ext.data.Store()
                         },
                     {
                         xtype: 'button',
@@ -1567,6 +1639,7 @@ Ext.define('EcoAlpsWater.view.main.NewSample', {
     initComponent: function () {
         this.callParent();
         this.controller.getFieldDescriptions();
+        this.controller.getComboBoxValues()
     }
 
 });

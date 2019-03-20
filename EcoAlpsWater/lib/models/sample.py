@@ -10,13 +10,15 @@ from EcoAlpsWater.lib.models.mixing_type import MixingType
 from EcoAlpsWater.lib.models.phytoplankton_countings import PhytoplanktonCountings
 from EcoAlpsWater.lib.models.station import Station
 from EcoAlpsWater.lib.models.vertical_temperature_profile import VerticalTemperatureProfile
+from django.contrib.auth.models import User
 
 
 class Sample(models.Model):
-    sample_id = models.TextField(blank=False, null=False)
-    sample_code = models.TextField(blank=False, null=False)
+    user = models.ForeignKey(User, on_delete=models.PROTECT, blank=False, null=False, default=1)
+    sample_id = models.TextField(blank=False, null=False, unique=True)
+    sample_code = models.TextField(blank=False, null=False, unique=True)
     drainage_basin = models.ForeignKey(DrainageBasin, on_delete=models.CASCADE, null=False, default=1)
-    cap_code = models.TextField(blank=False, null=False)
+    cap_code = models.TextField(blank=True, null=True)
     station = models.ForeignKey(Station, on_delete=models.CASCADE, null=False, default=1)
     sampling_date = models.DateTimeField(auto_now_add=True, blank=False, null=False)
     sampling_depth = models.FloatField(null=False, blank=False)
@@ -59,4 +61,18 @@ class Sample(models.Model):
     vertical_temperature_profiles = models.ForeignKey(VerticalTemperatureProfile, on_delete=models.CASCADE, null=True, blank=True)
     phytoplankton_countings = models.ForeignKey(PhytoplanktonCountings, on_delete=models.CASCADE, null=True, blank=True)
     cyanotoxin_samples = models.ForeignKey(CyanotoxinSamples, on_delete=models.CASCADE, null=True, blank=True)
+
+    def to_dict(self):
+        return {
+            'id': self.id,
+            'sample_id': self.sample_id,
+            'sample_code': self.sample_code,
+            'water_body': self.drainage_basin.type,
+            'water_body_name': self.drainage_basin.name,
+            'station': self.station.name,
+            'sampling_date': self.sampling_date.strftime('%Y-%m-%d'),
+            'sampling_depth': self.sampling_depth,
+            'depth_type': self.depth_type.name,
+            'edna_marker': self.edna_marker.name
+        }
 

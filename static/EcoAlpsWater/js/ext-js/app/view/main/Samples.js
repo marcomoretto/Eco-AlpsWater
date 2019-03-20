@@ -1,6 +1,26 @@
 /**
  * This view is an example list of people.
  */
+var eawSamplesGridStore = new Ext.data.JsonStore({
+    autoLoad: false,
+    pageSize: 10,
+    remoteSort: true,
+    proxy: {
+        type: 'ajax',
+        timeout: 120000,
+        url: 'get_samples/',
+        reader: {
+            type: 'json',
+            rootProperty: 'rows',
+            totalProperty: 'total'
+        },
+        actionMethods: {
+            read: 'POST'
+        }
+    },
+    fields: ['sample_id']
+});
+
 Ext.define('EcoAlpsWater.LiveFilter', {
     extend: 'Ext.form.field.Text',
     xtype: 'eaw_livefilter',
@@ -126,9 +146,7 @@ Ext.define('EcoAlpsWater.view.main.Samples', {
 
     controller: 'samples',
 
-    selModel: {
-        mode: 'MULTI'
-    },
+    store: eawSamplesGridStore,
 
     dockedItems: [{
         xtype: 'toolbar',
@@ -250,47 +268,60 @@ Ext.define('EcoAlpsWater.view.main.Samples', {
             }
         }]},{
             xtype: 'eaw_paging',
-            //store:
+            store: eawSamplesGridStore,
             dock: 'bottom',
             displayInfo: true
         }],
 
+    selModel: {
+        selType: 'checkboxmodel',
+        mode: 'MULTI',
+        checkOnly: true,
+        allowDeselect: false
+    },
+
     columns: [{
+        text: 'ID',
+        name: 'id',
+        itemId: 'id',
+        dataIndex: 'id',
+        flex: 1
+    },{
         text: 'Sample ID',
         name: 'sample_id',
         itemId: 'sample_id',
         dataIndex: 'sample_id',
-        flex: 1
+        flex: 2
     }, {
         text: 'Sample code',
         name: 'sample_code',
         itemId: 'sample_code',
         dataIndex: 'sample_code',
-        flex: 1
+        flex: 3
     }, {
-        text: 'Lake code',
-        name: 'lake_code',
-        itemId: 'lake_code',
-        dataIndex: 'lake_code',
-        flex: 1
+        text: 'Water body',
+        name: 'water_body',
+        itemId: 'water_body',
+        dataIndex: 'water_body',
+        flex: 2
     }, {
-        text: 'Lake', 
-        name: 'lake',
-        itemId: 'lake',
-        dataIndex: 'lake',
-        flex: 1
+        text: 'Water body name',
+        name: 'water_body_name',
+        itemId: 'water_body_name',
+        dataIndex: 'water_body_name',
+        flex: 2
     }, {
         text: 'Station name',
         name: 'station',
         itemId: 'station',
-        dataIndex: 'sample_id',
-        flex: 1
+        dataIndex: 'station',
+        flex: 2
     }, {
         text: 'Sampling date',
         name: 'sampling_date',
         itemId: 'sampling_date',
         dataIndex: 'sampling_date',
-        flex: 1
+        flex: 2
     }, {
         text: 'Sampling depth',
         name: 'sampling_depth',
@@ -302,7 +333,7 @@ Ext.define('EcoAlpsWater.view.main.Samples', {
         name: 'depth_type',
         itemId: 'depth_type',
         dataIndex: 'depth_type',
-        flex: 1
+        flex: 2
     }, {
         text: 'eDNA marker',
         name: 'edna_marker',
@@ -311,5 +342,8 @@ Ext.define('EcoAlpsWater.view.main.Samples', {
         flex: 1
     }
     ],
-
+    
+    listeners: {
+        afterrender: 'onSamplesGridAfterRender'
+    }
 });

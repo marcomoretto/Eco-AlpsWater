@@ -3,6 +3,10 @@ Ext.define('EcoAlpsWater.view.main.SamplesController', {
 
     alias: 'controller.samples',
 
+    onSamplesGridAfterRender: function(me) {
+        me.getStore().reload();
+    },
+
     onAdvancedSearchCollapse: function(me) {
         me.up('#samples').down('eaw_livefilter').setDisabled(false);
     },

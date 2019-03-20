@@ -39,8 +39,8 @@ INSTALLED_APPS = [
     'django_ftpserver',
 ]
 
-FTPSERVER_HANDLER = 'EcoAlpsWater.ftp_handler.EcoAlpsWaterHandler'
-FTPSERVER_FILESYSTEM = 'EcoAlpsWater.ftp_handler.EcoAlpsWaterFilesystem'
+FTPSERVER_HANDLER = 'EcoAlpsWater.lib.ftp_handler.EcoAlpsWaterHandler'
+FTPSERVER_FILESYSTEM = 'EcoAlpsWater.lib.ftp_handler.EcoAlpsWaterFilesystem'
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
