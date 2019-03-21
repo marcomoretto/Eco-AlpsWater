@@ -34,6 +34,16 @@ Ext.define('EcoAlpsWater.view.main.SamplesController', {
                     }
                 });
         }
+    },
+
+    onLiveFilterChange: function(me, text, old, event) {
+        if (text.length < 3) {
+            me.up('samples').getStore().proxy.extraParams.filter = '';
+            me.up('samples').getStore().reload();
+        } else {
+            me.up('samples').getStore().proxy.extraParams.filter = text;
+            me.up('samples').getStore().reload();
+        }
     }
 
 });

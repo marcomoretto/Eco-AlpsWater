@@ -2,6 +2,7 @@ import datetime
 import json
 
 from django.contrib.auth import authenticate, login, logout
+from django.db.models import Q
 from django.http import HttpResponse
 from django.shortcuts import render
 
@@ -13,6 +14,7 @@ from EcoAlpsWater.lib.models.depth_type import DepthType
 from EcoAlpsWater.lib.models.dna_extraction_kit import DNAExtractionKit
 from EcoAlpsWater.lib.models.drainage_basin import DrainageBasin
 from EcoAlpsWater.lib.models.edna_marker import EDNAMarker
+from EcoAlpsWater.lib.models.field_description import FieldDescription
 from EcoAlpsWater.lib.models.mixing_type import MixingType
 from EcoAlpsWater.lib.models.phytoplankton_countings import PhytoplanktonCountings
 from EcoAlpsWater.lib.models.sample import Sample
@@ -83,13 +85,9 @@ def get_combo_field_values(request):
 
 
 def get_field_descriptions(request):
-    descriptions = [{
-        'item_id': 'edna_marker',
-        'description': 'Ciao ciao ciao!!!'
-    }]
     return HttpResponse(
             json.dumps({
-                'descriptions': descriptions
+                'descriptions': [fd.to_dict() for fd in FieldDescription.objects.all()]
             }), content_type="application/json")
 
 
@@ -154,9 +152,19 @@ def get_samples(request):
     page = request.POST['page']
     start = request.POST['start']
     limit = request.POST['limit']
+    filter = request.POST.get('filter', None)
     st = int(start)
     en = st + int(limit)
-    rows = [s.to_dict() for s in Sample.objects.order_by('id')[st:en]]
+    rs = Sample.objects.order_by('id')
+    if filter:
+        rs = rs.filter(
+            Q(drainage_basin__type__icontains=filter) |
+            Q(drainage_basin__name__icontains=filter) |
+            Q(station__name__icontains=filter) |
+            Q(depth_type__name__icontains=filter) |
+            Q(edna_marker__name__icontains=filter)
+        )
+    rows = [s.to_dict() for s in rs[st:en]]
     total = Sample.objects.count()
     return HttpResponse(
             json.dumps({

@@ -23,6 +23,9 @@ Ext.define('EcoAlpsWater.view.main.MainController', {
 
     beforeActivate: function(me) {
         var panel = me.down('[xtype="' + me.itemId + '"]');
+        if (panel.xtype == 'samples') {
+            var grid = panel.getStore().reload();
+        }
         if (!panel.useHash) {
             window.location.hash = '#view/' + panel.xtype + '/0';
         }

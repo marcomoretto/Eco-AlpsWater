@@ -27,13 +27,13 @@ Ext.define('EcoAlpsWater.LiveFilter', {
     requires: [
         'Ext.form.field.Text'
     ],
+    
+    controller: 'samples',
 
     labelWidth:'auto',
 
     listeners: {
-        change: function (me, newValue, oldValue, eOpts) {
-
-        }
+        change: 'onLiveFilterChange'
     }
 });
 

@@ -19,7 +19,7 @@ Ext.define('EcoAlpsWater.view.main.NewSampleController', {
         }
         var sample_id = me.down('#sample_id');
         var sample_code = me.down('#sample_code');
-        var lake_code = me.down('#lake_code');
+        var water_body_code = me.down('#water_body_code');
         var cap_code = me.down('#cap_code');
         Ext.Ajax.request({
             url: 'update_ids/',
@@ -28,7 +28,7 @@ Ext.define('EcoAlpsWater.view.main.NewSampleController', {
                 var resData = Ext.decode(response.responseText);
                 sample_id.setValue(resData['ids']['sample_id']);
                 sample_code.setValue(resData['ids']['sample_code']);
-                lake_code.setValue(resData['ids']['lake_code']);
+                water_body_code.setValue(resData['ids']['water_body_code']);
                 cap_code.setValue(resData['ids']['cap_code']);
             },
             failure: function (response) {
@@ -52,7 +52,10 @@ Ext.define('EcoAlpsWater.view.main.NewSampleController', {
             url: 'save_sample/',
             params: values,
             success: function (response) {
-
+                if (EcoAlpsWater.current.checkHttpResponse(response)) {
+                    var resData = Ext.decode(response.responseText);
+                    EcoAlpsWater.current.showMessage('info', 'Save new sample', 'Sample successfully saved!');
+                }
             },
             failure: function (response) {
                 console.log('Server error', reponse);
@@ -107,7 +110,7 @@ Ext.define('EcoAlpsWater.view.main.NewSampleController', {
             success: function (response) {
                 var resData = Ext.decode(response.responseText);
                 resData.descriptions.forEach(function (i) {
-                    var target = me.getView().down('[itemId="' + i['item_id'] + '"]');
+                    var target = me.getView().down('[itemId="' + i['field_name'] + '"]');
                     var tip = Ext.create('Ext.tip.ToolTip', {
                         target: target.getEl(),
                         html: i['description']
