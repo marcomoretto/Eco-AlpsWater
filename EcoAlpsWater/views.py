@@ -32,6 +32,8 @@ import barcode
 from barcode.writer import ImageWriter
 import xlsxwriter
 
+from django.core.mail import send_mail
+
 
 def index(request):
     return render(request, 'EcoAlpsWater/index.html', None)
@@ -60,6 +62,18 @@ def check_login(request):
                 'login': False
             }), content_type="application/json")
 
+
+def send_email(request):
+    send_mail(
+        'Eco-AlpsWater verification e-mail',
+        'This mail has been automatically sent from the Eco-AlpsWater website.',
+        'noreply@example.com',
+        [request.user.email]
+    )
+    return HttpResponse(
+            json.dumps({
+                'success': True
+            }), content_type="application/json")
 
 def get_combo_field_values(request):
     water_bodies = []

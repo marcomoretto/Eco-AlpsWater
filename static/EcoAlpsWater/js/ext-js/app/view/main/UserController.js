@@ -8,6 +8,21 @@ Ext.define('EcoAlpsWater.view.main.ChangePasswordController', {
         });
     },
 
+    onSendEmail: function(me) {
+        Ext.Ajax.request({
+            url: 'send_email/',
+            success: function (response) {
+                if (EcoAlpsWater.current.checkHttpResponse(response)) {
+                    var resData = Ext.decode(response.responseText);
+                    EcoAlpsWater.current.showMessage('info', 'Email sent', 'Email sent successfully!')
+                }
+            },
+            failure: function (response) {
+                Ext.Msg.alert('Server problem', 'Server Problem');
+            }
+        });
+    },
+
     onSubmitChangePassword: function() {
         var view = this.getView();
         var params = view.down('[xtype="form"]').getValues();

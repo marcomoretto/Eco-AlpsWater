@@ -93,12 +93,20 @@ Ext.define('EcoAlpsWater.view.main.User', {
 
     bbar: ['->', {
         xtype: 'button',
+        text: 'Send verification e-mail',
+        itemId: 'send_email',
+        name: 'send_email',
+        listeners: {
+            click: 'onSendEmail'
+        }
+    }, {
+        xtype: 'button',
         text: 'Change password',
         itemId: 'change_pwd',
         name: 'change_pwd',
         listeners: {
             click: 'onChangePassword'
-        }
+        },
     }],
 
     listeners: {
