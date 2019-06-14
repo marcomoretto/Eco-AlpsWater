@@ -1,3 +1,9 @@
+import os
+import zipfile
+import io
+from json import JSONDecodeError
+
+from PIL import Image
 import datetime
 import json
 
@@ -9,6 +15,7 @@ from django.shortcuts import render
 # Create your views here.
 from EcoAlpsWater.lib.decorator import forward_exception_to_http
 from EcoAlpsWater.lib.models.biological_element import BiologicalElement
+from EcoAlpsWater.lib.models.comment import Comment
 from EcoAlpsWater.lib.models.cyanotoxin_samples import CyanotoxinSamples
 from EcoAlpsWater.lib.models.depth_type import DepthType
 from EcoAlpsWater.lib.models.dna_extraction_kit import DNAExtractionKit
@@ -20,6 +27,10 @@ from EcoAlpsWater.lib.models.phytoplankton_countings import PhytoplanktonCountin
 from EcoAlpsWater.lib.models.sample import Sample
 from EcoAlpsWater.lib.models.vertical_temperature_profile import VerticalTemperatureProfile
 from EcoAlpsWater.lib.sample_coder import SampleCoder
+
+import barcode
+from barcode.writer import ImageWriter
+import xlsxwriter
 
 
 def index(request):
@@ -148,30 +159,242 @@ def update_ids(request):
             }), content_type="application/json")
 
 @forward_exception_to_http
+def get_search_field_name(request):
+    fields = [{
+        'id': 'sample_id',
+        'name': 'Sample ID'
+    }, {
+        'id': 'sample_code',
+        'name': 'Sample code'
+    }, {
+        'id': 'drainage_basin__type',
+        'name': 'Water body type'
+    }, {
+        'id': 'drainage_basin__name',
+        'name': 'Water body name'
+    }, {
+        'id': 'sampling_date',
+        'name': 'Sampling date'
+    }, {
+        'id': 'station__name',
+        'name': 'Station name'
+    }, {
+        'id': 'cap_code',
+        'name': 'Cap code'
+    }, {
+        'id': 'sampling_depth',
+        'name': 'Sampling depth'
+    }, {
+        'id': '',
+        'name': ''
+    }, {
+        'id': '',
+        'name': ''
+    }, {
+        'id': '',
+        'name': ''
+    }, {
+        'id': '',
+        'name': ''
+    }, {
+        'id': '',
+        'name': ''
+    }, {
+        'id': 'biological_element__name',
+        'name': 'Biological element'
+    }]
+    '''
+    sampling_date = models.DateTimeField(auto_now_add=True, blank=False, null=False)
+    sampling_depth = models.FloatField(null=False, blank=False)
+    depth_type = models.ForeignKey(DepthType, on_delete=models.CASCADE, null=False, default=1)
+    edna_marker = models.ForeignKey(EDNAMarker, on_delete=models.CASCADE, null=False, default=1)
+    biological_element = models.ForeignKey(BiologicalElement, on_delete=models.CASCADE, null=False, default=1)
+    mean_river_outflow = models.FloatField(null=True, blank=True)
+    mixing_type = models.ForeignKey(MixingType, on_delete=models.CASCADE, null=True, blank=True)
+    catchment_area = models.FloatField(null=True, blank=True)
+    sampling_latitude = models.DecimalField(max_digits=9, decimal_places=6, null=True, blank=True)
+    sampling_longitude = models.DecimalField(max_digits=9, decimal_places=6, null=True, blank=True)
+    temperature = models.FloatField(null=True, blank=True)
+    field_ph = models.FloatField(null=True, blank=True)
+    conductivity_ph = models.FloatField(null=True, blank=True)
+    light_attenuation_coefficient = models.FloatField(null=True, blank=True)
+    secchi_disk_depth = models.FloatField(null=True, blank=True)
+    euphotic_layer = models.FloatField(null=True, blank=True)
+    oxygen_concentration = models.FloatField(null=True, blank=True)
+    oxygen_percentage = models.FloatField(null=True, blank=True)
+    laboratory_ph = models.FloatField(null=True, blank=True)
+    laboratory_conductivity = models.FloatField(null=True, blank=True)
+    total_alkalinity = models.FloatField(null=True, blank=True)
+    bicarbonates = models.FloatField(null=True, blank=True)
+    nitrate_nitrogen = models.FloatField(null=True, blank=True)
+    sulphates = models.FloatField(null=True, blank=True)
+    chloride = models.FloatField(null=True, blank=True)
+    calcium = models.FloatField(null=True, blank=True)
+    magnesium = models.FloatField(null=True, blank=True)
+    sodium = models.FloatField(null=True, blank=True)
+    potassium = models.FloatField(null=True, blank=True)
+    ammonium = models.FloatField(null=True, blank=True)
+    total_nitrogen = models.FloatField(null=True, blank=True)
+    soluble_reactive_phosphorus = models.FloatField(null=True, blank=True)
+    total_phosphorus = models.FloatField(null=True, blank=True)
+    reactive_silica = models.FloatField(null=True, blank=True)
+    dry_weight = models.FloatField(null=True, blank=True)
+    chlorophyll_a = models.FloatField(null=True, blank=True)
+    dna_extraction_kit = models.ForeignKey(DNAExtractionKit, on_delete=models.CASCADE, null=True, blank=True)
+    dna_extraction_date = models.DateTimeField(auto_now_add=False, blank=True, null=True)
+    vertical_temperature_profiles = models.ForeignKey(VerticalTemperatureProfile, on_delete=models.CASCADE, null=True, blank=True)
+    phytoplankton_countings = models.ForeignKey(PhytoplanktonCountings, on_delete=models.CASCADE, null=True, blank=True)
+    cyanotoxin_samples = models.ForeignKey(CyanotoxinSamples, on_delete=models.CASCADE, null=True, blank=True)'''
+    return HttpResponse(
+            json.dumps({
+                'success': True,
+                'rows': fields,
+                'total': len(fields)
+            }), content_type="application/json")
+
+@forward_exception_to_http
 def get_samples(request):
-    page = request.POST['page']
-    start = request.POST['start']
-    limit = request.POST['limit']
-    filter = request.POST.get('filter', None)
+    rs = Sample.objects.order_by('id')
+    page = request.POST.get('page', 1)
+    start = request.POST.get('start', 0)
+    limit = request.POST.get('limit', rs.count())
+    filter = request.POST.get('filter', '')
+    try:
+        filter = json.loads(filter)
+    except JSONDecodeError as e:
+        pass
     st = int(start)
     en = st + int(limit)
-    rs = Sample.objects.order_by('id')
     if filter:
-        rs = rs.filter(
-            Q(drainage_basin__type__icontains=filter) |
-            Q(drainage_basin__name__icontains=filter) |
-            Q(station__name__icontains=filter) |
-            Q(depth_type__name__icontains=filter) |
-            Q(edna_marker__name__icontains=filter)
-        )
+        if type(filter) == str:
+            rs = rs.filter(
+                Q(biological_element__name__icontains=filter) |
+                Q(drainage_basin__type__icontains=filter) |
+                Q(drainage_basin__name__icontains=filter) |
+                Q(station__name__icontains=filter) |
+                Q(depth_type__name__icontains=filter) |
+                Q(edna_marker__name__icontains=filter)
+            )
+        elif type(filter) == dict and len(filter['advanced']) > 0:
+            rs_filter = Q()
+            for f in filter['advanced'][::-1]:
+                _d = {f['field_name'] + '__icontains': f['field_value']}
+                conn = Q.AND
+                if f['field_and_or'] == 'or':
+                    conn = Q.OR
+                if f['field_contains'] == 'contains':
+                    rs_filter.add(Q(**_d), conn)
+                elif f['field_contains'] == 'doesnt_contain':
+                    rs_filter.add(~Q(**_d), conn)
+                elif f['field_contains'] == 'gt':
+                    _d = {f['field_name'] + '__gt': f['field_value']}
+                    rs_filter.add(Q(**_d), conn)
+                elif f['field_contains'] == 'gte':
+                    _d = {f['field_name'] + '__gte': f['field_value']}
+                    rs_filter.add(Q(**_d), conn)
+                elif f['field_contains'] == 'lt':
+                    _d = {f['field_name'] + '__lt': f['field_value']}
+                    rs_filter.add(Q(**_d), conn)
+                elif f['field_contains'] == 'lte':
+                    _d = {f['field_name'] + '__lte': f['field_value']}
+                    rs_filter.add(Q(**_d), conn)
+            rs = rs.filter(rs_filter)
     rows = [s.to_dict() for s in rs[st:en]]
-    total = Sample.objects.count()
+    total = rs.count()
     return HttpResponse(
             json.dumps({
                 'success': True,
                 'rows': rows,
                 'total': total
             }), content_type="application/json")
+
+@forward_exception_to_http
+def get_samples_complete(request):
+    id = request.POST.get('id', None)
+    description = bool(request.POST.get('description', False))
+    if id:
+        rs = Sample.objects.filter(id=id)
+    else:
+        rs = Sample.objects.order_by('id')
+    if description:
+        rows = [s.to_dict_description() for s in rs]
+    else:
+        rows = [s.to_dict_complete() for s in rs]
+    total = rs.count()
+    return HttpResponse(
+            json.dumps({
+                'success': True,
+                'rows': rows,
+                'total': total
+            }), content_type="application/json")
+
+@forward_exception_to_http
+def get_env_metadata(request):
+    samples = json.loads(request.POST['samples'])
+    buffer = io.BytesIO()
+    zf = zipfile.ZipFile(buffer, "w", zipfile.ZIP_DEFLATED)
+    files = []
+    for sample_id in samples:
+        sample = Sample.objects.get(id=sample_id)
+        workbook = xlsxwriter.Workbook(sample.sample_code + '.xlsx')
+        worksheet = workbook.add_worksheet()
+        row = 0
+        col = 0
+        bold = workbook.add_format({'bold': True})
+        s = sample.to_dict_description()
+        for i, h in enumerate(['Field', 'Field Description', 'Field Value', 'Comments']):
+            worksheet.write(row, col + i, h, bold)
+        row += 1
+        for field in s.keys():
+            desc = FieldDescription.objects.filter(field_name=field)
+            if len(desc) == 1:
+                desc = desc[0].description
+            if not desc:
+                desc = ''
+            value = s[field]
+            if not value:
+                value = ''
+            comments = Comment.objects.filter(sample=sample, field_name=field)
+            if len(comments) == 1:
+                comments = comments[0].comment
+            if not comments:
+                comments = ''
+            worksheet.write(row, col, field)
+            worksheet.write(row, col + 1, desc)
+            worksheet.write(row, col + 2, value)
+            worksheet.write(row, col + 3, comments)
+            row += 1
+        workbook.close()
+        zf.write(sample.sample_code + '.xlsx')
+        files.append(sample.sample_code + '.xlsx')
+    zf.close()
+    for f in files:
+        os.remove(f)
+    response = HttpResponse(buffer.getvalue())
+    response['Content-Type'] = 'application/x-zip-compressed'
+    response['Content-Disposition'] = 'attachment; filename=samples.zip'
+    return response
+
+@forward_exception_to_http
+def get_barcode(request):
+    samples = json.loads(request.POST['samples'])
+    buffer = io.BytesIO()
+    zf = zipfile.ZipFile(buffer, "w", zipfile.ZIP_DEFLATED)
+    files = []
+    for sample_id in samples:
+        s = Sample.objects.get(id=sample_id)
+        ean = barcode.get_barcode_class('ean13')
+        bcode = ean(s.sample_id, writer=ImageWriter())
+        bcode.save(s.sample_code)
+        zf.write(s.sample_code + '.png')
+        files.append(s.sample_code + '.png')
+    zf.close()
+    for f in files:
+        os.remove(f)
+    response = HttpResponse(buffer.getvalue())
+    response['Content-Type'] = 'application/x-zip-compressed'
+    response['Content-Disposition'] = 'attachment; filename=samples.zip'
+    return response
 
 @forward_exception_to_http
 def save_sample(request):
@@ -225,7 +448,19 @@ def save_sample(request):
         cyanotoxin_samples_id=request.POST.get('cyanotoxin_samples', None) or None,
     )
     sample.save()
+    for k, v in request.POST.items():
+        if k.endswith('_comment') and v:
+            field_name = k.replace('_comment', '')
+            value = v
+            comment = Comment(
+                sample=sample,
+                field_name=field_name,
+                comment=value
+            )
+            comment.save()
     return HttpResponse(
             json.dumps({
                 'success': True
             }), content_type="application/json")
+
+

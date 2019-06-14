@@ -43,11 +43,14 @@ Ext.define('EcoAlpsWater.view.main.NewSampleController', {
         var cardNum = me.items.items.length - 1;
         var values = {};
         for (i = 0; i <= cardNum; i++) {
-            form = me.down('new_sample_step_' + i.toString()).getForm();
+            panel = me.down('new_sample_step_' + i.toString());
+            form = panel.getForm();
             for (var attrname in form.getValues()) {
                 values[attrname] = form.getValues()[attrname];
+                values[attrname + '_comment'] = panel.down('#' + attrname)['comment'];
             }
         }
+        console.log(values);
         Ext.Ajax.request({
             url: 'save_sample/',
             params: values,
@@ -111,10 +114,12 @@ Ext.define('EcoAlpsWater.view.main.NewSampleController', {
                 var resData = Ext.decode(response.responseText);
                 resData.descriptions.forEach(function (i) {
                     var target = me.getView().down('[itemId="' + i['field_name'] + '"]');
-                    var tip = Ext.create('Ext.tip.ToolTip', {
-                        target: target.getEl(),
-                        html: i['description']
-                    });
+                    if (target) {
+                        var tip = Ext.create('Ext.tip.ToolTip', {
+                            target: target.getEl(),
+                            html: i['description']
+                        });
+                    }
                 });
             },
             failure: function (response) {
@@ -186,15 +191,45 @@ Ext.define('EcoAlpsWater.view.main.NewSampleController', {
         });
     },
 
+    onCloneFromAnotherSample: function(me) {
+        Ext.create({
+            xtype: 'clone_sample'
+        });
+    },
+
+    onCloneSample: function(me) {
+        var win = me.up('window');
+        var combo = win.down('combobox');
+        var record = combo.getSelectedRecord().data;
+        console.log(record);
+        var viewport = Ext.ComponentQuery.query('viewport')[0];
+        var main = viewport.down('#main');
+        var cardNum = main.down('new_sample').items.items.length - 1;
+        var c = main.down('new_sample').controller;
+        var _old_function = c.updateIDs;
+        c.updateIDs = function() {  }
+        for (i = 0; i <= cardNum; i++) {
+            panel = main.down('new_sample_step_' + i.toString());
+            console.log(panel.id);
+            form = panel.getForm();
+            form.setValues(record);
+        }
+        c.updateIDs = _old_function;
+        win.close();
+    },
+
     onAddComment: function(me) {
-        var fieldLabel = me.up('container').down('field').fieldLabel;
+        var field = me.up('container').down('field');
+        var fieldLabel = field.fieldLabel;
         Ext.MessageBox.show({
             title: 'Comment',
             msg: 'Add a comment for the field ' + fieldLabel,
             width:300,
             buttons: Ext.MessageBox.OKCANCEL,
             multiline: true,
-            //fn: showResultText,
+            fn: function (value, text) {
+                field.comment = text;
+            }
         });
     }
 });

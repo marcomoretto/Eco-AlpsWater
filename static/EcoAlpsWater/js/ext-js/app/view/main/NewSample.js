@@ -1,4 +1,65 @@
 Ext.setGlyphFontFamily('FontAwesome');
+
+Ext.define('EcoAlpsWater.view.main.CloneSampleWindow', {
+    extend: 'Ext.window.Window',
+    xtype: 'clone_sample',
+
+    requires: [
+        'Ext.window.Window',
+        'Ext.form.Panel'
+    ],
+
+    controller: 'new_sample',
+    bodyPadding: 10,
+    title: 'Clone sample',
+    closable: true,
+    autoShow: true,
+    modal: true,
+    width: 500,
+    layout: 'fit',
+
+    items: {
+        xtype: 'form',
+        layout: 'fit',
+        bodyPadding: 10,
+        reference: 'form',
+        items: [{
+            xtype: 'combobox',
+            name: 'samples',
+            itemId: 'samples',
+            fieldLabel: 'Sample',
+            allowBlank: false,
+            queryMode: 'local',
+            valueField: 'id',
+            displayField: 'sample_code',
+            store: {
+                autoLoad: true,
+                fields: ['id', 'sample_code'],
+                proxy: {
+                    type: 'ajax',
+                    url: 'get_samples_complete/',
+                    reader: {
+                        type: 'json',
+                        rootProperty: 'rows'
+                    }
+                }
+            }
+        }],
+        buttons: [{
+            text: 'Clone',
+            formBind: true,
+            listeners: {
+                click: 'onCloneSample'
+            }
+        }]
+    },
+
+    initComponent: function() {
+
+        this.callParent();
+    }
+});
+
 Ext.define('EcoAlpsWater.view.main.NewSampleStep0', {
     extend: 'Ext.form.Panel',
     xtype: 'new_sample_step_0',
@@ -1535,6 +1596,7 @@ Ext.define('EcoAlpsWater.view.main.NewSample', {
                     itemId: 'import_from_file',
                     text: 'From file',
                     glyph: 'xf15b',
+                    disabled: true,
                     iconCls: null,
                     listeners: {
                         click: {
@@ -1548,7 +1610,7 @@ Ext.define('EcoAlpsWater.view.main.NewSample', {
                     iconCls: null,
                     listeners: {
                         click: {
-                            //fn: 'onAction',
+                            fn: 'onCloneFromAnotherSample',
                         }
                     }
                 }]

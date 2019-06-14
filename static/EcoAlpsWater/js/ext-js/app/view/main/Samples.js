@@ -1,6 +1,75 @@
-/**
- * This view is an example list of people.
- */
+Ext.define('EcoAlpsWater.view.main.ViewSampleDetailsWindow', {
+    extend: 'Ext.window.Window',
+    xtype: 'view_sample_details',
+
+    requires: [
+        'Ext.window.Window',
+        'Ext.form.Panel',
+        'EcoAlpsWater.view.main.NewSampleStep0'
+    ],
+
+    controller: 'samples',
+    bodyPadding: 10,
+    title: 'Sample details',
+    closable: true,
+    autoShow: true,
+    modal: true,
+    width: 600,
+    height: 600,
+    layout: 'card',
+
+    items: [
+        {
+            id: 'detail-card-0',
+            xtype: 'new_sample_step_0'
+        },
+        {
+            id: 'detail-card-1',
+            xtype: 'new_sample_step_1'
+        },
+        {
+            id: 'detail-card-2',
+            xtype: 'new_sample_step_2'
+        },
+        {
+            id: 'detail-card-3',
+            xtype: 'new_sample_step_3'
+        },
+        {
+            id: 'detail-card-4',
+            xtype: 'new_sample_step_4'
+        },
+        {
+            id: 'detail-card-5',
+            xtype: 'new_sample_step_5'
+        }
+    ],
+
+    bbar: [
+        '->',
+        {
+            itemId: 'card-prev',
+            text: '&laquo; Previous',
+            handler: 'showPrevious',
+            disabled: true
+        },
+        {
+            itemId: 'card-next',
+            text: 'Next &raquo;',
+            handler: 'showNext'
+        },
+    ],
+
+    listeners: {
+        afterrender: 'onSampleDetailWindowAfterRender'
+    },
+
+    initComponent: function() {
+
+        this.callParent();
+    }
+});
+
 var eawSamplesGridStore = new Ext.data.JsonStore({
     autoLoad: false,
     pageSize: 10,
@@ -65,12 +134,28 @@ Ext.define('EcoAlpsWater.AdvancedSearchField', {
             itemId: 'field_name',
             valueField: 'id',
             displayField: 'name',
-            typeAhead: true,
             queryMode: 'local',
             emptyText: 'Field name',
             allowBlank: false,
             flex: 5,
-            margin: '0 5 0 0'
+            margin: '0 5 0 0',
+            store: {
+                autoLoad: true,
+                fields: ['id', 'name'],
+                proxy: {
+                    type: 'ajax',
+                    url: 'get_search_field_names/',
+                    reader: {
+                        type: 'json',
+                        rootProperty: 'rows'
+                    }
+                }
+            },
+            listeners: {
+                change: {
+                    fn: 'onChangeSearchField'
+                }
+            }
         }, {
             xtype: 'combobox',
             fieldLabel: '',
@@ -88,7 +173,11 @@ Ext.define('EcoAlpsWater.AdvancedSearchField', {
                 fields: ['id', 'name'],
                 data : [
                     {"id": "contains", "name": "CONTAINS"},
-                    {"id": "doesnt_contain", "name": "DOESN'T CONTAIN"}
+                    {"id": "doesnt_contain", "name": "DOESN'T CONTAIN"},
+                    {"id": "gt", "name": "GREATER THAN"},
+                    {"id": "gte", "name": "GREATER THAN OR EQUAL"},
+                    {"id": "lt", "name": "LESS THAN"},
+                    {"id": "lte", "name": "LESS THAN OR EQUAL"}
                 ]
             })
         }, {
@@ -100,6 +189,16 @@ Ext.define('EcoAlpsWater.AdvancedSearchField', {
             flex: 5,
             margin: '0 5 0 0',
             allowBlank: false,
+        }, {
+            xtype: 'datefield',
+            ieldLabel: '',
+            name: 'field_value',
+            itemId: 'field_value_date',
+            emptyText: 'Value',
+            flex: 5,
+            margin: '0 5 0 0',
+            allowBlank: false,
+            hidden: true
         }, {
             xtype: 'combobox',
             fieldLabel: '',
@@ -183,7 +282,12 @@ Ext.define('EcoAlpsWater.view.main.Samples', {
                 }, {
                     xtype: 'button',
                     glyph: 'xf002',
-                    text: 'Search'
+                    text: 'Search',
+                    listeners: {
+                        click: {
+                            fn: 'onAdvancedSearch'
+                        }
+                    }
                 }]
             }],
             flex: 1,
@@ -219,13 +323,23 @@ Ext.define('EcoAlpsWater.view.main.Samples', {
             glyph: 'f06e',
             itemId: 'view_details',
             name: 'view_details',
-            disabled: true
+            disabled: true,
+            listeners: {
+                click: {
+                    fn: 'onViewSampleDetails'
+                }
+            }
         }, {
             text: 'Clone sample',
             itemId: 'clone_sample',
             name: 'clone_sample',
             glyph: 'xf24d',
-            disabled: true
+            disabled: true,
+            listeners: {
+                click: {
+                    fn: 'onCloneSample'
+                }
+            }
         }, {
             text: 'Download',
             itemId: 'data_collection_menu_item',
@@ -237,11 +351,12 @@ Ext.define('EcoAlpsWater.view.main.Samples', {
                 items: [{
                     text: 'Barcode',
                     itemId: 'barcode',
+                    disabled: true,
                     iconCls: null,
                     glyph: 'f02a',
                     listeners: {
                         click: {
-                            //fn: 'onAction'
+                            fn: 'onDownloadBarcode'
                         }
                     }
                 }, {
@@ -249,15 +364,17 @@ Ext.define('EcoAlpsWater.view.main.Samples', {
                     itemId: 'env_meta_data',
                     iconCls: null,
                     glyph: 'f03e',
+                    disabled: true,
                     listeners: {
                         click: {
-                            //fn: 'onAction'
+                            fn: 'onDownloadEnvMetaData'
                         }
                     }
                 }, {
                     text: 'Sequence file',
                     itemId: 'sequence_file',
                     iconCls: null,
+                    disabled: true,
                     glyph: 'f15c',
                     listeners: {
                         click: {
@@ -285,19 +402,27 @@ Ext.define('EcoAlpsWater.view.main.Samples', {
         name: 'id',
         itemId: 'id',
         dataIndex: 'id',
-        flex: 1
+        flex: 1,
+        hidden: true
     },{
         text: 'Sample ID',
         name: 'sample_id',
         itemId: 'sample_id',
         dataIndex: 'sample_id',
-        flex: 2
+        flex: 2,
+        hidden:true,
     }, {
         text: 'Sample code',
         name: 'sample_code',
         itemId: 'sample_code',
         dataIndex: 'sample_code',
         flex: 3
+    }, {
+        text: 'Biological element',
+        name: 'biological_element',
+        itemId: 'biological_element',
+        dataIndex: 'biological_element',
+        flex: 2
     }, {
         text: 'Water body',
         name: 'water_body',
@@ -344,6 +469,8 @@ Ext.define('EcoAlpsWater.view.main.Samples', {
     ],
     
     listeners: {
-        afterrender: 'onSamplesGridAfterRender'
+        afterrender: 'onSamplesGridAfterRender',
+        select: 'onItemSelect',
+        deselect: 'onItemDeselect'
     }
 });

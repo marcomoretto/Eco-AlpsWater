@@ -20,7 +20,7 @@
     "model": "auth.user",
     "fields": {
         "password": "pbkdf2_sha256$120000$Eu7BNgiZUkcq$qBCrytSpsOGGclS08CvL8lhFds7QVFaqdas+Xz3E77Q=",
-        "last_login": "2019-03-21T08:14:33.234Z",
+        "last_login": "2019-06-14T08:14:37.888Z",
         "is_superuser": true,
         "username": "guest",
         "first_name": "",
@@ -50,11 +50,363 @@
     }
 },
 {
+    "model": "sessions.session",
+    "pk": "uwblick4p6ja3yamsqimg9f9c9dee5mt",
+    "fields": {
+        "session_data": "NzY4MWYxYTdhNDE0NTcyOTFkMTIwNjU5ZGQ5OTUzZDBmNzE4OWY0MTp7Il9hdXRoX3VzZXJfaWQiOiIyIiwiX2F1dGhfdXNlcl9iYWNrZW5kIjoiZGphbmdvLmNvbnRyaWIuYXV0aC5iYWNrZW5kcy5Nb2RlbEJhY2tlbmQiLCJfYXV0aF91c2VyX2hhc2giOiI2MzkwNjMyZGNjNDI1N2ExZDA5ZDcwYmUzNGU3ZDY4N2YyNmIwNzY5In0=",
+        "expire_date": "2019-06-28T08:14:37.919Z"
+    }
+},
+{
     "model": "EcoAlpsWater.fielddescription",
     "pk": 1,
     "fields": {
         "field_name": "sampling_depth",
-        "description": "Unit of measurement: meter (m)"
+        "description": "Unit of measurement: m"
+    }
+},
+{
+    "model": "EcoAlpsWater.fielddescription",
+    "pk": 2,
+    "fields": {
+        "field_name": "biological_element",
+        "description": "Biological element"
+    }
+},
+{
+    "model": "EcoAlpsWater.fielddescription",
+    "pk": 3,
+    "fields": {
+        "field_name": "water_body",
+        "description": "Water body"
+    }
+},
+{
+    "model": "EcoAlpsWater.fielddescription",
+    "pk": 4,
+    "fields": {
+        "field_name": "water_body_name",
+        "description": "Water body name"
+    }
+},
+{
+    "model": "EcoAlpsWater.fielddescription",
+    "pk": 5,
+    "fields": {
+        "field_name": "station",
+        "description": "Station name"
+    }
+},
+{
+    "model": "EcoAlpsWater.fielddescription",
+    "pk": 6,
+    "fields": {
+        "field_name": "depth_type",
+        "description": "Depth type"
+    }
+},
+{
+    "model": "EcoAlpsWater.fielddescription",
+    "pk": 7,
+    "fields": {
+        "field_name": "edna_marker",
+        "description": "EDNA marker"
+    }
+},
+{
+    "model": "EcoAlpsWater.fielddescription",
+    "pk": 8,
+    "fields": {
+        "field_name": "sampling_date",
+        "description": "Sampling date"
+    }
+},
+{
+    "model": "EcoAlpsWater.fielddescription",
+    "pk": 9,
+    "fields": {
+        "field_name": "mean_river_outflow",
+        "description": "Unit of measurement: m\u00b3 / s"
+    }
+},
+{
+    "model": "EcoAlpsWater.fielddescription",
+    "pk": 10,
+    "fields": {
+        "field_name": "mixing_type",
+        "description": "Mixing type"
+    }
+},
+{
+    "model": "EcoAlpsWater.fielddescription",
+    "pk": 11,
+    "fields": {
+        "field_name": "catchment_area",
+        "description": "Unit of measurement: km\u00b2"
+    }
+},
+{
+    "model": "EcoAlpsWater.fielddescription",
+    "pk": 12,
+    "fields": {
+        "field_name": "sampling_latitude",
+        "description": "Sampling latitude: degree \u00b0"
+    }
+},
+{
+    "model": "EcoAlpsWater.fielddescription",
+    "pk": 13,
+    "fields": {
+        "field_name": "sampling_longitude",
+        "description": "Sampling longitude: degree \u00b0"
+    }
+},
+{
+    "model": "EcoAlpsWater.fielddescription",
+    "pk": 14,
+    "fields": {
+        "field_name": "temperature",
+        "description": "Unit of measurement: \u00b0C"
+    }
+},
+{
+    "model": "EcoAlpsWater.fielddescription",
+    "pk": 15,
+    "fields": {
+        "field_name": "field_ph",
+        "description": "Unit of measurement: pH units"
+    }
+},
+{
+    "model": "EcoAlpsWater.fielddescription",
+    "pk": 16,
+    "fields": {
+        "field_name": "conductivity_ph",
+        "description": "Unit of measurement: pH units"
+    }
+},
+{
+    "model": "EcoAlpsWater.fielddescription",
+    "pk": 17,
+    "fields": {
+        "field_name": "light_attenuation_coefficient",
+        "description": "Unit of measurement: 1 / m"
+    }
+},
+{
+    "model": "EcoAlpsWater.fielddescription",
+    "pk": 18,
+    "fields": {
+        "field_name": "secchi_disk_depth",
+        "description": "Unit of measurement: m"
+    }
+},
+{
+    "model": "EcoAlpsWater.fielddescription",
+    "pk": 19,
+    "fields": {
+        "field_name": "euphotic_layer",
+        "description": "Unit of measurement: m"
+    }
+},
+{
+    "model": "EcoAlpsWater.fielddescription",
+    "pk": 20,
+    "fields": {
+        "field_name": "oxygen_concentration",
+        "description": "Unit of measurement: mg / L"
+    }
+},
+{
+    "model": "EcoAlpsWater.fielddescription",
+    "pk": 21,
+    "fields": {
+        "field_name": "oxygen_percentage",
+        "description": "Unit of measurement: %"
+    }
+},
+{
+    "model": "EcoAlpsWater.fielddescription",
+    "pk": 22,
+    "fields": {
+        "field_name": "laboratory_ph",
+        "description": "Unit of measurement: pH units"
+    }
+},
+{
+    "model": "EcoAlpsWater.fielddescription",
+    "pk": 23,
+    "fields": {
+        "field_name": "laboratory_conductivity",
+        "description": "Unit of measurement: \u03bcS / cm at 25\u00b0C"
+    }
+},
+{
+    "model": "EcoAlpsWater.fielddescription",
+    "pk": 24,
+    "fields": {
+        "field_name": "total_alkalinity",
+        "description": "Unit of measurement: mg CaCO\u2083 / L"
+    }
+},
+{
+    "model": "EcoAlpsWater.fielddescription",
+    "pk": 25,
+    "fields": {
+        "field_name": "bicarbonates",
+        "description": "Unit of measurement: mg / L"
+    }
+},
+{
+    "model": "EcoAlpsWater.fielddescription",
+    "pk": 26,
+    "fields": {
+        "field_name": "nitrate_nitrogen",
+        "description": "Unit of measurement: \u03bcg N / L"
+    }
+},
+{
+    "model": "EcoAlpsWater.fielddescription",
+    "pk": 27,
+    "fields": {
+        "field_name": "sulphates",
+        "description": "Unit of measurement: mg / L"
+    }
+},
+{
+    "model": "EcoAlpsWater.fielddescription",
+    "pk": 28,
+    "fields": {
+        "field_name": "chloride",
+        "description": "Unit of measurement: mg / L"
+    }
+},
+{
+    "model": "EcoAlpsWater.fielddescription",
+    "pk": 29,
+    "fields": {
+        "field_name": "calcium",
+        "description": "Unit of measurement: mg / L"
+    }
+},
+{
+    "model": "EcoAlpsWater.fielddescription",
+    "pk": 30,
+    "fields": {
+        "field_name": "magnesium",
+        "description": "Unit of measurement: mg / L"
+    }
+},
+{
+    "model": "EcoAlpsWater.fielddescription",
+    "pk": 31,
+    "fields": {
+        "field_name": "sodium",
+        "description": "Unit of measurement: mg / L"
+    }
+},
+{
+    "model": "EcoAlpsWater.fielddescription",
+    "pk": 32,
+    "fields": {
+        "field_name": "potassium",
+        "description": "Unit of measurement: mg / L"
+    }
+},
+{
+    "model": "EcoAlpsWater.fielddescription",
+    "pk": 33,
+    "fields": {
+        "field_name": "ammonium",
+        "description": "Unit of measurement: \u03bcg N / L"
+    }
+},
+{
+    "model": "EcoAlpsWater.fielddescription",
+    "pk": 34,
+    "fields": {
+        "field_name": "total_nitrogen",
+        "description": "Unit of measurement: \u03bcg N / L"
+    }
+},
+{
+    "model": "EcoAlpsWater.fielddescription",
+    "pk": 35,
+    "fields": {
+        "field_name": "soluble_reactive_phosphorus",
+        "description": "Unit of measurement: \u03bcg P / L"
+    }
+},
+{
+    "model": "EcoAlpsWater.fielddescription",
+    "pk": 36,
+    "fields": {
+        "field_name": "total_phosphorus",
+        "description": "Unit of measurement: \u03bcg P / L"
+    }
+},
+{
+    "model": "EcoAlpsWater.fielddescription",
+    "pk": 37,
+    "fields": {
+        "field_name": "reactive_silica",
+        "description": "Unit of measurement: mg Si / L"
+    }
+},
+{
+    "model": "EcoAlpsWater.fielddescription",
+    "pk": 38,
+    "fields": {
+        "field_name": "dry_weight",
+        "description": "Dry weight at 105\u00b0C in owen: mg / L"
+    }
+},
+{
+    "model": "EcoAlpsWater.fielddescription",
+    "pk": 39,
+    "fields": {
+        "field_name": "chlorophyll_a",
+        "description": "Unit of measurement: \u03bcg / L"
+    }
+},
+{
+    "model": "EcoAlpsWater.fielddescription",
+    "pk": 40,
+    "fields": {
+        "field_name": "dna_extraction_kit",
+        "description": "DNA extraction kit"
+    }
+},
+{
+    "model": "EcoAlpsWater.fielddescription",
+    "pk": 41,
+    "fields": {
+        "field_name": "vertical_temperature_profiles",
+        "description": "Vertical temperature profile"
+    }
+},
+{
+    "model": "EcoAlpsWater.fielddescription",
+    "pk": 42,
+    "fields": {
+        "field_name": "phytoplankton_countings",
+        "description": "Phytoplankton countings"
+    }
+},
+{
+    "model": "EcoAlpsWater.fielddescription",
+    "pk": 43,
+    "fields": {
+        "field_name": "cyanotoxin_samples",
+        "description": "Cyanotoxin samples"
+    }
+},
+{
+    "model": "EcoAlpsWater.fielddescription",
+    "pk": 44,
+    "fields": {
+        "field_name": "dna_extraction_date",
+        "description": "DNA extraction date"
     }
 },
 {
@@ -93,27 +445,6 @@
     }
 },
 {
-    "model": "EcoAlpsWater.cyanotoxinsamples",
-    "pk": 1,
-    "fields": {
-        "name": "sample1"
-    }
-},
-{
-    "model": "EcoAlpsWater.cyanotoxinsamples",
-    "pk": 2,
-    "fields": {
-        "name": "sample2"
-    }
-},
-{
-    "model": "EcoAlpsWater.cyanotoxinsamples",
-    "pk": 3,
-    "fields": {
-        "name": "sample3"
-    }
-},
-{
     "model": "EcoAlpsWater.depthtype",
     "pk": 1,
     "fields": {
@@ -135,67 +466,10 @@
     }
 },
 {
-    "model": "EcoAlpsWater.dnaextractionkit",
-    "pk": 1,
-    "fields": {
-        "name": "kit1"
-    }
-},
-{
-    "model": "EcoAlpsWater.dnaextractionkit",
-    "pk": 2,
-    "fields": {
-        "name": "kit2"
-    }
-},
-{
-    "model": "EcoAlpsWater.dnaextractionkit",
-    "pk": 3,
-    "fields": {
-        "name": "kit3"
-    }
-},
-{
     "model": "EcoAlpsWater.drainagebasin",
     "pk": 1,
     "fields": {
         "name": "Garda",
-        "type": "Lake",
-        "country": "Italy"
-    }
-},
-{
-    "model": "EcoAlpsWater.drainagebasin",
-    "pk": 2,
-    "fields": {
-        "name": "Molveno",
-        "type": "Lake",
-        "country": "Italy"
-    }
-},
-{
-    "model": "EcoAlpsWater.drainagebasin",
-    "pk": 3,
-    "fields": {
-        "name": "Adige",
-        "type": "River",
-        "country": "Italy"
-    }
-},
-{
-    "model": "EcoAlpsWater.drainagebasin",
-    "pk": 4,
-    "fields": {
-        "name": "Noce",
-        "type": "River",
-        "country": "Italy"
-    }
-},
-{
-    "model": "EcoAlpsWater.drainagebasin",
-    "pk": 5,
-    "fields": {
-        "name": "Como",
         "type": "Lake",
         "country": "Italy"
     }
@@ -212,428 +486,6 @@
     "pk": 2,
     "fields": {
         "name": "18S"
-    }
-},
-{
-    "model": "EcoAlpsWater.mixingtype",
-    "pk": 1,
-    "fields": {
-        "name": "mixing1"
-    }
-},
-{
-    "model": "EcoAlpsWater.mixingtype",
-    "pk": 2,
-    "fields": {
-        "name": "mixing2"
-    }
-},
-{
-    "model": "EcoAlpsWater.phytoplanktoncountings",
-    "pk": 1,
-    "fields": {
-        "name": "counting1"
-    }
-},
-{
-    "model": "EcoAlpsWater.phytoplanktoncountings",
-    "pk": 2,
-    "fields": {
-        "name": "counting2"
-    }
-},
-{
-    "model": "EcoAlpsWater.phytoplanktoncountings",
-    "pk": 3,
-    "fields": {
-        "name": "counting3"
-    }
-},
-{
-    "model": "EcoAlpsWater.station",
-    "pk": 1,
-    "fields": {
-        "name": "station1",
-        "pp_code": "st1",
-        "drainage_basin": 1
-    }
-},
-{
-    "model": "EcoAlpsWater.station",
-    "pk": 2,
-    "fields": {
-        "name": "station2",
-        "pp_code": "st2",
-        "drainage_basin": 1
-    }
-},
-{
-    "model": "EcoAlpsWater.station",
-    "pk": 3,
-    "fields": {
-        "name": "station3",
-        "pp_code": "st3",
-        "drainage_basin": 2
-    }
-},
-{
-    "model": "EcoAlpsWater.station",
-    "pk": 4,
-    "fields": {
-        "name": "station4",
-        "pp_code": "st4",
-        "drainage_basin": 2
-    }
-},
-{
-    "model": "EcoAlpsWater.verticaltemperatureprofile",
-    "pk": 1,
-    "fields": {
-        "name": "temp1"
-    }
-},
-{
-    "model": "EcoAlpsWater.verticaltemperatureprofile",
-    "pk": 2,
-    "fields": {
-        "name": "temp2"
-    }
-},
-{
-    "model": "EcoAlpsWater.verticaltemperatureprofile",
-    "pk": 3,
-    "fields": {
-        "name": "temp3"
-    }
-},
-{
-    "model": "EcoAlpsWater.sample",
-    "pk": 4,
-    "fields": {
-        "user": [
-            "admin"
-        ],
-        "sample_id": "0200032020015",
-        "sample_code": "I_L_Molve_2019_03_20_D_1_F",
-        "drainage_basin": 2,
-        "cap_code": null,
-        "station": 4,
-        "sampling_date": "2019-03-20T10:21:46.550Z",
-        "sampling_depth": 1.0,
-        "depth_type": 2,
-        "edna_marker": 2,
-        "biological_element": 5,
-        "mean_river_outflow": null,
-        "mixing_type": null,
-        "catchment_area": null,
-        "sampling_latitude": null,
-        "sampling_longitude": null,
-        "temperature": null,
-        "field_ph": null,
-        "conductivity_ph": null,
-        "light_attenuation_coefficient": null,
-        "secchi_disk_depth": null,
-        "euphotic_layer": null,
-        "oxygen_concentration": null,
-        "oxygen_percentage": null,
-        "laboratory_ph": null,
-        "laboratory_conductivity": null,
-        "total_alkalinity": null,
-        "bicarbonates": null,
-        "nitrate_nitrogen": null,
-        "sulphates": null,
-        "chloride": null,
-        "calcium": null,
-        "magnesium": null,
-        "sodium": null,
-        "potassium": null,
-        "ammonium": null,
-        "total_nitrogen": null,
-        "soluble_reactive_phosphorus": null,
-        "total_phosphorus": null,
-        "reactive_silica": null,
-        "dry_weight": null,
-        "chlorophyll_a": null,
-        "dna_extraction_kit": null,
-        "dna_extraction_date": null,
-        "vertical_temperature_profiles": null,
-        "phytoplankton_countings": null,
-        "cyanotoxin_samples": null
-    }
-},
-{
-    "model": "EcoAlpsWater.sample",
-    "pk": 5,
-    "fields": {
-        "user": [
-            "guest"
-        ],
-        "sample_id": "0200032020045",
-        "sample_code": "I_L_Molve_2019_03_20_D_4_F",
-        "drainage_basin": 2,
-        "cap_code": null,
-        "station": 4,
-        "sampling_date": "2019-03-20T10:43:00.116Z",
-        "sampling_depth": 4.0,
-        "depth_type": 2,
-        "edna_marker": 2,
-        "biological_element": 5,
-        "mean_river_outflow": null,
-        "mixing_type": null,
-        "catchment_area": null,
-        "sampling_latitude": null,
-        "sampling_longitude": null,
-        "temperature": null,
-        "field_ph": null,
-        "conductivity_ph": null,
-        "light_attenuation_coefficient": null,
-        "secchi_disk_depth": null,
-        "euphotic_layer": null,
-        "oxygen_concentration": null,
-        "oxygen_percentage": null,
-        "laboratory_ph": null,
-        "laboratory_conductivity": null,
-        "total_alkalinity": null,
-        "bicarbonates": null,
-        "nitrate_nitrogen": null,
-        "sulphates": null,
-        "chloride": null,
-        "calcium": null,
-        "magnesium": null,
-        "sodium": null,
-        "potassium": null,
-        "ammonium": null,
-        "total_nitrogen": null,
-        "soluble_reactive_phosphorus": null,
-        "total_phosphorus": null,
-        "reactive_silica": null,
-        "dry_weight": null,
-        "chlorophyll_a": null,
-        "dna_extraction_kit": null,
-        "dna_extraction_date": null,
-        "vertical_temperature_profiles": null,
-        "phytoplankton_countings": null,
-        "cyanotoxin_samples": null
-    }
-},
-{
-    "model": "EcoAlpsWater.sample",
-    "pk": 15,
-    "fields": {
-        "user": [
-            "guest"
-        ],
-        "sample_id": "0100032010553",
-        "sample_code": "I_L_Garda_2019_03_20_E_55_D",
-        "drainage_basin": 1,
-        "cap_code": null,
-        "station": 2,
-        "sampling_date": "2019-03-20T16:09:39.999Z",
-        "sampling_depth": 55.0,
-        "depth_type": 1,
-        "edna_marker": 2,
-        "biological_element": 3,
-        "mean_river_outflow": null,
-        "mixing_type": null,
-        "catchment_area": null,
-        "sampling_latitude": null,
-        "sampling_longitude": null,
-        "temperature": null,
-        "field_ph": null,
-        "conductivity_ph": null,
-        "light_attenuation_coefficient": null,
-        "secchi_disk_depth": null,
-        "euphotic_layer": null,
-        "oxygen_concentration": null,
-        "oxygen_percentage": null,
-        "laboratory_ph": null,
-        "laboratory_conductivity": null,
-        "total_alkalinity": null,
-        "bicarbonates": null,
-        "nitrate_nitrogen": null,
-        "sulphates": null,
-        "chloride": null,
-        "calcium": null,
-        "magnesium": null,
-        "sodium": null,
-        "potassium": null,
-        "ammonium": null,
-        "total_nitrogen": null,
-        "soluble_reactive_phosphorus": null,
-        "total_phosphorus": null,
-        "reactive_silica": null,
-        "dry_weight": null,
-        "chlorophyll_a": null,
-        "dna_extraction_kit": null,
-        "dna_extraction_date": null,
-        "vertical_temperature_profiles": null,
-        "phytoplankton_countings": null,
-        "cyanotoxin_samples": null
-    }
-},
-{
-    "model": "EcoAlpsWater.sample",
-    "pk": 17,
-    "fields": {
-        "user": [
-            "guest"
-        ],
-        "sample_id": "0200032120444",
-        "sample_code": "I_L_Molve_2019_03_21_D_44_B",
-        "drainage_basin": 2,
-        "cap_code": null,
-        "station": 3,
-        "sampling_date": "2019-03-20T16:12:25.024Z",
-        "sampling_depth": 44.0,
-        "depth_type": 2,
-        "edna_marker": 2,
-        "biological_element": 4,
-        "mean_river_outflow": null,
-        "mixing_type": null,
-        "catchment_area": null,
-        "sampling_latitude": null,
-        "sampling_longitude": null,
-        "temperature": null,
-        "field_ph": null,
-        "conductivity_ph": null,
-        "light_attenuation_coefficient": null,
-        "secchi_disk_depth": null,
-        "euphotic_layer": null,
-        "oxygen_concentration": null,
-        "oxygen_percentage": null,
-        "laboratory_ph": null,
-        "laboratory_conductivity": null,
-        "total_alkalinity": null,
-        "bicarbonates": null,
-        "nitrate_nitrogen": null,
-        "sulphates": null,
-        "chloride": null,
-        "calcium": null,
-        "magnesium": null,
-        "sodium": null,
-        "potassium": null,
-        "ammonium": null,
-        "total_nitrogen": null,
-        "soluble_reactive_phosphorus": null,
-        "total_phosphorus": null,
-        "reactive_silica": null,
-        "dry_weight": null,
-        "chlorophyll_a": null,
-        "dna_extraction_kit": null,
-        "dna_extraction_date": null,
-        "vertical_temperature_profiles": null,
-        "phytoplankton_countings": null,
-        "cyanotoxin_samples": null
-    }
-},
-{
-    "model": "EcoAlpsWater.sample",
-    "pk": 18,
-    "fields": {
-        "user": [
-            "guest"
-        ],
-        "sample_id": "0200032020443",
-        "sample_code": "I_L_Molve_2019_03_20_D_44_D",
-        "drainage_basin": 2,
-        "cap_code": null,
-        "station": 3,
-        "sampling_date": "2019-03-20T16:13:27.913Z",
-        "sampling_depth": 44.0,
-        "depth_type": 2,
-        "edna_marker": 1,
-        "biological_element": 3,
-        "mean_river_outflow": null,
-        "mixing_type": null,
-        "catchment_area": null,
-        "sampling_latitude": null,
-        "sampling_longitude": null,
-        "temperature": null,
-        "field_ph": null,
-        "conductivity_ph": null,
-        "light_attenuation_coefficient": null,
-        "secchi_disk_depth": null,
-        "euphotic_layer": null,
-        "oxygen_concentration": null,
-        "oxygen_percentage": null,
-        "laboratory_ph": null,
-        "laboratory_conductivity": null,
-        "total_alkalinity": null,
-        "bicarbonates": null,
-        "nitrate_nitrogen": null,
-        "sulphates": null,
-        "chloride": null,
-        "calcium": null,
-        "magnesium": null,
-        "sodium": null,
-        "potassium": null,
-        "ammonium": null,
-        "total_nitrogen": null,
-        "soluble_reactive_phosphorus": null,
-        "total_phosphorus": null,
-        "reactive_silica": null,
-        "dry_weight": null,
-        "chlorophyll_a": null,
-        "dna_extraction_kit": null,
-        "dna_extraction_date": null,
-        "vertical_temperature_profiles": null,
-        "phytoplankton_countings": null,
-        "cyanotoxin_samples": null
-    }
-},
-{
-    "model": "EcoAlpsWater.sample",
-    "pk": 20,
-    "fields": {
-        "user": [
-            "guest"
-        ],
-        "sample_id": "0200031410344",
-        "sample_code": "I_L_Molve_2019_03_14_E_34_B",
-        "drainage_basin": 2,
-        "cap_code": null,
-        "station": 3,
-        "sampling_date": "2019-03-20T16:24:52.306Z",
-        "sampling_depth": 34.0,
-        "depth_type": 1,
-        "edna_marker": 2,
-        "biological_element": 4,
-        "mean_river_outflow": null,
-        "mixing_type": null,
-        "catchment_area": null,
-        "sampling_latitude": null,
-        "sampling_longitude": null,
-        "temperature": null,
-        "field_ph": null,
-        "conductivity_ph": null,
-        "light_attenuation_coefficient": null,
-        "secchi_disk_depth": null,
-        "euphotic_layer": null,
-        "oxygen_concentration": null,
-        "oxygen_percentage": null,
-        "laboratory_ph": null,
-        "laboratory_conductivity": null,
-        "total_alkalinity": null,
-        "bicarbonates": null,
-        "nitrate_nitrogen": null,
-        "sulphates": null,
-        "chloride": null,
-        "calcium": null,
-        "magnesium": null,
-        "sodium": null,
-        "potassium": null,
-        "ammonium": null,
-        "total_nitrogen": null,
-        "soluble_reactive_phosphorus": null,
-        "total_phosphorus": null,
-        "reactive_silica": null,
-        "dry_weight": null,
-        "chlorophyll_a": null,
-        "dna_extraction_kit": null,
-        "dna_extraction_date": null,
-        "vertical_temperature_profiles": null,
-        "phytoplankton_countings": null,
-        "cyanotoxin_samples": null
     }
 },
 {
@@ -685,7 +537,7 @@
             "guest"
         ],
         "group": 1,
-        "last_login": "2019-03-08T12:11:49.239Z",
+        "last_login": "2019-03-21T08:57:55.211Z",
         "home_dir": "/app/ftp-data"
     }
 }

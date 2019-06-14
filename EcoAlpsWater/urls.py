@@ -13,4 +13,8 @@ urlpatterns = [
     url(r'^save_sample/$', views.save_sample, name='save_sample'),
     url(r'^update_ids/$', views.update_ids, name='update_ids'),
     url(r'^get_samples/$', views.get_samples, name='get_samples'),
+    url(r'^get_samples_complete/$', views.get_samples_complete, name='get_samples_complete'),
+    url(r'^get_barcode/$', views.get_barcode, name='get_barcode'),
+    url(r'^get_env_metadata/$', views.get_env_metadata, name='get_env_metadata'),
+    url(r'^get_search_field_names/$', views.get_search_field_name, name='get_search_field_names'),
 ]
