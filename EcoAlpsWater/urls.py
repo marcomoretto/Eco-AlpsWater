@@ -1,9 +1,16 @@
 from django.conf.urls import url
+from django.views.generic import TemplateView
 
 from EcoAlpsWater import views
 
+from django.conf import settings
+
+template_name = "EcoAlpsWater/index.html"
+#if settings.DEBUG:
+#    template_name = "EcoAlpsWater/dev_index.html"
+
 urlpatterns = [
-    url(r'^$', views.index, name='index'),
+    url(r'^$', TemplateView.as_view(template_name=template_name)),
     url(r'^check_login/$', views.check_login, name='check_login'),
     url(r'^logout/$', views.request_logout, name='request_logout'),
     url(r'^get_field_descriptions/$', views.get_field_descriptions, name='get_field_descriptions'),

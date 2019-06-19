@@ -52,13 +52,14 @@ services:
       - "21:21"
     expose:
       - "21"
+      - "30000-30009"
     links:
       - postgres:postgres
     volumes_from:
       - ftp_data
     volumes:
       - .:/app
-    command: python manage.py eaw_ftp_server 0.0.0.0:21
+    command: python manage.py eaw_ftp_server 0.0.0.0:21 --passive-ports 30000-30009
     networks:
       static-network:
         ipv4_address: 172.25.0.5

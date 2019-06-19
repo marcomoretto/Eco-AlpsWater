@@ -17,7 +17,7 @@ Ext.define('EcoAlpsWater.view.login.LoginController', {
         var login_params = view.down('[xtype="form"]').getValues();
 
         Ext.Ajax.request({
-            url: 'check_login/',
+            url: '/check_login/',
             params: login_params,
             success: function (response) {
                 var resData = Ext.decode(response.responseText);

@@ -57,7 +57,9 @@ ROOT_URLCONF = 'EcoAlpsWater_.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [os.path.join(BASE_DIR, 'templates')]
+        'DIRS': [
+            os.path.join(BASE_DIR, 'templates')
+        ]
         ,
         'APP_DIRS': True,
         'OPTIONS': {
@@ -131,7 +133,5 @@ STATICFILES_DIRS = [
 ]
 
 EMAIL_USE_TLS = True
-EMAIL_HOST = 'smtp.gmail.com'
-EMAIL_PORT = 587
-EMAIL_HOST_USER = 'marco.moretto@gmail.com'
-EMAIL_HOST_PASSWORD = 'oQWmbB74Puyp'
+EMAIL_HOST = 'mailrelay.iasma.it'
+

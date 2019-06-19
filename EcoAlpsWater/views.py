@@ -35,10 +35,6 @@ import xlsxwriter
 from django.core.mail import send_mail
 
 
-def index(request):
-    return render(request, 'EcoAlpsWater/index.html', None)
-
-
 def request_logout(request):
     logout(request)
     return HttpResponse(json.dumps({'login': False}), content_type="application/json")
@@ -66,8 +62,8 @@ def check_login(request):
 def send_email(request):
     send_mail(
         'Eco-AlpsWater verification e-mail',
-        'This mail has been automatically sent from the Eco-AlpsWater website.',
-        'noreply@example.com',
+        'This e-mail has been automatically sent from the Eco-AlpsWater website.',
+        'eco-alpswater@fmach.it',
         [request.user.email]
     )
     return HttpResponse(

@@ -1,16 +1,33 @@
 {% load static %}
-<!DOCTYPE HTML>
-<html manifest="">
+<!DOCTYPE html>
+<html lang="en">
 <head>
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
     <link rel="shortcut icon" href="{% static "EcoAlpsWater/images/favicon.ico" %}" type="image/x-icon">
     <link rel="icon" href="{% static "EcoAlpsWater/images/favicon.ico" %}" type="image/x-icon">
     <title>Eco-AlpsWater</title>
 
-    <!-- The line below must be kept intact for Sencha Cmd to build your application -->
-    <script id="microloader" data-app="a59271ef-d8f1-4711-996d-a378fd260449" type="text/javascript" src="{% static "EcoAlpsWater/js/ext-js/bootstrap.js" %}"></script>
-</head>
-<body></body>
+        <style>
+            html, body {
+                width: 100%;
+                width: 100%;
+                margin: 0;
+                padding: 0;
+                border-width: 0;
+            }
+
+            iframe {
+                position: absolute;
+                top: 0;
+                left: 0;
+                width: 100vw;
+                height: 100vh;
+                margin: 0;
+                padding: 0;
+                border-width: 0;
+            }
+        </style>
+    </head>
+    <body>
+        <iframe src="{% static "EcoAlpsWater/js/ext-js/build/production/EcoAlpsWater/index.html" %}"></iframe>
+    </body>
 </html>

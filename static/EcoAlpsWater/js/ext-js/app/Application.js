@@ -39,7 +39,7 @@ Ext.define('EcoAlpsWater.Application', {
             action = pn
         }
         Ext.Ajax.request({
-            url: 'check_login/',
+            url: '/check_login/',
             success: function (response) {
                 var resData = Ext.decode(response.responseText);
                 if (resData.login) {
