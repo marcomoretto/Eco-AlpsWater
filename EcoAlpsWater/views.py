@@ -388,13 +388,11 @@ def get_env_metadata(request):
     return response
 
 
-@forward_exception_to_http
-def get_barcode(request):
-    samples = json.loads(request.POST['samples'])
+def __create_barcode_file(sample_ids):
     buffer = io.BytesIO()
     zf = zipfile.ZipFile(buffer, "w", zipfile.ZIP_DEFLATED)
     files = []
-    for sample_id in samples:
+    for sample_id in sample_ids:
         s = Sample.objects.get(id=sample_id)
         ean = barcode.get_barcode_class('ean13')
         bcode = ean(s.sample_id, writer=ImageWriter())
@@ -404,6 +402,12 @@ def get_barcode(request):
     zf.close()
     for f in files:
         os.remove(f)
+    return buffer
+
+
+@forward_exception_to_http
+def get_barcode(request):
+    buffer = __create_barcode_file(json.loads(request.POST['samples']))
     response = HttpResponse(buffer.getvalue())
     response['Content-Type'] = 'application/x-zip-compressed'
     response['Content-Disposition'] = 'attachment; filename=samples.zip'
@@ -472,16 +476,18 @@ def save_sample(request):
                 comment=value
             )
             comment.save()
+    buffer = __create_barcode_file([sample.id])
     send_email(request.user.email,
         'Eco-AlpsWater new sample added: ' + sample.sample_code,
         '''
-        Dear {user},
-        a new sample with code {sample_code} has just been succesfully added to the Eco-AlpsWater database.
-        Please find attached to this e-mail a PNG file with the sample barcode and an Excel file with all the sample information.
-        Both files are ZIP-compressed.
+Dear {user},
+a new sample with code {sample_code} has just been succesfully added to the Eco-AlpsWater database.
+Please find attached to this e-mail a PNG file with the sample barcode and an Excel file with all the sample information.
+Both files are ZIP-compressed.
                                                          
-        This e-mail has been automatically sent from the Eco-AlpsWater website.
-        '''.format(user=request.user.username, sample_code=sample.sample_code)
+This e-mail has been automatically sent from the Eco-AlpsWater website.
+        '''.format(user=request.user.username, sample_code=sample.sample_code),
+        [('barcode.zip', buffer.getvalue(), 'application/zip')]
     )
     return HttpResponse(
             json.dumps({
