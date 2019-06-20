@@ -340,9 +340,7 @@ def get_samples_complete(request):
             }), content_type="application/json")
 
 
-@forward_exception_to_http
-def get_env_metadata(request):
-    samples = json.loads(request.POST['samples'])
+def __create_env_metadata(samples):
     buffer = io.BytesIO()
     zf = zipfile.ZipFile(buffer, "w", zipfile.ZIP_DEFLATED)
     files = []
@@ -382,6 +380,12 @@ def get_env_metadata(request):
     zf.close()
     for f in files:
         os.remove(f)
+    return buffer
+
+@forward_exception_to_http
+def get_env_metadata(request):
+    samples = json.loads(request.POST['samples'])
+    buffer = __create_env_metadata(samples)
     response = HttpResponse(buffer.getvalue())
     response['Content-Type'] = 'application/x-zip-compressed'
     response['Content-Disposition'] = 'attachment; filename=samples.zip'
@@ -476,7 +480,8 @@ def save_sample(request):
                 comment=value
             )
             comment.save()
-    buffer = __create_barcode_file([sample.id])
+    barcode_buffer = __create_barcode_file([sample.id])
+    excel_buffer = __create_env_metadata([sample.id])
     send_email(request.user.email,
         'Eco-AlpsWater new sample added: ' + sample.sample_code,
         '''
@@ -487,7 +492,8 @@ Both files are ZIP-compressed.
                                                          
 This e-mail has been automatically sent from the Eco-AlpsWater website.
         '''.format(user=request.user.username, sample_code=sample.sample_code),
-        [('barcode.zip', buffer.getvalue(), 'application/zip')]
+        [(sample.sample_code + '_barcode.zip', barcode_buffer.getvalue(), 'application/zip'),
+         (sample.sample_code + '_sample.zip', excel_buffer.getvalue(), 'application/zip')]
     )
     return HttpResponse(
             json.dumps({
