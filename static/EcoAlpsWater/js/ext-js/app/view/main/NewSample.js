@@ -37,7 +37,7 @@ Ext.define('EcoAlpsWater.view.main.CloneSampleWindow', {
                 fields: ['id', 'sample_code'],
                 proxy: {
                     type: 'ajax',
-                    url: 'get_samples_complete/',
+                    url: '/get_samples_complete/',
                     reader: {
                         type: 'json',
                         rootProperty: 'rows'

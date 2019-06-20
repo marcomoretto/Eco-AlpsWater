@@ -41,6 +41,8 @@ INSTALLED_APPS = [
 
 FTPSERVER_HANDLER = 'EcoAlpsWater.lib.ftp_handler.EcoAlpsWaterHandler'
 FTPSERVER_FILESYSTEM = 'EcoAlpsWater.lib.ftp_handler.EcoAlpsWaterFilesystem'
+FTP_SERVER_VAULT_DIRECTORY = '/app/ftp-data/vault'
+FTP_SERVER_DOWNLOAD_DIRECTORY = '/app/ftp-data/download'
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
@@ -134,4 +136,5 @@ STATICFILES_DIRS = [
 
 EMAIL_USE_TLS = True
 EMAIL_HOST = 'mailrelay.iasma.it'
+EMAIL_USER = 'eco-alpswater@fmach.it'
 

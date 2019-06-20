@@ -73,7 +73,7 @@ Ext.define('EcoAlpsWater.view.main.SamplesController', {
         samples['samples'] = JSON.stringify(samples.samples),
         Ext.Ajax.request({
             binary: true,
-            url: 'get_env_metadata/',
+            url: '/get_env_metadata/',
             params: samples,
             success: function (response) {
                 var blob = new Blob([response.responseBytes], {type: 'base64'}),
@@ -101,7 +101,7 @@ Ext.define('EcoAlpsWater.view.main.SamplesController', {
         samples['samples'] = JSON.stringify(samples.samples),
         Ext.Ajax.request({
             binary: true,
-            url: 'get_barcode/',
+            url: '/get_barcode/',
             params: samples,
             success: function (response) {
                 var blob = new Blob([response.responseBytes], {type: 'base64'}),
@@ -161,7 +161,7 @@ Ext.define('EcoAlpsWater.view.main.SamplesController', {
         var cardNum = me.items.items.length - 1;
         var params = {'id': grid.getSelection()[0].id, 'description': true};
         Ext.Ajax.request({
-            url: 'get_samples_complete/',
+            url: '/get_samples_complete/',
             params: params,
             success: function (response) {
                 var resData = Ext.decode(response.responseText);
@@ -195,7 +195,7 @@ Ext.define('EcoAlpsWater.view.main.SamplesController', {
         var grid = me.up('samples');
         var params = {'id': grid.getSelection()[0].id};
         Ext.Ajax.request({
-            url: 'get_samples_complete/',
+            url: '/get_samples_complete/',
             params: params,
             success: function (response) {
                 var resData = Ext.decode(response.responseText);

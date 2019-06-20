@@ -11,7 +11,7 @@ Ext.define('EcoAlpsWater.view.main.MainController', {
 
     onLogout: function(me) {
         Ext.Ajax.request({
-            url: 'logout/',
+            url: '/logout/',
             success: function (response) {
                 window.location.reload();
             },

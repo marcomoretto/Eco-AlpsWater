@@ -10,7 +10,7 @@ Ext.define('EcoAlpsWater.view.main.ChangePasswordController', {
 
     onSendEmail: function(me) {
         Ext.Ajax.request({
-            url: 'send_email/',
+            url: '/send_verification_email/',
             success: function (response) {
                 if (EcoAlpsWater.current.checkHttpResponse(response)) {
                     var resData = Ext.decode(response.responseText);
@@ -27,7 +27,7 @@ Ext.define('EcoAlpsWater.view.main.ChangePasswordController', {
         var view = this.getView();
         var params = view.down('[xtype="form"]').getValues();
         Ext.Ajax.request({
-            url: 'change_password/',
+            url: '/change_password/',
             params: params,
             success: function (response) {
                 if (EcoAlpsWater.current.checkHttpResponse(response)) {
@@ -47,7 +47,7 @@ Ext.define('EcoAlpsWater.view.main.ChangePasswordController', {
         var institute = me.down('#institute');
         var e_mail = me.down('#e_mail');
         Ext.Ajax.request({
-            url: 'get_user_info/',
+            url: '/get_user_info/',
             success: function (response) {
                 var resData = Ext.decode(response.responseText);
                 username.setValue(resData.user_info.user_name);

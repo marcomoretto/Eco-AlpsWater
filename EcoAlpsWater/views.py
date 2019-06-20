@@ -14,6 +14,7 @@ from django.shortcuts import render
 
 # Create your views here.
 from EcoAlpsWater.lib.decorator import forward_exception_to_http
+from EcoAlpsWater.lib.email import send_email
 from EcoAlpsWater.lib.models.biological_element import BiologicalElement
 from EcoAlpsWater.lib.models.comment import Comment
 from EcoAlpsWater.lib.models.cyanotoxin_samples import CyanotoxinSamples
@@ -31,8 +32,6 @@ from EcoAlpsWater.lib.sample_coder import SampleCoder
 import barcode
 from barcode.writer import ImageWriter
 import xlsxwriter
-
-from django.core.mail import send_mail
 
 
 def request_logout(request):
@@ -59,17 +58,16 @@ def check_login(request):
             }), content_type="application/json")
 
 
-def send_email(request):
-    send_mail(
+def send_verification_email(request):
+    send_email(request.user.email,
         'Eco-AlpsWater verification e-mail',
-        'This e-mail has been automatically sent from the Eco-AlpsWater website.',
-        'eco-alpswater@fmach.it',
-        [request.user.email]
+        'This e-mail has been automatically sent from the Eco-AlpsWater website.'
     )
     return HttpResponse(
             json.dumps({
                 'success': True
             }), content_type="application/json")
+
 
 def get_combo_field_values(request):
     water_bodies = []
@@ -168,6 +166,7 @@ def update_ids(request):
                 }
             }), content_type="application/json")
 
+
 @forward_exception_to_http
 def get_search_field_name(request):
     fields = [{
@@ -262,6 +261,7 @@ def get_search_field_name(request):
                 'total': len(fields)
             }), content_type="application/json")
 
+
 @forward_exception_to_http
 def get_samples(request):
     rs = Sample.objects.order_by('id')
@@ -318,6 +318,7 @@ def get_samples(request):
                 'total': total
             }), content_type="application/json")
 
+
 @forward_exception_to_http
 def get_samples_complete(request):
     id = request.POST.get('id', None)
@@ -337,6 +338,7 @@ def get_samples_complete(request):
                 'rows': rows,
                 'total': total
             }), content_type="application/json")
+
 
 @forward_exception_to_http
 def get_env_metadata(request):
@@ -385,6 +387,7 @@ def get_env_metadata(request):
     response['Content-Disposition'] = 'attachment; filename=samples.zip'
     return response
 
+
 @forward_exception_to_http
 def get_barcode(request):
     samples = json.loads(request.POST['samples'])
@@ -405,6 +408,7 @@ def get_barcode(request):
     response['Content-Type'] = 'application/x-zip-compressed'
     response['Content-Disposition'] = 'attachment; filename=samples.zip'
     return response
+
 
 @forward_exception_to_http
 def save_sample(request):
@@ -468,6 +472,17 @@ def save_sample(request):
                 comment=value
             )
             comment.save()
+    send_email(request.user.email,
+        'Eco-AlpsWater new sample added: ' + sample.sample_code,
+        '''
+        Dear {user},
+        a new sample with code {sample_code} has just been succesfully added to the Eco-AlpsWater database.
+        Please find attached to this e-mail a PNG file with the sample barcode and an Excel file with all the sample information.
+        Both files are ZIP-compressed.
+                                                         
+        This e-mail has been automatically sent from the Eco-AlpsWater website.
+        '''.format(user=request.user.username, sample_code=sample.sample_code)
+    )
     return HttpResponse(
             json.dumps({
                 'success': True

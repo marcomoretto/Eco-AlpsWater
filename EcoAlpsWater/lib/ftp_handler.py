@@ -4,12 +4,16 @@ from stat import S_IREAD, S_IRGRP, S_IROTH
 from pyftpdlib.filesystems import AbstractedFS
 from pyftpdlib.handlers import FTPHandler, PassiveDTP, DTPHandler
 import logging
+from django.conf import settings
 
 PassiveDTP.timeout = 200
 
 
+
 def file_invalid(filename, mode):
-    invalid = ('sencha' in filename and 'wb' in mode) or (os.path.isfile(filename) and os.path.exists(filename))
+    invalid = False
+    if mode == 'wb':
+        invalid = ('sencha' in filename) or (os.path.isfile(filename) and os.path.exists(filename))
     return invalid
 
 
@@ -21,6 +25,10 @@ class EcoAlpsWaterFilesystem(AbstractedFS):
             self.cmd_channel.server._ignored_files = (self.cmd_channel.username, filename)
             return open('/dev/null', mode)
         return AbstractedFS.open(self, filename, mode)
+
+    def chdir(self, path):
+        if settings.FTP_SERVER_VAULT_DIRECTORY not in path:
+            AbstractedFS.chdir(self, path)
 
 
 class EcoAlpsWaterDTPHandler(DTPHandler):
@@ -73,7 +81,9 @@ class EcoAlpsWaterHandler(FTPHandler):
     def on_file_received(self, file):
         # do something when a file has been received
         if file != '/dev/null':
-            os.chmod(file, S_IREAD|S_IRGRP|S_IROTH)
+            dest_file = os.path.join(settings.FTP_SERVER_VAULT_DIRECTORY, os.path.basename(file))
+            os.rename(file, dest_file)
+            os.chmod(dest_file, S_IREAD|S_IRGRP|S_IROTH)
 
     def on_incomplete_file_sent(self, file):
         # do something when a file is partially sent

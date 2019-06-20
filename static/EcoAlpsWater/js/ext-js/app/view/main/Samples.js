@@ -77,7 +77,7 @@ var eawSamplesGridStore = new Ext.data.JsonStore({
     proxy: {
         type: 'ajax',
         timeout: 120000,
-        url: 'get_samples/',
+        url: '/get_samples/',
         reader: {
             type: 'json',
             rootProperty: 'rows',
@@ -144,7 +144,7 @@ Ext.define('EcoAlpsWater.AdvancedSearchField', {
                 fields: ['id', 'name'],
                 proxy: {
                     type: 'ajax',
-                    url: 'get_search_field_names/',
+                    url: '/get_search_field_names/',
                     reader: {
                         type: 'json',
                         rootProperty: 'rows'

@@ -1,5 +1,7 @@
+import subprocess
 import sys
 import os
+from stat import S_IREAD, S_IRGRP, S_IROTH
 
 import pyftpdlib
 from pyftpdlib import handlers
@@ -12,6 +14,7 @@ from django.core.management.base import BaseCommand, CommandError
 from django_ftpserver.authorizers import FTPAccountAuthorizer
 from django_ftpserver.compat import become_daemon
 from django_ftpserver import utils
+from crontab import CronTab
 
 from EcoAlpsWater.lib.ftp_handler import EcoAlpsWaterDTPHandler
 
@@ -145,14 +148,14 @@ class Command(BaseCommand):
         filesystem_class = utils.get_settings_value('FTPSERVER_FILESYSTEM') \
             or None
 
-        dtp_handler = EcoAlpsWaterDTPHandler
+        #dtp_handler = EcoAlpsWaterDTPHandler
         #handler_class.dtp_handler = dtp_handler
 
         # setup server
         server = self.make_server(
             server_class=FTPServer,
             handler_class=handler_class,
-            dtp_handler= dtp_handler,
+            #dtp_handler= dtp_handler,
             authorizer_class=authorizer_class,
             filesystem_class=filesystem_class,
             host_port=(host, port),
@@ -165,6 +168,20 @@ class Command(BaseCommand):
             sendfile=sendfile)
 
         #server.handler.dtp_handler = dtp_handler
+
+        # check FTP directories
+        if not os.path.exists(settings.FTP_SERVER_VAULT_DIRECTORY):
+            os.makedirs(settings.FTP_SERVER_VAULT_DIRECTORY)
+        os.chmod(settings.FTP_SERVER_VAULT_DIRECTORY, S_IREAD)
+        if not os.path.exists(settings.FTP_SERVER_DOWNLOAD_DIRECTORY):
+            os.makedirs(settings.FTP_SERVER_DOWNLOAD_DIRECTORY)
+
+        # start crontab
+        my_cron = CronTab(user='root')
+        job = my_cron.new(command='rm -rf ' + settings.FTP_SERVER_DOWNLOAD_DIRECTORY + '/*', comment='delete_download')
+        job.hour.every(24)
+        my_cron.write()
+        subprocess.run(['cron'])
 
         # start server
         quit_command = 'CTRL-BREAK' if sys.platform == 'win32' else 'CONTROL-C'

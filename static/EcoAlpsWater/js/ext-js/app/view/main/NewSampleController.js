@@ -22,7 +22,7 @@ Ext.define('EcoAlpsWater.view.main.NewSampleController', {
         var water_body_code = me.down('#water_body_code');
         var cap_code = me.down('#cap_code');
         Ext.Ajax.request({
-            url: 'update_ids/',
+            url: '/update_ids/',
             params: values,
             success: function (response) {
                 var resData = Ext.decode(response.responseText);
@@ -52,7 +52,7 @@ Ext.define('EcoAlpsWater.view.main.NewSampleController', {
         }
         console.log(values);
         Ext.Ajax.request({
-            url: 'save_sample/',
+            url: '/save_sample/',
             params: values,
             success: function (response) {
                 if (EcoAlpsWater.current.checkHttpResponse(response)) {
@@ -87,7 +87,7 @@ Ext.define('EcoAlpsWater.view.main.NewSampleController', {
     getComboBoxValues: function() {
         var me = this;
         Ext.Ajax.request({
-            url: 'get_combo_field_values/',
+            url: '/get_combo_field_values/',
             success: function (response) {
                 var resData = Ext.decode(response.responseText);
                 for (var property in resData.values) {
@@ -109,7 +109,7 @@ Ext.define('EcoAlpsWater.view.main.NewSampleController', {
     getFieldDescriptions: function() {
         var me = this;
         Ext.Ajax.request({
-            url: 'get_field_descriptions/',
+            url: '/get_field_descriptions/',
             success: function (response) {
                 var resData = Ext.decode(response.responseText);
                 resData.descriptions.forEach(function (i) {
@@ -227,6 +227,7 @@ Ext.define('EcoAlpsWater.view.main.NewSampleController', {
             width:300,
             buttons: Ext.MessageBox.OKCANCEL,
             multiline: true,
+            value: field.comment,
             fn: function (value, text) {
                 field.comment = text;
             }
