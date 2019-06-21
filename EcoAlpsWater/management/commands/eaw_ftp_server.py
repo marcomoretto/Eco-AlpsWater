@@ -175,6 +175,7 @@ class Command(BaseCommand):
         os.chmod(settings.FTP_SERVER_VAULT_DIRECTORY, S_IREAD)
         if not os.path.exists(settings.FTP_SERVER_DOWNLOAD_DIRECTORY):
             os.makedirs(settings.FTP_SERVER_DOWNLOAD_DIRECTORY)
+        os.chmod(settings.FTP_SERVER_DOWNLOAD_DIRECTORY, S_IREAD)
 
         # start crontab
         my_cron = CronTab(user='root')

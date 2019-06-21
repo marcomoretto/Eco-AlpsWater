@@ -6,14 +6,20 @@ from pyftpdlib.handlers import FTPHandler, PassiveDTP, DTPHandler
 import logging
 from django.conf import settings
 
-PassiveDTP.timeout = 200
+from EcoAlpsWater.lib.email import send_email
+from EcoAlpsWater.lib.models.sample import Sample
 
+PassiveDTP.timeout = 200
 
 
 def file_invalid(filename, mode):
     invalid = False
     if mode == 'wb':
-        invalid = ('sencha' in filename) or (os.path.isfile(filename) and os.path.exists(filename))
+        sample_code_id = os.path.basename(filename).split('.')[0]
+        sample_exists = Sample.objects.filter(sample_id=sample_code_id).count() > 0
+        invalid = not sample_exists or (os.path.isfile(filename) and os.path.exists(filename)) or \
+                  os.path.dirname(filename) == settings.FTP_SERVER_DOWNLOAD_DIRECTORY or \
+                  os.path.dirname(filename) == settings.FTP_SERVER_VAULT_DIRECTORY
     return invalid
 
 
@@ -83,7 +89,18 @@ class EcoAlpsWaterHandler(FTPHandler):
         if file != '/dev/null':
             dest_file = os.path.join(settings.FTP_SERVER_VAULT_DIRECTORY, os.path.basename(file))
             os.rename(file, dest_file)
-            os.chmod(dest_file, S_IREAD|S_IRGRP|S_IROTH)
+            os.chmod(dest_file, S_IREAD | S_IRGRP | S_IROTH)
+            email = self.authorizer.get_account(self.username).user.email
+            username = self.username
+            send_email(email,
+        'Eco-AlpsWater new sample sequence file added',
+        '''
+Dear {user},
+a new sample sequence file {filename} has just been succesfully uploaded into the Eco-AlpsWater database.
+                                                         
+This e-mail has been automatically sent from the Eco-AlpsWater website.
+        '''.format(user=username, filename=os.path.basename(file))
+    )
 
     def on_incomplete_file_sent(self, file):
         # do something when a file is partially sent
