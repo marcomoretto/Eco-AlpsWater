@@ -271,7 +271,7 @@ def get_search_field_name(request):
 def get_sequence(request):
     samples = json.loads(request.POST['samples'])
     dirname = str(uuid.uuid4())
-    os.makedirs(os.path.join(settings.FTP_SERVER_DOWNLOAD_DIRECTORY, dirname))
+    os.mkdir(os.path.join(settings.FTP_SERVER_DOWNLOAD_DIRECTORY, dirname))
     ftp_samples = []
     for sample_id in samples:
         sample = Sample.objects.get(id=sample_id)

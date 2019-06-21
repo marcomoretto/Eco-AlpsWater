@@ -179,6 +179,8 @@ class Command(BaseCommand):
 
         # start crontab
         my_cron = CronTab(user='root')
+        my_cron.remove_all()
+        my_cron.write()
         job = my_cron.new(command='rm -rf ' + settings.FTP_SERVER_DOWNLOAD_DIRECTORY + '/*', comment='delete_download')
         job.hour.every(24)
         my_cron.write()
