@@ -378,7 +378,7 @@ Ext.define('EcoAlpsWater.view.main.Samples', {
                     glyph: 'f15c',
                     listeners: {
                         click: {
-                            //fn: 'onAction',
+                            fn: 'onDownloadSequence',
                         }
                     }
                 }]

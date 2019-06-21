@@ -1,4 +1,6 @@
 import os
+import tarfile
+import uuid
 import zipfile
 import io
 from json import JSONDecodeError
@@ -7,6 +9,7 @@ from PIL import Image
 import datetime
 import json
 
+from django.conf import settings
 from django.contrib.auth import authenticate, login, logout
 from django.db.models import Q
 from django.http import HttpResponse
@@ -263,6 +266,39 @@ def get_search_field_name(request):
 
 
 @forward_exception_to_http
+def get_sequence(request):
+    samples = json.loads(request.POST['samples'])
+    filename = str(uuid.uuid4()) + '.tar'
+    tar_file = tarfile.open(os.path.join(settings.FTP_SERVER_DOWNLOAD_DIRECTORY, filename), 'w')
+    for sample_id in samples:
+        sample = Sample.objects.get(id=sample_id)
+        files = [fn for fn in os.listdir(settings.FTP_SERVER_VAULT_DIRECTORY) if filename.startswith(sample.sample_id)]
+        for file in files:
+            tar_file.add(os.path.join(settings.FTP_SERVER_VAULT_DIRECTORY, file))
+    tar_file.close()
+    send_email(request.user.email,
+        'Eco-AlpsWater sequence file(s) ready',
+        '''
+Dear {user},
+the sequence file(s) you requested are ready to be downloaded from the Eco-AlpsWater FTP server using your credentials.
+Please note that all downloadable files get removed every day.
+
+host: ftp://eco-alpswater.fmach.it
+port: 21
+username: {user}
+password: <your_password>
+file: {filename}
+                                                         
+This e-mail has been automatically sent from the Eco-AlpsWater website.
+        '''.format(user=request.user.username, filename=filename)
+    )
+    return HttpResponse(
+            json.dumps({
+                'success': True
+            }), content_type="application/json")
+
+
+@forward_exception_to_http
 def get_samples(request):
     rs = Sample.objects.order_by('id')
     page = request.POST.get('page', 1)
@@ -398,8 +434,8 @@ def __create_barcode_file(sample_ids):
     files = []
     for sample_id in sample_ids:
         s = Sample.objects.get(id=sample_id)
-        ean = barcode.get_barcode_class('ean13')
-        bcode = ean(s.sample_id, writer=ImageWriter())
+        code128 = barcode.get_barcode_class('code128')
+        bcode = code128(s.sample_id, writer=ImageWriter())
         bcode.save(s.sample_code)
         zf.write(s.sample_code + '.png')
         files.append(s.sample_code + '.png')

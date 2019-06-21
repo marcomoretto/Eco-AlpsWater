@@ -119,6 +119,28 @@ Ext.define('EcoAlpsWater.view.main.SamplesController', {
         });
     },
 
+    onDownloadSequence: function(me) {
+        var samples = {
+            'samples': []
+        };
+        me.up('samples').getSelection().forEach(function(e) {
+            samples['samples'].push(e.id);
+        });
+        samples['samples'] = JSON.stringify(samples.samples),
+        Ext.Ajax.request({
+            binary: true,
+            url: '/get_sequence/',
+            params: samples,
+            success: function (response) {
+                var resData = Ext.decode(response.responseText);
+                EcoAlpsWater.current.showMessage('info', 'Sequence file ready', 'An e-mail with instructions has been sent to your e-mail account!');
+            },
+            failure: function (response) {
+                console.log('Server error', reponse);
+            }
+        });
+    },
+
     onViewSampleDetails: function(me) {
         Ext.create({
             xtype: 'view_sample_details'

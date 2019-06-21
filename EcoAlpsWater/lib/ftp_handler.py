@@ -14,6 +14,7 @@ PassiveDTP.timeout = 200
 
 def file_invalid(filename, mode):
     invalid = False
+    logging.getLogger('EAW').warning(filename)
     if mode == 'wb':
         sample_code_id = os.path.basename(filename).split('.')[0]
         sample_exists = Sample.objects.filter(sample_id=sample_code_id).count() > 0

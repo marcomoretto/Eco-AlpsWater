@@ -25,4 +25,5 @@ urlpatterns = [
     url(r'^get_env_metadata/$', views.get_env_metadata, name='get_env_metadata'),
     url(r'^get_search_field_names/$', views.get_search_field_name, name='get_search_field_names'),
     url(r'^send_verification_email/$', views.send_verification_email, name='send_verification_email'),
+    url(r'^get_sequence/$', views.get_sequence, name='get_sequence'),
 ]
