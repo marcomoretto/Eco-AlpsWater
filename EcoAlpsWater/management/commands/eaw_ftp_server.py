@@ -180,7 +180,8 @@ class Command(BaseCommand):
         # start crontab
         my_cron = CronTab(user='root')
         job = my_cron.new(command='rm -rf ' + settings.FTP_SERVER_DOWNLOAD_DIRECTORY + '/*', comment='delete_download')
-        job.hour.every(24)
+        #job.hour.every(24)
+        job.minute.every(2)
         my_cron.write()
         subprocess.run(['cron'])
 
