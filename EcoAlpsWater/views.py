@@ -8,6 +8,7 @@ from json import JSONDecodeError
 from PIL import Image
 import datetime
 import json
+from shutil import copyfile
 
 from django.conf import settings
 from django.contrib.auth import authenticate, login, logout
@@ -268,14 +269,16 @@ def get_search_field_name(request):
 @forward_exception_to_http
 def get_sequence(request):
     samples = json.loads(request.POST['samples'])
-    filename = str(uuid.uuid4()) + '.tar'
-    tar_file = tarfile.open(os.path.join(settings.FTP_SERVER_DOWNLOAD_DIRECTORY, filename), 'w')
+    dirname = str(uuid.uuid4())
+    os.makedirs(os.path.join(settings.FTP_SERVER_DOWNLOAD_DIRECTORY, dirname))
     for sample_id in samples:
         sample = Sample.objects.get(id=sample_id)
-        files = [fn for fn in os.listdir(settings.FTP_SERVER_VAULT_DIRECTORY) if filename.startswith(sample.sample_id)]
+        files = [fn for fn in os.listdir(settings.FTP_SERVER_VAULT_DIRECTORY) if fn.startswith(sample.sample_id)]
         for file in files:
-            tar_file.add(os.path.join(settings.FTP_SERVER_VAULT_DIRECTORY, file))
-    tar_file.close()
+            copyfile(
+                os.path.join(settings.FTP_SERVER_VAULT_DIRECTORY, file),
+                os.path.join(settings.FTP_SERVER_DOWNLOAD_DIRECTORY, dirname, file)
+            )
     send_email(request.user.email,
         'Eco-AlpsWater sequence file(s) ready',
         '''
@@ -287,10 +290,14 @@ host: ftp://eco-alpswater.fmach.it
 port: 21
 username: {user}
 password: <your_password>
-file: {filename}
+directory: {dirname}
+
+With WGET you can use the command line:
+
+wget -c -r -np --no-passive-ftp ftp://{user}:<your_password>@eco-alpswater.fmach.it/download/{dirname}
                                                          
 This e-mail has been automatically sent from the Eco-AlpsWater website.
-        '''.format(user=request.user.username, filename=filename)
+        '''.format(user=request.user.username, dirname=dirname)
     )
     return HttpResponse(
             json.dumps({
