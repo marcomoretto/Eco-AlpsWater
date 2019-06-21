@@ -7,13 +7,14 @@ import logging
 from django.conf import settings
 
 from EcoAlpsWater.lib.email import send_email
+from EcoAlpsWater.lib.models.ftp_sample_directory import FTPSampleDirectory
 from EcoAlpsWater.lib.models.sample import Sample
 
 PassiveDTP.timeout = 200
 
 
-def file_invalid(filename, mode):
-    invalid = False
+def file_invalid(filename, mode, user):
+    invalid = True
     logging.getLogger('EAW').warning(filename)
     if mode == 'wb':
         sample_code_id = os.path.basename(filename).split('.')[0]
@@ -21,6 +22,13 @@ def file_invalid(filename, mode):
         invalid = not sample_exists or (os.path.isfile(filename) and os.path.exists(filename)) or \
                   os.path.dirname(filename) == settings.FTP_SERVER_DOWNLOAD_DIRECTORY or \
                   os.path.dirname(filename) == settings.FTP_SERVER_VAULT_DIRECTORY
+    elif mode == 'rb':
+        if filename.startswith(settings.FTP_SERVER_VAULT_DIRECTORY):
+            invalid = True
+        elif filename.startswith(settings.FTP_SERVER_DOWNLOAD_DIRECTORY):
+            basedir = os.path.basename(os.path.dirname(filename))
+            users = [s.sample.user for s in FTPSampleDirectory.objects.filter(base_dirname=basedir)]
+            invalid = len(set(users)) != 1 or users[0] != user
     return invalid
 
 
@@ -28,7 +36,8 @@ class EcoAlpsWaterFilesystem(AbstractedFS):
 
     def open(self, filename, mode):
         self.cmd_channel.server._ignored_files = None
-        if file_invalid(filename, mode):
+        user = self.cmd_channel.authorizer.get_account(self.cmd_channel.username).user
+        if file_invalid(filename, mode, user):
             self.cmd_channel.server._ignored_files = (self.cmd_channel.username, filename)
             return open('/dev/null', mode)
         return AbstractedFS.open(self, filename, mode)

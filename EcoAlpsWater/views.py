@@ -32,6 +32,7 @@ from EcoAlpsWater.lib.models.phytoplankton_countings import PhytoplanktonCountin
 from EcoAlpsWater.lib.models.sample import Sample
 from EcoAlpsWater.lib.models.vertical_temperature_profile import VerticalTemperatureProfile
 from EcoAlpsWater.lib.sample_coder import SampleCoder
+from EcoAlpsWater.lib.models.ftp_sample_directory import FTPSampleDirectory
 
 import barcode
 from barcode.writer import ImageWriter
@@ -271,6 +272,7 @@ def get_sequence(request):
     samples = json.loads(request.POST['samples'])
     dirname = str(uuid.uuid4())
     os.makedirs(os.path.join(settings.FTP_SERVER_DOWNLOAD_DIRECTORY, dirname))
+    ftp_samples = []
     for sample_id in samples:
         sample = Sample.objects.get(id=sample_id)
         files = [fn for fn in os.listdir(settings.FTP_SERVER_VAULT_DIRECTORY) if fn.startswith(sample.sample_id)]
@@ -279,6 +281,12 @@ def get_sequence(request):
                 os.path.join(settings.FTP_SERVER_VAULT_DIRECTORY, file),
                 os.path.join(settings.FTP_SERVER_DOWNLOAD_DIRECTORY, dirname, file)
             )
+        ftp_sample = FTPSampleDirectory(
+            base_dirname=dirname,
+            full_dirname=os.path.join(settings.FTP_SERVER_DOWNLOAD_DIRECTORY, dirname),
+            sample=sample
+        )
+        ftp_samples.append(ftp_sample)
     send_email(request.user.email,
         'Eco-AlpsWater sequence file(s) ready',
         '''
@@ -299,6 +307,7 @@ wget -c -r -np --no-passive-ftp ftp://{user}:<your_password>@eco-alpswater.fmach
 This e-mail has been automatically sent from the Eco-AlpsWater website.
         '''.format(user=request.user.username, dirname=dirname)
     )
+    FTPSampleDirectory.objects.bulk_create(ftp_samples)
     return HttpResponse(
             json.dumps({
                 'success': True
