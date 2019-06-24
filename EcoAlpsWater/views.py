@@ -199,66 +199,123 @@ def get_search_field_name(request):
         'id': 'sampling_depth',
         'name': 'Sampling depth'
     }, {
-        'id': '',
-        'name': ''
+        'id': 'depth_type__name',
+        'name': 'Depth type'
     }, {
-        'id': '',
-        'name': ''
+        'id': 'edna_marker__name',
+        'name': 'eDNA marker'
     }, {
-        'id': '',
-        'name': ''
+        'id': 'mean_river_outflow',
+        'name': 'Mean river outflow'
     }, {
-        'id': '',
-        'name': ''
+        'id': 'mixing_type__name',
+        'name': 'Mixing type'
     }, {
-        'id': '',
-        'name': ''
+        'id': 'catchment_area',
+        'name': 'Catchment area'
     }, {
         'id': 'biological_element__name',
         'name': 'Biological element'
+    }, {
+        'id': 'sampling_latitude',
+        'name': 'Sampling latitude'
+    }, {
+        'id': 'sampling_longitude',
+        'name': 'Sampling longitude'
+    }, {
+        'id': 'temperature',
+        'name': 'Temperature'
+    }, {
+        'id': 'field_ph',
+        'name': 'Field pH'
+    }, {
+        'id': 'conductivity_ph',
+        'name': 'Conductivity pH'
+    }, {
+        'id': 'light_attenuation_coefficient',
+        'name': 'Light attenuation coefficient'
+    }, {
+        'id': 'secchi_disk_depth',
+        'name': 'Secchi disk depth'
+    }, {
+        'id': 'euphotic_layer',
+        'name': 'Euphotic layer'
+    }, {
+        'id': 'oxygen_concentration',
+        'name': 'Oxygen concentration'
+    }, {
+        'id': 'oxygen_percentage',
+        'name': 'Oxygen percentage'
+    }, {
+        'id': 'laboratory_ph',
+        'name': 'Laboratory pH'
+    }, {
+        'id': 'laboratory_conductivity',
+        'name': 'Laboratory conductivity'
+    }, {
+        'id': 'total_alkalinity',
+        'name': 'Total alkalinity'
+    }, {
+        'id': 'bicarbonates',
+        'name': 'Bicarbonates'
+    }, {
+        'id': 'nitrate_nitrogen',
+        'name': 'Nitrate nitrogen'
+    }, {
+        'id': 'sulphates',
+        'name': 'Sulphates'
+    }, {
+        'id': 'chloride',
+        'name': 'Chloride'
+    }, {
+        'id': 'calcium',
+        'name': 'Calcium'
+    }, {
+        'id': 'magnesium',
+        'name': 'Magnesium'
+    }, {
+        'id': 'sodium',
+        'name': 'Sodium'
+    }, {
+        'id': 'potassium',
+        'name': 'Potassium'
+    }, {
+        'id': 'ammonium',
+        'name': 'Ammonium'
+    }, {
+        'id': 'total_nitrogen',
+        'name': 'Total nitrogen'
+    }, {
+        'id': 'soluble_reactive_phosphorus',
+        'name': 'Soluble reactive phosphorus'
+    }, {
+        'id': 'total_phosphorus',
+        'name': 'Total phosphorus'
+    }, {
+        'id': 'reactive_silica',
+        'name': 'Reactive silica'
+    }, {
+        'id': 'dry_weight',
+        'name': 'Dry weight'
+    }, {
+        'id': 'chlorophyll_a',
+        'name': 'Chlorophyll a'
+    }, {
+        'id': 'dna_extraction_kit',
+        'name': 'DNA extraction kit'
+    }, {
+        'id': 'dna_extraction_date',
+        'name': 'DNA extraction date'
+    }, {
+        'id': 'vertical_temperature_profiles',
+        'name': 'Vertical temperature profiles'
+    }, {
+        'id': 'phytoplankton_countings',
+        'name': 'Phytoplankton countings'
+    }, {
+        'id': 'cyanotoxin_samples',
+        'name': 'Cyanotoxin samples'
     }]
-    '''
-    sampling_date = models.DateTimeField(auto_now_add=True, blank=False, null=False)
-    sampling_depth = models.FloatField(null=False, blank=False)
-    depth_type = models.ForeignKey(DepthType, on_delete=models.CASCADE, null=False, default=1)
-    edna_marker = models.ForeignKey(EDNAMarker, on_delete=models.CASCADE, null=False, default=1)
-    biological_element = models.ForeignKey(BiologicalElement, on_delete=models.CASCADE, null=False, default=1)
-    mean_river_outflow = models.FloatField(null=True, blank=True)
-    mixing_type = models.ForeignKey(MixingType, on_delete=models.CASCADE, null=True, blank=True)
-    catchment_area = models.FloatField(null=True, blank=True)
-    sampling_latitude = models.DecimalField(max_digits=9, decimal_places=6, null=True, blank=True)
-    sampling_longitude = models.DecimalField(max_digits=9, decimal_places=6, null=True, blank=True)
-    temperature = models.FloatField(null=True, blank=True)
-    field_ph = models.FloatField(null=True, blank=True)
-    conductivity_ph = models.FloatField(null=True, blank=True)
-    light_attenuation_coefficient = models.FloatField(null=True, blank=True)
-    secchi_disk_depth = models.FloatField(null=True, blank=True)
-    euphotic_layer = models.FloatField(null=True, blank=True)
-    oxygen_concentration = models.FloatField(null=True, blank=True)
-    oxygen_percentage = models.FloatField(null=True, blank=True)
-    laboratory_ph = models.FloatField(null=True, blank=True)
-    laboratory_conductivity = models.FloatField(null=True, blank=True)
-    total_alkalinity = models.FloatField(null=True, blank=True)
-    bicarbonates = models.FloatField(null=True, blank=True)
-    nitrate_nitrogen = models.FloatField(null=True, blank=True)
-    sulphates = models.FloatField(null=True, blank=True)
-    chloride = models.FloatField(null=True, blank=True)
-    calcium = models.FloatField(null=True, blank=True)
-    magnesium = models.FloatField(null=True, blank=True)
-    sodium = models.FloatField(null=True, blank=True)
-    potassium = models.FloatField(null=True, blank=True)
-    ammonium = models.FloatField(null=True, blank=True)
-    total_nitrogen = models.FloatField(null=True, blank=True)
-    soluble_reactive_phosphorus = models.FloatField(null=True, blank=True)
-    total_phosphorus = models.FloatField(null=True, blank=True)
-    reactive_silica = models.FloatField(null=True, blank=True)
-    dry_weight = models.FloatField(null=True, blank=True)
-    chlorophyll_a = models.FloatField(null=True, blank=True)
-    dna_extraction_kit = models.ForeignKey(DNAExtractionKit, on_delete=models.CASCADE, null=True, blank=True)
-    dna_extraction_date = models.DateTimeField(auto_now_add=False, blank=True, null=True)
-    vertical_temperature_profiles = models.ForeignKey(VerticalTemperatureProfile, on_delete=models.CASCADE, null=True, blank=True)
-    phytoplankton_countings = models.ForeignKey(PhytoplanktonCountings, on_delete=models.CASCADE, null=True, blank=True)
-    cyanotoxin_samples = models.ForeignKey(CyanotoxinSamples, on_delete=models.CASCADE, null=True, blank=True)'''
     return HttpResponse(
             json.dumps({
                 'success': True,
