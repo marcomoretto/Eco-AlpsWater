@@ -373,7 +373,7 @@ This e-mail has been automatically sent from the Eco-AlpsWater website.
 
 @forward_exception_to_http
 def get_samples(request):
-    rs = Sample.objects.order_by('id')
+    rs = Sample.objects.order_by('id').filter(user=request.user)
     page = request.POST.get('page', 1)
     start = request.POST.get('start', 0)
     limit = request.POST.get('limit', rs.count())
@@ -436,6 +436,7 @@ def get_samples_complete(request):
         rs = Sample.objects.filter(id=id)
     else:
         rs = Sample.objects.order_by('id')
+    rs = rs.filter(user=request.user)
     if description:
         rows = [s.to_dict_description() for s in rs]
     else:
