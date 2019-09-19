@@ -100,6 +100,17 @@ Ext.define('EcoAlpsWater.view.main.Main', {
             beforeActivate: 'beforeActivate'
         }
     }, {
+        title: 'Stations',
+        glyph: 'f041',
+        layout: 'fit',
+        itemId: 'stations',
+        items: [{
+            xtype: 'stations'
+        }],
+        listeners: {
+            beforeActivate: 'beforeActivate'
+        }
+    }, {
         title: 'User informations',
         itemId: 'user',
         glyph: 'xf007',

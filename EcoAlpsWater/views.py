@@ -27,9 +27,11 @@ from EcoAlpsWater.lib.models.dna_extraction_kit import DNAExtractionKit
 from EcoAlpsWater.lib.models.drainage_basin import DrainageBasin
 from EcoAlpsWater.lib.models.edna_marker import EDNAMarker
 from EcoAlpsWater.lib.models.field_description import FieldDescription
+from EcoAlpsWater.lib.models.geographical_point import GeographicalPoint
 from EcoAlpsWater.lib.models.mixing_type import MixingType
 from EcoAlpsWater.lib.models.phytoplankton_countings import PhytoplanktonCountings
 from EcoAlpsWater.lib.models.sample import Sample
+from EcoAlpsWater.lib.models.station import Station
 from EcoAlpsWater.lib.models.vertical_temperature_profile import VerticalTemperatureProfile
 from EcoAlpsWater.lib.sample_coder import SampleCoder
 from EcoAlpsWater.lib.models.ftp_sample_directory import FTPSampleDirectory
@@ -74,13 +76,22 @@ def send_verification_email(request):
             }), content_type="application/json")
 
 
+def get_stations(request):
+    rows = [s.to_dict() for s in Station.objects.all()]
+    return HttpResponse(
+        json.dumps({
+            'success': True,
+            'rows': rows,
+            'total': len(rows)
+        }), content_type="application/json")
+
 def get_combo_field_values(request):
     water_bodies = []
     for ty in DrainageBasin.TYPE:
         water_body = {'id': ty[0], 'name': ty[0], 'water_body_name': []}
         for db in DrainageBasin.objects.filter(type=ty[0]):
             wb = db.to_dict()
-            wb['station'] = [ss.to_dict() for ss in db.station_set.all()]
+            #wb['station'] = [ss.to_dict() for ss in db.station_set.all()]
             water_body['water_body_name'].append(wb)
         water_bodies.append(water_body)
     depth_type = [dt.to_dict() for dt in DepthType.objects.all()]
@@ -143,16 +154,14 @@ def change_password(request):
 @forward_exception_to_http
 def update_ids(request):
     biological_element = request.POST.get('biological_element', None) or None,
-    water_body = request.POST.get('water_body', None) or None,
-    water_body_name = request.POST.get('water_body_name', None) or None
     depth = request.POST.get('sampling_depth', '') or ''
     depth_type = request.POST.get('depth_type', None) or None
     sampling_date = request.POST.get('sampling_date', None) or None,
+    station = request.POST.get('station', None) or None
 
     sample_code = SampleCoder(
         biological_element[0],
-        water_body,
-        water_body_name,
+        station,
         depth,
         depth_type,
         sampling_date
@@ -527,6 +536,36 @@ def get_barcode(request):
     response['Content-Disposition'] = 'attachment; filename=samples.zip'
     return response
 
+@forward_exception_to_http
+def save_station(request):
+    values = json.loads(request.POST['values'])
+    station = Station(
+        name=values['station'],
+        type=values['station_type'],
+        pp_code=values['station'],
+        drainage_basin_id=values['water_body_name']
+    )
+    station.save()
+    if type(values['latitude']) == list:
+        for lat, lon in zip(values['latitude'], values['longitude']):
+            geo_point = GeographicalPoint(
+                station=station,
+                latitude=lat,
+                longitude=lon
+            )
+            geo_point.save()
+    else:
+        geo_point = GeographicalPoint(
+            station=station,
+            latitude=values['latitude'],
+            longitude=values['longitude']
+        )
+        geo_point.save()
+
+    return HttpResponse(
+        json.dumps({
+            'success': True
+        }), content_type="application/json")
 
 @forward_exception_to_http
 def save_sample(request):

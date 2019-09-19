@@ -50,7 +50,6 @@ Ext.define('EcoAlpsWater.view.main.NewSampleController', {
                 values[attrname + '_comment'] = panel.down('#' + attrname)['comment'];
             }
         }
-        console.log(values);
         Ext.Ajax.request({
             url: '/save_sample/',
             params: values,
@@ -92,10 +91,13 @@ Ext.define('EcoAlpsWater.view.main.NewSampleController', {
                 var resData = Ext.decode(response.responseText);
                 for (var property in resData.values) {
                     if (resData.values.hasOwnProperty(property)) {
-                        var store = me.getView().down('#' + property).getStore()
-                        resData.values[property].forEach(function(i) {
-                            store.insert(0, i);
-                        });
+                        var view = me.getView().down('#' + property);
+                        if (view) {
+                            var store = view.getStore()
+                            resData.values[property].forEach(function (i) {
+                                store.insert(0, i);
+                            });
+                        }
                     }
                 }
             },
@@ -197,6 +199,10 @@ Ext.define('EcoAlpsWater.view.main.NewSampleController', {
         });
     },
 
+    onComboStationFocus: function(me) {
+        me.getStore().reload();
+    },
+
     onCloneSample: function(me) {
         var win = me.up('window');
         var combo = win.down('combobox');
@@ -210,7 +216,6 @@ Ext.define('EcoAlpsWater.view.main.NewSampleController', {
         c.updateIDs = function() {  }
         for (i = 0; i <= cardNum; i++) {
             panel = main.down('new_sample_step_' + i.toString());
-            console.log(panel.id);
             form = panel.getForm();
             form.setValues(record);
         }

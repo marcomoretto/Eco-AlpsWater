@@ -4,14 +4,14 @@ import datetime
 from EcoAlpsWater.lib.models.biological_element import BiologicalElement
 from EcoAlpsWater.lib.models.depth_type import DepthType
 from EcoAlpsWater.lib.models.drainage_basin import DrainageBasin
+from EcoAlpsWater.lib.models.station import Station
 
 
 class SampleCoder:
 
-    def __init__(self, biological_element_id, water_body, drainage_basin_id, depth, depth_type_id, sampling_date):
+    def __init__(self, biological_element_id, station_id, depth, depth_type_id, sampling_date):
         self.biological_element_id = biological_element_id
-        self.water_body = water_body
-        self.drainage_basin_id = drainage_basin_id
+        self.station_id = station_id
         self.depth = depth
         self.depth_type_id = depth_type_id
         self.sampling_date = sampling_date
@@ -35,8 +35,8 @@ class SampleCoder:
             year = '%02d' % year
 
         sample_id = '00'
-        if self.drainage_basin_id:
-            sample_id = '%02d' % int(self.drainage_basin_id)
+        if self.station_id:
+            sample_id = '%02d' % int(Station.objects.get(id=self.station_id).drainage_basin_id)
 
         dt = '0'
         if self.depth_type_id:
@@ -50,7 +50,11 @@ class SampleCoder:
         if self.biological_element_id:
             be = str(self.biological_element_id)
 
-        return sample_id + year + sampling_month + sampling_day + dt + depth + be
+        st = '00'
+        if self.station_id:
+            st = '%02d' % int(self.station_id)
+
+        return sample_id + year + sampling_month + sampling_day + dt + depth + be + st
 
     def get_sample_code(self):
         sampling_month = ''
@@ -64,20 +68,23 @@ class SampleCoder:
             sampling_month = sampling_month[0]
             sampling_day = sampling_day[0]
 
-        drainage_basin = DrainageBasin.objects.filter(id=self.drainage_basin_id).first() or DrainageBasin()
+        station = Station.objects.filter(id=self.station_id).first() or Station()
+        drainage_basin = station.drainage_basin if self.station_id else DrainageBasin()
         biological_element = BiologicalElement.objects.filter(id=self.biological_element_id).first() or BiologicalElement()
         depth_type = DepthType.objects.filter(id=self.depth_type_id).first() or DepthType()
 
         country = dict(DrainageBasin.COUNTRY).get(drainage_basin.country, '')
-        db = self.water_body[0][0] if len(self.water_body) > 0 and self.water_body[0] and len(self.water_body[0]) > 0 else ''
+        water_body = station.drainage_basin.type if self.station_id else ''
+        db = water_body[0][0] if len(water_body) > 0 and water_body[0] and len(water_body[0]) > 0 else ''
         dt = depth_type.name[0] if len(depth_type.name) > 0 else ''
         if len(drainage_basin.name) >= 5:
             name = drainage_basin.name[:5]
         else:
             name = drainage_basin.name + ''.join(['x'] * (5 - len(drainage_basin.name)))
         be = biological_element.name[0] if biological_element.name else ''
+        st = '%02d' % int(self.station_id) if self.station_id else '00'
 
-        sample_code = '{country}_{db}_{name}_{year}_{month}_{day}_{layer}_{depth}_{be}'.format(
+        sample_code = '{country}_{db}_{name}_{year}_{month}_{day}_{layer}_{depth}_{be}_{st}'.format(
             country=country,
             db=db,
             name=name,
@@ -86,7 +93,8 @@ class SampleCoder:
             day=sampling_day,
             layer=dt,
             depth=self.depth,
-            be=be
+            be=be,
+            st=st
         )
 
         return sample_code

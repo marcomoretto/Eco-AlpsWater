@@ -6,8 +6,8 @@ from EcoAlpsWater import views
 from django.conf import settings
 
 template_name = "EcoAlpsWater/index.html"
-#if settings.DEBUG:
-#    template_name = "EcoAlpsWater/dev_index.html"
+if settings.DEBUG:
+    template_name = "EcoAlpsWater/dev_index.html"
 
 urlpatterns = [
     url(r'^$', TemplateView.as_view(template_name=template_name)),
@@ -26,4 +26,6 @@ urlpatterns = [
     url(r'^get_search_field_names/$', views.get_search_field_name, name='get_search_field_names'),
     url(r'^send_verification_email/$', views.send_verification_email, name='send_verification_email'),
     url(r'^get_sequence/$', views.get_sequence, name='get_sequence'),
+    url(r'^save_station/$', views.save_station, name='save_station'),
+    url(r'^get_stations/$', views.get_stations, name='get_stations'),
 ]
