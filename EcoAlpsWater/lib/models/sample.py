@@ -64,8 +64,8 @@ class Sample(models.Model):
     phytoplankton_countings = models.BinaryField()
     cyanotoxin_samples = models.BinaryField()
 
-    def to_dict_description(self):
-        return {
+    def to_dict_description(self, *args, **kwargs):
+        d = {
             #'id': self.id,
             'sample_id': self.sample_id,
             'sample_code': self.sample_code,
@@ -114,6 +114,9 @@ class Sample(models.Model):
             'dna_quality_a260_230': self.dna_quality_a260_230,
             'dna_quality_a260_280': self.dna_quality_a260_280
         }
+        for k, v in kwargs.items():
+            d[k] = getattr(self, v)
+        return d
 
     def to_dict_complete(self):
         return {
@@ -121,8 +124,8 @@ class Sample(models.Model):
             'sample_id': self.sample_id,
             'sample_code': self.sample_code,
             'biological_element': self.biological_element_id,
-            'sampling_matrix': self.sampling_matrix.name if self.sampling_matrix else None,
-            'sampling_strategy': self.sampling_strategy.name if self.sampling_strategy else None,
+            'sampling_matrix': self.sampling_matrix_id,
+            'sampling_strategy': self.sampling_strategy_id,
             'station': self.station_id,
             'sampling_date': self.sampling_date.strftime('%Y-%m-%d'),
             'sampling_depth_min': self.sampling_depth_min,
@@ -131,7 +134,7 @@ class Sample(models.Model):
             'depth_type': self.depth_type_id,
             'edna_marker': self.edna_marker_id,
             'mean_river_outflow': self.mean_river_outflow,
-            'mixing_type': self.mixing_type_id,
+            'mixing_type': self.mixing_type.name,
             'catchment_area': self.catchment_area,
             'temperature': self.temperature,
             'field_ph': self.field_ph,

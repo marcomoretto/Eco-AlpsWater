@@ -312,13 +312,20 @@ Ext.define('EcoAlpsWater.view.main.NewSampleController', {
         me.getStore().reload();
     },
 
+    __cloneSampleWarning: function() {
+        EcoAlpsWater.current.showMessage('info',
+            'Warning XLSX files',
+            "The XLSX profile files need to be manually uploaded if needed!"
+        );
+    },
+
     onCloneSample: function(me) {
         var win = me.up('window');
         var combo = win.down('combobox');
         var record = combo.getSelectedRecord().data;
-        console.log(record);
         var viewport = Ext.ComponentQuery.query('viewport')[0];
         var main = viewport.down('#main');
+        var station = main.down('#station').getStore().reload();
         var cardNum = main.down('new_sample').items.items.length - 1;
         var c = main.down('new_sample').controller;
         var _old_function = c.updateIDs;
@@ -330,6 +337,7 @@ Ext.define('EcoAlpsWater.view.main.NewSampleController', {
         }
         c.updateIDs = _old_function;
         win.close();
+        this.__cloneSampleWarning();
     },
 
     onAddComment: function(me) {

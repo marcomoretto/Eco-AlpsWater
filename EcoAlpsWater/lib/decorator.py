@@ -40,21 +40,21 @@ class send_email_to_admin(object):
                 message = '''
                 Dear admin,
                 user {user} has just request to download sequence files for samples {samples}.
-                '''.format(user=user, samples=', '.join([Sample.objects.get(id=sample_id) for sample_id in samples]))
+                '''.format(user=user, samples=', '.join([Sample.objects.get(id=sample_id).sample_code for sample_id in samples]))
             elif self.operation == 'get_env_metadata':
                 user = request.user.username
                 samples = json.loads(request.POST['samples'])
                 message = '''
                 Dear admin,
                 user {user} has just request to download environmental metadata for samples {samples}.
-                '''.format(user=user, samples=', '.join([Sample.objects.get(id=sample_id) for sample_id in samples]))
+                '''.format(user=user, samples=', '.join([Sample.objects.get(id=sample_id).sample_code for sample_id in samples]))
             elif self.operation == 'get_barcode':
                 user = request.user.username
                 samples = json.loads(request.POST['samples'])
                 message = '''
                 Dear admin,
                 user {user} has just request to download barcode for samples {samples}.
-                '''.format(user=user, samples=', '.join([Sample.objects.get(id=sample_id) for sample_id in samples]))
+                '''.format(user=user, samples=', '.join([Sample.objects.get(id=sample_id).sample_code for sample_id in samples]))
             elif self.operation == 'save_station':
                 user = request.user.username
                 values = json.loads(request.POST['values'])

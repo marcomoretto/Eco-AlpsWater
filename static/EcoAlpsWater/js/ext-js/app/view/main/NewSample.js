@@ -229,7 +229,7 @@ Ext.define('EcoAlpsWater.view.main.NewSampleStep0', {
                             }
                         },
                         store: {
-                            autoLoad: true,
+                            autoLoad: false,
                             fields: ['id', 'name'],
                             proxy: {
                                 type: 'ajax',
@@ -1553,7 +1553,7 @@ Ext.define('EcoAlpsWater.view.main.NewSampleStep3', {
                             fieldLabel: 'Vertical temperature profiles',
                             name: 'vertical_temperature_profiles',
                             itemId: 'vertical_temperature_profiles',
-                            buttonText: 'Upload template',
+                            buttonText: 'Upload',
                             anchor: '100%',
                             allowBlank: true,
                             clearOnSubmit: false,
@@ -1606,7 +1606,7 @@ Ext.define('EcoAlpsWater.view.main.NewSampleStep3', {
                             fieldLabel: 'Phytoplankton countings',
                             name: 'phytoplankton_countings',
                             itemId: 'phytoplankton_countings',
-                            buttonText: 'Upload template',
+                            buttonText: 'Upload',
                             anchor: '100%',
                             allowBlank: true,
                             clearOnSubmit: false,
@@ -1659,7 +1659,7 @@ Ext.define('EcoAlpsWater.view.main.NewSampleStep3', {
                             fieldLabel: 'Cyanotoxin samples',
                             name: 'cyanotoxin_samples',
                             itemId: 'cyanotoxin_samples',
-                            buttonText: 'Upload template',
+                            buttonText: 'Upload',
                             anchor: '100%',
                             allowBlank: true,
                             clearOnSubmit: false,

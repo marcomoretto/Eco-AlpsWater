@@ -299,7 +299,15 @@ Ext.define('EcoAlpsWater.view.main.SamplesController', {
                         if (field) {
                             field.setReadOnly(true);
                             field.allowBlank = true;
-                            field.setRawValue(obj[property]);
+                            field.suspendEvents();
+                            if (property == 'dna_extraction_kit') {
+                                field.setValue(obj[property]);
+                            } else {
+                                field.setRawValue(obj[property]);
+                            }
+                            if (property == 'sampling_volume' && obj[property]) {
+                                field.setDisabled(false);
+                            }
                         }
                     }
                 }
@@ -321,7 +329,9 @@ Ext.define('EcoAlpsWater.view.main.SamplesController', {
             url: '/get_samples_complete/',
             params: params,
             success: function (response) {
+                var station = main.down('#station').getStore().reload();
                 var resData = Ext.decode(response.responseText);
+                main.down('#sampling_matrix').suspendEvents();
                 EcoAlpsWater.current.showPanel('new_sample');
                 var _old_function = c.updateIDs;
                 c.updateIDs = function() {  }
@@ -331,6 +341,13 @@ Ext.define('EcoAlpsWater.view.main.SamplesController', {
                     form.setValues(resData.rows[0]);
                 }
                 c.updateIDs = _old_function;
+                main.down('#sampling_matrix').resumeEvents();
+                var sampling_volume = main.down('#sampling_volume');
+                if (sampling_volume.getValue()) {
+                    sampling_volume.setDisabled(false);
+                }
+                var newSamplePanel = viewport.down('new_sample').controller.__cloneSampleWarning();
+                main.down('#archives_fieldset').setDisabled(false);
             },
             failure: function (response) {
                 console.log('Server error', reponse);

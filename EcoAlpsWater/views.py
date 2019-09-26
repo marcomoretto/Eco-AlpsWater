@@ -550,7 +550,7 @@ def get_samples_complete(request):
     if not request.user.is_superuser:
         rs = rs.filter(user=request.user)
     if description:
-        rows = [s.to_dict_description() for s in rs]
+        rows = [s.to_dict_description(dna_extraction_kit='dna_extraction_kit_id') for s in rs]
     else:
         rows = [s.to_dict_complete() for s in rs]
     total = rs.count()
