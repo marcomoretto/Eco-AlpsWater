@@ -3,11 +3,88 @@ Ext.define('EcoAlpsWater.view.main.NewSampleController', {
 
     alias: 'controller.new_sample',
 
+    onProfileTemplateChange: function(me) {
+        var form = me.up('form').getForm();
+        var field = me.up('container').down('filefield').name;
+        var panel = me.findParentByType('[xtype="new_sample"]');
+        if (!panel) {
+            panel = me.findParentByType('[xtype="view_sample_details"]');
+        }
+        var sample_code = panel.down('#sample_code').getValue();
+        if (form.isValid() && sample_code) {
+            form.submit({
+                url: 'upload_excel_profile_file/',
+                params: {
+                    request: JSON.stringify(
+                        {
+                            'sample_code': sample_code,
+                            'template': field
+                        }
+                    )
+                },
+                success: function (f, response) {
+                    if (EcoAlpsWater.current.checkHttpResponse(response.response)) {
+                        EcoAlpsWater.current.showMessage('info', 'File uploaded', 'File correctly uploaded!');
+                    }
+                },
+                failure: function (f, response) {
+                    //
+                }
+            });
+        }
+    },
+
+    onDownloadTemplate: function (me) {
+        var name = me.up('container').down('filefield').name;
+        Ext.Ajax.request({
+            url: '/download_template/',
+            params: {'name': name},
+            binary: true,
+            success: function (response) {
+                var blob = new Blob([response.responseBytes], {type: 'base64'}),
+                url = window.URL.createObjectURL(blob),
+                xlsx = document.createElement('a');
+                xlsx.href = url;
+                xlsx.download = name + '.xlsx';
+                document.body.appendChild(xlsx);
+                xlsx.click();
+                document.body.removeChild(xlsx);
+            },
+            failure: function (response) {
+                console.log('Server error', reponse);
+            }
+        });
+    },
+
+    onSamplingMatrixFieldChange: function (me) {
+        var sampling_volume = me.up('panel').down('#sampling_volume');
+        if (me.getSelectedRecord().data.name.toLowerCase() == 'water') {
+            sampling_volume.setDisabled(false);
+        } else {
+            sampling_volume.setDisabled(true);
+        }
+        me.up('new_sample').getController().updateIDs();
+    },
+
+    onBioElementFieldChange: function (me) {
+        var edna = me.up('panel').down('#edna_marker');
+        var r = me.getSelectedRecord().data.edna_marker;
+        edna.setValue(r.id);
+        me.up('new_sample').getController().updateIDs();
+    },
+
     onFieldChange: function() {
         this.updateIDs();
     },
 
     updateIDs: function() {
+        var viewport = Ext.ComponentQuery.query('viewport')[0];
+        var main = viewport.down('#main');
+
+        var upload_vertical_temperature_profiles = main.down('#vertical_temperature_profiles');
+        var upload_phytoplankton_countings = main.down('#phytoplankton_countings');
+        var upload_cyanotoxin_samples = main.down('#cyanotoxin_samples');
+
         var me = this.getView();
         var cardNum = me.items.items.length - 1;
         var values = {};
@@ -30,6 +107,28 @@ Ext.define('EcoAlpsWater.view.main.NewSampleController', {
                 sample_code.setValue(resData['ids']['sample_code']);
                 water_body_code.setValue(resData['ids']['water_body_code']);
                 cap_code.setValue(resData['ids']['cap_code']);
+
+                if (upload_vertical_temperature_profiles.getValue() ||
+                    upload_phytoplankton_countings.getValue() ||
+                    upload_cyanotoxin_samples.getValue()
+                    ) {
+                    upload_vertical_temperature_profiles.suspendEvents();
+                    upload_vertical_temperature_profiles.setRawValue('');
+                    upload_vertical_temperature_profiles.up('form').getForm().reset();
+                    upload_vertical_temperature_profiles.resumeEvents();
+                    upload_phytoplankton_countings.suspendEvents();
+                    upload_phytoplankton_countings.setRawValue('');
+                    upload_phytoplankton_countings.up('form').getForm().reset();
+                    upload_phytoplankton_countings.resumeEvents();
+                    upload_cyanotoxin_samples.suspendEvents();
+                    upload_cyanotoxin_samples.setRawValue('');
+                    upload_cyanotoxin_samples.up('form').getForm().reset();
+                    upload_cyanotoxin_samples.resumeEvents();
+                    EcoAlpsWater.current.showMessage('info',
+                        'Change uploaded XLSX template files',
+                        'You need to upload again the XLSX template files since the Sample Code and ID have changed!'
+                    );
+                }
             },
             failure: function (response) {
                 console.log('Server error', reponse);
@@ -92,7 +191,7 @@ Ext.define('EcoAlpsWater.view.main.NewSampleController', {
                 for (var property in resData.values) {
                     if (resData.values.hasOwnProperty(property)) {
                         var view = me.getView().down('#' + property);
-                        if (view) {
+                        if (view && view.store) {
                             var store = view.getStore()
                             resData.values[property].forEach(function (i) {
                                 store.insert(0, i);
@@ -158,6 +257,13 @@ Ext.define('EcoAlpsWater.view.main.NewSampleController', {
     },
 
     updateNavigationButtons: function(index) {
+        var viewport = Ext.ComponentQuery.query('viewport')[0];
+        var main = viewport.down('#main');
+
+        var upload_vertical_temperature_profiles = main.down('#vertical_temperature_profiles');
+        var upload_phytoplankton_countings = main.down('#phytoplankton_countings');
+        var upload_cyanotoxin_samples = main.down('#cyanotoxin_samples');
+
         var me = this.getView();
 
         var cardNum = me.items.items.length - 1;
@@ -176,6 +282,9 @@ Ext.define('EcoAlpsWater.view.main.NewSampleController', {
                 valid = valid & form.isValid();
             }
             me.down('#save_sample').setDisabled(!valid);
+            upload_vertical_temperature_profiles.setDisabled(!valid);
+            upload_phytoplankton_countings.setDisabled(!valid);
+            upload_cyanotoxin_samples.setDisabled(!valid);
         }
     },
 

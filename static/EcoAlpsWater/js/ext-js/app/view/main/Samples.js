@@ -14,9 +14,10 @@ Ext.define('EcoAlpsWater.view.main.ViewSampleDetailsWindow', {
     closable: true,
     autoShow: true,
     modal: true,
-    width: 600,
-    height: 600,
+    width: 800,
+    height: 800,
     layout: 'card',
+    sample_id: null,
 
     items: [
         {
@@ -34,18 +35,23 @@ Ext.define('EcoAlpsWater.view.main.ViewSampleDetailsWindow', {
         {
             id: 'detail-card-3',
             xtype: 'new_sample_step_3'
-        },
-        {
-            id: 'detail-card-4',
-            xtype: 'new_sample_step_4'
-        },
-        {
-            id: 'detail-card-5',
-            xtype: 'new_sample_step_5'
         }
     ],
 
     bbar: [
+        {
+            itemId: 'card-edit',
+            text: 'Edit mode',
+            handler: 'editMode',
+            glyph: 'f044'
+        },
+        {
+            itemId: 'card-update',
+            text: 'Update',
+            handler: 'updateSample',
+            glyph: 'f062',
+            hidden: true
+        },
         '->',
         {
             itemId: 'card-prev',
@@ -57,7 +63,7 @@ Ext.define('EcoAlpsWater.view.main.ViewSampleDetailsWindow', {
             itemId: 'card-next',
             text: 'Next &raquo;',
             handler: 'showNext'
-        },
+        }
     ],
 
     listeners: {
@@ -65,8 +71,8 @@ Ext.define('EcoAlpsWater.view.main.ViewSampleDetailsWindow', {
     },
 
     initComponent: function() {
-
         this.callParent();
+        this.controller.getComboBoxValues()
     }
 });
 

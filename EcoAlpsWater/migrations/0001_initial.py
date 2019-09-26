@@ -147,7 +147,7 @@ class Migration(migrations.Migration):
                 ('sampling_longitude', models.DecimalField(blank=True, decimal_places=6, max_digits=9, null=True)),
                 ('temperature', models.FloatField(blank=True, null=True)),
                 ('field_ph', models.FloatField(blank=True, null=True)),
-                ('conductivity_ph', models.FloatField(blank=True, null=True)),
+                ('field_conductivity', models.FloatField(blank=True, null=True)),
                 ('light_attenuation_coefficient', models.FloatField(blank=True, null=True)),
                 ('secchi_disk_depth', models.FloatField(blank=True, null=True)),
                 ('euphotic_layer', models.FloatField(blank=True, null=True)),

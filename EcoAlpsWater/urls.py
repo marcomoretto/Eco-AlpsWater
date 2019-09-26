@@ -28,4 +28,7 @@ urlpatterns = [
     url(r'^get_sequence/$', views.get_sequence, name='get_sequence'),
     url(r'^save_station/$', views.save_station, name='save_station'),
     url(r'^get_stations/$', views.get_stations, name='get_stations'),
+    url(r'^download_template/$', views.download_template, name='download_template'),
+    url(r'^upload_excel_profile_file/$', views.upload_excel_profile_file, name='upload_excel_profile_file'),
+    url(r'^update_sample/$', views.update_sample, name='update_sample'),
 ]

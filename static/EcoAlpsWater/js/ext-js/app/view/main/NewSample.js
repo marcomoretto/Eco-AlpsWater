@@ -109,6 +109,82 @@ Ext.define('EcoAlpsWater.view.main.NewSampleStep0', {
                         store: Ext.data.Store(),
                         listeners: {
                             change: {
+                                fn: 'onBioElementFieldChange'
+                            }
+                        }
+                        },
+                    {
+                        xtype: 'button',
+                        flex: 1,
+                        glyph: 'xf27a',
+                        tooltip: 'Add comment',
+                        tooltipType: 'title',
+                        listeners: {
+                            click: {
+                                fn: 'onAddComment',
+                            }
+                        }
+                    }
+                ]
+            }, {
+                xtype: 'container',
+                layout: 'hbox',
+                margin: '0 0 5 0',
+                items: [
+                    {
+                        xtype: 'combobox',
+                        fieldLabel: 'Sampling matrix',
+                        name: 'sampling_matrix',
+                        itemId: 'sampling_matrix',
+                        valueField: 'id',
+                        displayField: 'name',
+                        editable: false,
+                        queryMode: 'local',
+                        emptyText: 'Select a sampling matrix...',
+                        allowBlank: false,
+                        flex: 15,
+                        margin: '0 5 0 0',
+                        store: Ext.data.Store(),
+                        listeners: {
+                            change: {
+                                fn: 'onSamplingMatrixFieldChange'
+                            }
+                        }
+                        },
+                    {
+                        xtype: 'button',
+                        flex: 1,
+                        glyph: 'xf27a',
+                        tooltip: 'Add comment',
+                        tooltipType: 'title',
+                        listeners: {
+                            click: {
+                                fn: 'onAddComment',
+                            }
+                        }
+                    }
+                ]
+            }, {
+                xtype: 'container',
+                layout: 'hbox',
+                margin: '0 0 5 0',
+                items: [
+                    {
+                        xtype: 'combobox',
+                        fieldLabel: 'Sampling strategy',
+                        name: 'sampling_strategy',
+                        itemId: 'sampling_strategy',
+                        valueField: 'id',
+                        displayField: 'name',
+                        editable: false,
+                        queryMode: 'local',
+                        emptyText: 'Select a sampling strategy...',
+                        allowBlank: false,
+                        flex: 15,
+                        margin: '0 5 0 0',
+                        store: Ext.data.Store(),
+                        listeners: {
+                            change: {
                                 fn: 'onFieldChange',
                             }
                         }
@@ -186,11 +262,63 @@ Ext.define('EcoAlpsWater.view.main.NewSampleStep0', {
                 items: [
                     {
                         xtype: 'numberfield',
-                        fieldLabel: 'Sampling depth',
-                        name: 'sampling_depth',
-                        itemId: 'sampling_depth',
+                        fieldLabel: 'Sampling depth range (min)',
+                        minValue: 0,
+                        name: 'sampling_depth_min',
+                        itemId: 'sampling_depth_min',
                         decimalPrecision: 5,
                         allowBlank: false,
+                        flex: 8,
+                        margin: '0 5 0 0',
+                        listeners: {
+                            change: {
+                                fn: 'onFieldChange',
+                                }
+                            }
+                        }, {
+                        xtype: 'numberfield',
+                        fieldLabel: '(max)',
+                        labelWidth: 80,
+                        minValue: 0,
+                        name: 'sampling_depth_max',
+                        itemId: 'sampling_depth_max',
+                        decimalPrecision: 5,
+                        allowBlank: false,
+                        flex: 7,
+                        margin: '0 5 0 0',
+                        listeners: {
+                            change: {
+                                fn: 'onFieldChange',
+                            }
+                        }
+                        },
+                    {
+                        xtype: 'button',
+                        flex: 1,
+                        glyph: 'xf27a',
+                        tooltip: 'Add comment',
+                        tooltipType: 'title',
+                        listeners: {
+                            click: {
+                                fn: 'onAddComment',
+                            }
+                        }
+                    }
+                ]
+            }, {
+                xtype: 'container',
+                layout: 'hbox',
+                margin: '0 0 5 0',
+                items: [
+                    {
+                        xtype: 'numberfield',
+                        fieldLabel: 'Sampling volume',
+                        name: 'sampling_volume',
+                        itemId: 'sampling_volume',
+                        minValue: 0,
+                        disabled: true,
+                        decimalPrecision: 5,
+                        allowBlank: true,
                         flex: 15,
                         margin: '0 5 0 0',
                         listeners: {
@@ -265,8 +393,9 @@ Ext.define('EcoAlpsWater.view.main.NewSampleStep0', {
                         valueField: 'id',
                         displayField: 'name',
                         editable: false,
+                        readOnly: true,
                         queryMode: 'local',
-                        emptyText: 'Select a eDNA marker ...',
+                        emptyText: 'eDNA marker depends on Biological element field',
                         allowBlank: false,
                         flex: 15,
                         margin: '0 5 0 0',
@@ -318,7 +447,36 @@ Ext.define('EcoAlpsWater.view.main.NewSampleStep0', {
                         }
                     }
                 ]
-            }, {
+            }
+        ]
+    }]
+});
+
+Ext.define('EcoAlpsWater.view.main.NewSampleStep1', {
+    extend: 'Ext.form.Panel',
+    xtype: 'new_sample_step_1',
+
+    frame: false,
+    bodyPadding: 0,
+    scrollable:true,
+    border: false,
+
+    fieldDefaults: {
+        labelAlign: 'right',
+        labelWidth: 180,
+        msgTarget: 'side'
+    },
+
+    items: [{
+        xtype: 'fieldset',
+        title: 'General data',
+        defaultType: 'textfield',
+        defaults: {
+            anchor: '100%'
+        },
+
+        items: [
+            , {
                 xtype: 'container',
                 layout: 'hbox',
                 margin: '0 0 5 0',
@@ -411,25 +569,7 @@ Ext.define('EcoAlpsWater.view.main.NewSampleStep0', {
                 ]
             }
         ]
-    }]
-});
-
-Ext.define('EcoAlpsWater.view.main.NewSampleStep1', {
-    extend: 'Ext.form.Panel',
-    xtype: 'new_sample_step_1',
-
-    frame: false,
-    bodyPadding: 0,
-    scrollable:true,
-    border: false,
-
-    fieldDefaults: {
-        labelAlign: 'right',
-        labelWidth: 180,
-        msgTarget: 'side'
-    },
-
-    items: [{
+    }, {
         xtype: 'fieldset',
         title: 'Field data',
         defaultType: 'textfield',
@@ -503,8 +643,8 @@ Ext.define('EcoAlpsWater.view.main.NewSampleStep1', {
                     {
                         xtype: 'numberfield',
                         fieldLabel: 'Field conductivity',
-                        name: 'conductivity_ph',
-                        itemId: 'conductivity_ph',
+                        name: 'field_conductivity',
+                        itemId: 'field_conductivity',
                         decimalPrecision: 5,
                         allowBlank: true,
                         flex: 15,
@@ -563,6 +703,7 @@ Ext.define('EcoAlpsWater.view.main.NewSampleStep1', {
                         itemId: 'secchi_disk_depth',
                         decimalPrecision: 5,
                         allowBlank: true,
+                        minValue: 0,
                         flex: 15,
                         margin: '0 5 0 0'
                         },
@@ -592,6 +733,7 @@ Ext.define('EcoAlpsWater.view.main.NewSampleStep1', {
                         itemId: 'euphotic_layer',
                         decimalPrecision: 5,
                         allowBlank: true,
+                        minValue: 0,
                         flex: 15,
                         margin: '0 5 0 0'
                         },
@@ -1033,38 +1175,7 @@ Ext.define('EcoAlpsWater.view.main.NewSampleStep2', {
                         }
                     }
                 ]
-            }
-            ]
-    }],
-    initComponent: function() {
-        this.callParent();
-    },
-});
-
-Ext.define('EcoAlpsWater.view.main.NewSampleStep3', {
-    extend: 'Ext.form.Panel',
-    xtype: 'new_sample_step_3',
-
-    frame: false,
-    bodyPadding: 0,
-    scrollable:true,
-    border: false,
-
-    fieldDefaults: {
-        labelAlign: 'right',
-        labelWidth: 180,
-        msgTarget: 'side'
-    },
-
-    items: [{
-        xtype: 'fieldset',
-        title: 'Laboratory data',
-        defaultType: 'textfield',
-        defaults: {
-            anchor: '100%'
-        },
-
-        items: [{
+            }, {
                 xtype: 'container',
                 layout: 'hbox',
                 margin: '0 0 5 0',
@@ -1120,7 +1231,38 @@ Ext.define('EcoAlpsWater.view.main.NewSampleStep3', {
                         }
                     }
                 ]
-            },
+            }
+            ]
+    }],
+    initComponent: function() {
+        this.callParent();
+    },
+});
+
+Ext.define('EcoAlpsWater.view.main.NewSampleStep3', {
+    extend: 'Ext.form.Panel',
+    xtype: 'new_sample_step_3',
+
+    frame: false,
+    bodyPadding: 0,
+    scrollable:true,
+    border: false,
+
+    fieldDefaults: {
+        labelAlign: 'right',
+        labelWidth: 180,
+        msgTarget: 'side'
+    },
+
+    items: [{
+        xtype: 'fieldset',
+        title: 'Laboratory data',
+        defaultType: 'textfield',
+        defaults: {
+            anchor: '100%'
+        },
+
+        items: [
             {
                 xtype: 'container',
                 layout: 'hbox',
@@ -1266,11 +1408,129 @@ Ext.define('EcoAlpsWater.view.main.NewSampleStep3', {
                         }
                     }
                 ]
-            }]
+            }, {
+                xtype: 'container',
+                layout: 'hbox',
+                margin: '0 0 5 0',
+                items: [
+                    {
+                        fieldLabel: 'DNA extraction date',
+                        xtype: 'datefield',
+                        name: 'dna_extraction_date',
+                        itemId: 'dna_extraction_date',
+                        allowBlank: true,
+                        flex: 15,
+                        margin: '0 5 0 0',
+                        listeners: {
+                            change: {
+                                //fn: 'onFieldChange',
+                            }
+                        }
+                        },
+                    {
+                        xtype: 'button',
+                        flex: 1,
+                        glyph: 'xf27a',
+                        tooltip: 'Add comment',
+                        tooltipType: 'title',
+                        listeners: {
+                            click: {
+                                fn: 'onAddComment',
+                            }
+                        }
+                    }
+                ]
+            }, {
+                xtype: 'container',
+                layout: 'hbox',
+                margin: '0 0 5 0',
+                items: [
+                    {
+                        xtype: 'numberfield',
+                        fieldLabel: 'DNA quantity',
+                        name: 'dna_quantity',
+                        itemId: 'dna_quantity',
+                        decimalPrecision: 5,
+                        allowBlank: true,
+                        minValue: 0,
+                        flex: 15,
+                        margin: '0 5 0 0'
+                        },
+                    {
+                        xtype: 'button',
+                        flex: 1,
+                        glyph: 'xf27a',
+                        tooltip: 'Add comment',
+                        tooltipType: 'title',
+                        listeners: {
+                            click: {
+                                fn: 'onAddComment',
+                            }
+                        }
+                    }
+                ]
+            }, {
+                xtype: 'container',
+                layout: 'hbox',
+                margin: '0 0 5 0',
+                items: [
+                    {
+                        xtype: 'numberfield',
+                        fieldLabel: 'DNA quality (A260/280)',
+                        name: 'dna_quality_a260_280',
+                        itemId: 'dna_quality_a260_280',
+                        decimalPrecision: 5,
+                        allowBlank: true,
+                        flex: 15,
+                        margin: '0 5 0 0'
+                        },
+                    {
+                        xtype: 'button',
+                        flex: 1,
+                        glyph: 'xf27a',
+                        tooltip: 'Add comment',
+                        tooltipType: 'title',
+                        listeners: {
+                            click: {
+                                fn: 'onAddComment',
+                            }
+                        }
+                    }
+                ]
+            }, {
+                xtype: 'container',
+                layout: 'hbox',
+                margin: '0 0 5 0',
+                items: [
+                    {
+                        xtype: 'numberfield',
+                        fieldLabel: 'DNA quality (A260/230)',
+                        name: 'dna_quality_a260_230',
+                        itemId: 'dna_quality_a260_230',
+                        decimalPrecision: 5,
+                        allowBlank: true,
+                        flex: 15,
+                        margin: '0 5 0 0'
+                        },
+                    {
+                        xtype: 'button',
+                        flex: 1,
+                        glyph: 'xf27a',
+                        tooltip: 'Add comment',
+                        tooltipType: 'title',
+                        listeners: {
+                            click: {
+                                fn: 'onAddComment',
+                            }
+                        }
+                    }
+                ]
+            },]
     }, {
         xtype: 'fieldset',
         title: 'Linked to archives',
         defaultType: 'textfield',
+        itemId: 'archives_fieldset',
         defaults: {
             anchor: '100%'
         },
@@ -1282,20 +1542,40 @@ Ext.define('EcoAlpsWater.view.main.NewSampleStep3', {
                 margin: '0 0 5 0',
                 items: [
                     {
-                        xtype: 'combobox',
-                        fieldLabel: 'Vertical temperature profiles',
-                        name: 'vertical_temperature_profiles',
-                        itemId: 'vertical_temperature_profiles',
-                        valueField: 'id',
-                        displayField: 'name',
-                        typeAhead: true,
-                        queryMode: 'local',
-                        emptyText: 'Select a temperature profile...',
-                        allowBlank: true,
+                        xtype: 'form',
                         flex: 15,
                         margin: '0 5 0 0',
-                        store: Ext.data.Store()
+                        bodyStyle: {
+                            "background-color": "transparent"
                         },
+                        items: [{
+                            xtype: 'filefield',
+                            fieldLabel: 'Vertical temperature profiles',
+                            name: 'vertical_temperature_profiles',
+                            itemId: 'vertical_temperature_profiles',
+                            buttonText: 'Upload template',
+                            anchor: '100%',
+                            allowBlank: true,
+                            clearOnSubmit: false,
+                            reference: 'vertical_temperature_profiles',
+                            listeners: {
+                                change: 'onProfileTemplateChange'
+                            }
+                        }]
+                    },
+                    {
+                        xtype: 'button',
+                        flex: 1,
+                        glyph: 'f019',
+                        tooltip: 'Download template',
+                        margin: '0 5 0 0',
+                        tooltipType: 'title',
+                        listeners: {
+                            click: {
+                                fn: 'onDownloadTemplate',
+                            }
+                        }
+                    },
                     {
                         xtype: 'button',
                         flex: 1,
@@ -1315,20 +1595,40 @@ Ext.define('EcoAlpsWater.view.main.NewSampleStep3', {
                 margin: '0 0 5 0',
                 items: [
                     {
-                        xtype: 'combobox',
-                        fieldLabel: 'Phytoplankton countings',
-                        name: 'phytoplankton_countings',
-                        itemId: 'phytoplankton_countings',
-                        valueField: 'id',
-                        displayField: 'name',
-                        typeAhead: true,
-                        queryMode: 'local',
-                        emptyText: 'Select a phytoplankton countings...',
-                        allowBlank: true,
+                        xtype: 'form',
                         flex: 15,
                         margin: '0 5 0 0',
-                        store: Ext.data.Store()
+                        bodyStyle: {
+                            "background-color": "transparent"
                         },
+                        items: [{
+                            xtype: 'filefield',
+                            fieldLabel: 'Phytoplankton countings',
+                            name: 'phytoplankton_countings',
+                            itemId: 'phytoplankton_countings',
+                            buttonText: 'Upload template',
+                            anchor: '100%',
+                            allowBlank: true,
+                            clearOnSubmit: false,
+                            reference: 'phytoplankton_countings',
+                            listeners: {
+                                change: 'onProfileTemplateChange'
+                            }
+                        }]
+                    },
+                    {
+                        xtype: 'button',
+                        flex: 1,
+                        glyph: 'f019',
+                        tooltip: 'Download template',
+                        margin: '0 5 0 0',
+                        tooltipType: 'title',
+                        listeners: {
+                            click: {
+                                fn: 'onDownloadTemplate',
+                            }
+                        }
+                    },
                     {
                         xtype: 'button',
                         flex: 1,
@@ -1348,21 +1648,40 @@ Ext.define('EcoAlpsWater.view.main.NewSampleStep3', {
                 margin: '0 0 5 0',
                 items: [
                     {
-                        xtype: 'combobox',
-                        fieldLabel: 'Cyanotoxin samples',
-                        name: 'cyanotoxin_samples',
-                        itemId: 'cyanotoxin_samples',
-                        valueField: 'id',
-                        displayField: 'name',
-                        typeAhead: true,
-                        queryMode: 'local',
-                        emptyText: 'Select a phytoplankton countings...',
-                        allowBlank: true,
+                        xtype: 'form',
                         flex: 15,
                         margin: '0 5 0 0',
-                        store: Ext.data.Store()
+                        bodyStyle: {
+                            "background-color": "transparent"
                         },
+                        items: [{
+                            xtype: 'filefield',
+                            fieldLabel: 'Cyanotoxin samples',
+                            name: 'cyanotoxin_samples',
+                            itemId: 'cyanotoxin_samples',
+                            buttonText: 'Upload template',
+                            anchor: '100%',
+                            allowBlank: true,
+                            clearOnSubmit: false,
+                            reference: 'cyanotoxin_samples',
+                            listeners: {
+                                change: 'onProfileTemplateChange'
+                            }
+                        }]
+                    },
                     {
+                        xtype: 'button',
+                        flex: 1,
+                        glyph: 'f019',
+                        tooltip: 'Download template',
+                        margin: '0 5 0 0',
+                        tooltipType: 'title',
+                        listeners: {
+                            click: {
+                                fn: 'onDownloadTemplate',
+                            }
+                        }
+                    }, {
                         xtype: 'button',
                         flex: 1,
                         glyph: 'xf27a',
@@ -1507,7 +1826,7 @@ Ext.define('EcoAlpsWater.view.main.NewSample', {
     initComponent: function () {
         this.callParent();
         this.controller.getFieldDescriptions();
-        this.controller.getComboBoxValues()
+        this.controller.getComboBoxValues();
     }
 
 });

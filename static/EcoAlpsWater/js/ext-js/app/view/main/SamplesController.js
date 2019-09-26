@@ -3,6 +3,11 @@ Ext.define('EcoAlpsWater.view.main.SamplesController', {
 
     alias: 'controller.samples',
 
+    onProfileTemplateChange: function(me) {
+        var viewport = Ext.ComponentQuery.query('viewport')[0];
+        viewport.down('new_sample').controller.onProfileTemplateChange(me);
+    },
+
     onSamplesGridAfterRender: function(me) {
         me.getStore().reload();
     },
@@ -170,6 +175,100 @@ Ext.define('EcoAlpsWater.view.main.SamplesController', {
         me.up('samples').getStore().reload();
     },
 
+    updateSample: function(me) {
+        var win = me.up('window');
+        var me = this.getView();
+        var cardNum = me.items.items.length - 1;
+        var values = {};
+        for (i = 0; i <= cardNum; i++) {
+            panel = me.down('new_sample_step_' + i.toString());
+            form = panel.getForm();
+            for (var attrname in form.getValues()) {
+                values[attrname] = form.getValues()[attrname];
+                values[attrname + '_comment'] = panel.down('#' + attrname)['comment'];
+            }
+        }
+        values['id'] = me.sample_id;
+        Ext.Ajax.request({
+            url: '/update_sample/',
+            params: values,
+            success: function (response) {
+                if (EcoAlpsWater.current.checkHttpResponse(response)) {
+                    var resData = Ext.decode(response.responseText);
+                    EcoAlpsWater.current.showMessage('info', 'Update sample', 'Sample successfully updated!');
+                    win.close();
+                }
+            },
+            failure: function (response) {
+                console.log('Server error', reponse);
+            }
+        });
+    },
+
+    editMode: function(me) {
+        var panel = me.up('panel');
+        Ext.MessageBox.show({
+            title: 'With great power comes great responsibility',
+            msg: 'Are you sure you want to activate the Edit Mode? This will allow you to change some values of an already imported samples and might be potentially harmful. Do you want to continue?',
+            buttons: Ext.MessageBox.YESNO,
+            icon: Ext.MessageBox.QUESTION,
+            fn: function (a) {
+                if (a == 'yes') {
+                    panel.down('#card-update').setHidden(false);
+                    panel.down('#laboratory_ph').setReadOnly(false);
+                    panel.down('#laboratory_conductivity').setReadOnly(false);
+                    panel.down('#total_alkalinity').setReadOnly(false);
+                    panel.down('#bicarbonates').setReadOnly(false);
+                    panel.down('#nitrate_nitrogen').setReadOnly(false);
+                    panel.down('#sulphates').setReadOnly(false);
+                    panel.down('#chloride').setReadOnly(false);
+                    panel.down('#calcium').setReadOnly(false);
+                    panel.down('#magnesium').setReadOnly(false);
+                    panel.down('#sodium').setReadOnly(false);
+                    panel.down('#potassium').setReadOnly(false);
+                    panel.down('#ammonium').setReadOnly(false);
+                    panel.down('#total_nitrogen').setReadOnly(false);
+                    panel.down('#soluble_reactive_phosphorus').setReadOnly(false);
+                    panel.down('#total_phosphorus').setReadOnly(false);
+                    panel.down('#reactive_silica').setReadOnly(false);
+                    panel.down('#dry_weight').setReadOnly(false);
+                    panel.down('#chlorophyll_a').setReadOnly(false);
+                    panel.down('#dna_extraction_kit').setReadOnly(false);
+                    panel.down('#dna_extraction_date').setReadOnly(false);
+                    panel.down('#dna_quantity').setReadOnly(false);
+                    panel.down('#dna_quality_a260_280').setReadOnly(false);
+                    panel.down('#dna_quality_a260_230').setReadOnly(false);
+                    panel.down('#archives_fieldset').setHidden(false);
+                }
+            }
+        });
+    },
+
+    getComboBoxValues: function() {
+        var me = this;
+        Ext.Ajax.request({
+            url: '/get_combo_field_values/',
+            success: function (response) {
+                var resData = Ext.decode(response.responseText);
+                for (var property in resData.values) {
+                    if (resData.values.hasOwnProperty(property)) {
+                        var view = me.getView().down('#' + property);
+                        if (view && view.store) {
+                            var store = view.getStore()
+                            resData.values[property].forEach(function (i) {
+                                store.insert(0, i);
+                            });
+                        }
+                    }
+                }
+            },
+            failure: function (response) {
+                console.log('Server error', reponse);
+            }
+        });
+
+    },
+
     onSampleDetailWindowAfterRender: function(me) {
         var buttons = me.query('button');
         Ext.Array.each(buttons, function(button) {
@@ -182,6 +281,7 @@ Ext.define('EcoAlpsWater.view.main.SamplesController', {
         var grid = main.down('samples');
         var cardNum = me.items.items.length - 1;
         var params = {'id': grid.getSelection()[0].id, 'description': true};
+        me.sample_id = grid.getSelection()[0].id;
         Ext.Ajax.request({
             url: '/get_samples_complete/',
             params: params,
@@ -192,6 +292,7 @@ Ext.define('EcoAlpsWater.view.main.SamplesController', {
                 Ext.Array.each(fields, function(field) {
                     field.setEmptyText('');
                 });
+                me.down('#archives_fieldset').setHidden(true);
                 for (var property in obj) {
                     if (obj.hasOwnProperty(property)) {
                         var field = me.down('#' + property);

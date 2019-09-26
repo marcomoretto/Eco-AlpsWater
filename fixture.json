@@ -181,8 +181,8 @@
     "model": "EcoAlpsWater.fielddescription",
     "pk": 16,
     "fields": {
-        "field_name": "conductivity_ph",
-        "description": "Unit of measurement: pH units"
+        "field_name": "field_conductivity",
+        "description": "Unit of measurement: μS/cm"
     }
 },
 {

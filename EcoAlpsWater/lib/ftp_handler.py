@@ -6,6 +6,7 @@ from pyftpdlib.handlers import FTPHandler, PassiveDTP, DTPHandler
 import logging
 from django.conf import settings
 
+from EcoAlpsWater.lib.decorator import send_email_to_admin
 from EcoAlpsWater.lib.email import send_email
 from EcoAlpsWater.lib.models.ftp_sample_directory import FTPSampleDirectory
 from EcoAlpsWater.lib.models.sample import Sample
@@ -94,6 +95,7 @@ class EcoAlpsWaterHandler(FTPHandler):
         # do something when a file has been sent
         pass
 
+    @send_email_to_admin('ftp_file_received')
     def on_file_received(self, file):
         # do something when a file has been received
         if file != '/dev/null':
