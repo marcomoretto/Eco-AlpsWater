@@ -325,19 +325,24 @@ Ext.define('EcoAlpsWater.view.main.NewSampleController', {
         var record = combo.getSelectedRecord().data;
         var viewport = Ext.ComponentQuery.query('viewport')[0];
         var main = viewport.down('#main');
-        var station = main.down('#station').getStore().reload();
-        var cardNum = main.down('new_sample').items.items.length - 1;
-        var c = main.down('new_sample').controller;
-        var _old_function = c.updateIDs;
-        c.updateIDs = function() {  }
-        for (i = 0; i <= cardNum; i++) {
-            panel = main.down('new_sample_step_' + i.toString());
-            form = panel.getForm();
-            form.setValues(record);
-        }
-        c.updateIDs = _old_function;
-        win.close();
-        this.__cloneSampleWarning();
+        var station = main.down('#station');
+        var _this = this;
+        station.getStore().on('load', function() {
+            var cardNum = main.down('new_sample').items.items.length - 1;
+            var c = main.down('new_sample').controller;
+            var _old_function = c.updateIDs;
+            c.updateIDs = function () {
+            }
+            for (i = 0; i <= cardNum; i++) {
+                panel = main.down('new_sample_step_' + i.toString());
+                form = panel.getForm();
+                form.setValues(record);
+            }
+            c.updateIDs = _old_function;
+            win.close();
+            _this.__cloneSampleWarning();
+        });
+        station.getStore().reload();
     },
 
     onAddComment: function(me) {

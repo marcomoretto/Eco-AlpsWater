@@ -3,7 +3,7 @@ Ext.define('EcoAlpsWater.view.main.StationsController', {
 
     alias: 'controller.stations',
 
-    onLiveFilterChange: function(me, text, old, event) {
+    onStationLiveFilterChange: function(me, text, old, event) {
         if (text.length < 3) {
             me.up('stations').getStore().proxy.extraParams.filter = '';
             me.up('stations').getStore().reload();

@@ -287,7 +287,7 @@ Ext.define('EcoAlpsWater.LiveFilter', {
     labelWidth:'auto',
 
     listeners: {
-        change: 'onLiveFilterChange'
+        change: 'onStationLiveFilterChange'
     }
 });
 
