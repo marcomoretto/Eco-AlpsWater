@@ -257,7 +257,7 @@ Ext.define('EcoAlpsWater.view.main.NewStationWindow', {
 
 var eawStationsGridStore = new Ext.data.JsonStore({
     autoLoad: false,
-    pageSize: 20,
+    pageSize: 2,
     remoteSort: true,
     proxy: {
         type: 'ajax',

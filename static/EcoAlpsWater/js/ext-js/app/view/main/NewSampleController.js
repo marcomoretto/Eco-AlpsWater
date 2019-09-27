@@ -13,7 +13,7 @@ Ext.define('EcoAlpsWater.view.main.NewSampleController', {
         var sample_code = panel.down('#sample_code').getValue();
         if (form.isValid() && sample_code) {
             form.submit({
-                url: 'upload_excel_profile_file/',
+                url: '/upload_excel_profile_file/',
                 params: {
                     request: JSON.stringify(
                         {

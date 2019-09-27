@@ -179,8 +179,7 @@ class Sample(models.Model):
             'water_body': self.station.drainage_basin.type,
             'water_body_name': self.station.drainage_basin.name,
             'sampling_date': self.sampling_date.strftime('%Y-%m-%d'),
-            'sampling_depth_min': self.sampling_depth_min,
-            'sampling_depth_max': self.sampling_depth_max,
+            'sampling_depth': str(self.sampling_depth_min) + ' - ' + str(self.sampling_depth_max),
             'sampling_volume': self.sampling_volume,
             'depth_type': self.depth_type.name,
             'edna_marker': self.edna_marker.name

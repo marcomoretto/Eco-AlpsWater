@@ -78,13 +78,29 @@ def send_verification_email(request):
 
 
 def get_stations(request):
-    rows = [s.to_dict() for s in Station.objects.all()]
+    rs = Station.objects.order_by('id').all()
+    page = request.POST.get('page', 1)
+    start = request.POST.get('start', 0)
+    limit = request.POST.get('limit', rs.count())
+    filter = request.POST.get('filter', '')
+    st = int(start)
+    en = st + int(limit)
+    if filter:
+        rs = rs.filter(
+            Q(id__icontains=filter) |
+            Q(drainage_basin__type__icontains=filter) |
+            Q(drainage_basin__name__icontains=filter) |
+            Q(name__icontains=filter) |
+            Q(type__icontains=filter)
+        )
+    rows = [s.to_dict() for s in rs[st:en]]
+    total = rs.count()
     return HttpResponse(
-        json.dumps({
-            'success': True,
-            'rows': rows,
-            'total': len(rows)
-        }), content_type="application/json")
+            json.dumps({
+                'success': True,
+                'rows': rows,
+                'total': total
+            }), content_type="application/json")
 
 
 @forward_exception_to_http
@@ -223,10 +239,10 @@ def get_search_field_name(request):
         'id': 'sample_code',
         'name': 'Sample code'
     }, {
-        'id': 'drainage_basin__type',
+        'id': 'station__drainage_basin__type',
         'name': 'Water body type'
     }, {
-        'id': 'drainage_basin__name',
+        'id': 'station__drainage_basin__name',
         'name': 'Water body name'
     }, {
         'id': 'sampling_date',
@@ -238,8 +254,14 @@ def get_search_field_name(request):
         'id': 'cap_code',
         'name': 'Cap code'
     }, {
-        'id': 'sampling_depth',
-        'name': 'Sampling depth'
+        'id': 'sampling_depth_min',
+        'name': 'Sampling depth min'
+    }, {
+        'id': 'sampling_depth_max',
+        'name': 'Sampling depth max'
+    }, {
+        'id': 'sampling_volume',
+        'name': 'Sampling volume'
     }, {
         'id': 'depth_type__name',
         'name': 'Depth type'
@@ -259,11 +281,11 @@ def get_search_field_name(request):
         'id': 'biological_element__name',
         'name': 'Biological element'
     }, {
-        'id': 'sampling_latitude',
-        'name': 'Sampling latitude'
+        'id': 'sampling_matrix',
+        'name': 'Sampling matrix'
     }, {
-        'id': 'sampling_longitude',
-        'name': 'Sampling longitude'
+        'id': 'sampling_strategy',
+        'name': 'Sampling strategy'
     }, {
         'id': 'temperature',
         'name': 'Temperature'
@@ -343,20 +365,11 @@ def get_search_field_name(request):
         'id': 'chlorophyll_a',
         'name': 'Chlorophyll a'
     }, {
-        'id': 'dna_extraction_kit',
+        'id': 'dna_extraction_kit__name',
         'name': 'DNA extraction kit'
     }, {
         'id': 'dna_extraction_date',
         'name': 'DNA extraction date'
-    }, {
-        'id': 'vertical_temperature_profiles',
-        'name': 'Vertical temperature profiles'
-    }, {
-        'id': 'phytoplankton_countings',
-        'name': 'Phytoplankton countings'
-    }, {
-        'id': 'cyanotoxin_samples',
-        'name': 'Cyanotoxin samples'
     }]
     return HttpResponse(
             json.dumps({
@@ -742,8 +755,9 @@ def save_sample(request):
         dna_quality_a260_230=request.POST.get('dna_quality_a260_230', None) or None
     )
 
-    dt = datetime.datetime.strptime(sample.dna_extraction_date, '%m/%d/%Y')
-    sample.dna_extraction_date = datetime.datetime(dt.year, dt.month, dt.day, tzinfo=pytz.UTC)
+    if sample.dna_extraction_date:
+        dt = datetime.datetime.strptime(sample.dna_extraction_date, '%m/%d/%Y')
+        sample.dna_extraction_date = datetime.datetime(dt.year, dt.month, dt.day, tzinfo=pytz.UTC)
 
     full_dir = os.path.join('/tmp/', sample.sample_code)
     files = ['vertical_temperature_profiles',

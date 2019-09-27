@@ -41,11 +41,11 @@ class EcoAlpsWaterFilesystem(AbstractedFS):
         if file_invalid(filename, mode, user):
             self.cmd_channel.server._ignored_files = (self.cmd_channel.username, filename)
             return open('/dev/null', mode)
-        return AbstractedFS.open(self, filename, mode)
+        return super(EcoAlpsWaterFilesystem, self).open(filename, mode)
 
     def chdir(self, path):
         if settings.FTP_SERVER_VAULT_DIRECTORY not in path:
-            AbstractedFS.chdir(self, path)
+            super(EcoAlpsWaterFilesystem, self).chdir(path)
 
 
 class EcoAlpsWaterDTPHandler(DTPHandler):
