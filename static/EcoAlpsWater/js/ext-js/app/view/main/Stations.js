@@ -275,9 +275,9 @@ var eawStationsGridStore = new Ext.data.JsonStore({
     fields: ['id', 'name']
 });
 
-Ext.define('EcoAlpsWater.LiveFilter', {
+Ext.define('EcoAlpsWater.StationLiveFilter', {
     extend: 'Ext.form.field.Text',
-    xtype: 'eaw_livefilter',
+    xtype: 'eaw_station_livefilter',
     requires: [
         'Ext.form.field.Text'
     ],
@@ -291,9 +291,9 @@ Ext.define('EcoAlpsWater.LiveFilter', {
     }
 });
 
-Ext.define('EcoAlpsWater.Paging', {
+Ext.define('EcoAlpsWater.StationPaging', {
     extend: 'Ext.toolbar.Paging',
-    xtype: 'eaw_paging',
+    xtype: 'eaw_station_paging',
     requires: [
         'Ext.toolbar.Paging'
     ],
@@ -327,7 +327,7 @@ Ext.define('EcoAlpsWater.view.main.Stations', {
         dock: 'top',
         items: ['->',
             {
-                xtype: 'eaw_livefilter',
+                xtype: 'eaw_station_livefilter',
                 fieldLabel: 'Filter',
                 name: 'filter'
         }]
@@ -361,7 +361,7 @@ Ext.define('EcoAlpsWater.view.main.Stations', {
                 }
             }
         }]},{
-            xtype: 'eaw_paging',
+            xtype: 'eaw_station_paging',
             store: eawStationsGridStore,
             dock: 'bottom',
             displayInfo: true
