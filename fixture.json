@@ -2,8 +2,8 @@
 {
     "model": "auth.user",
     "fields": {
-        "password": "pbkdf2_sha256$120000$b2ZqkcZr4BHg$KXqkPMuWCocr4jvhkH/20MJQcN3NKZGe9ACWc4amZD0=",
-        "last_login": "2019-02-20T12:15:38.178Z",
+        "password": "pbkdf2_sha256$120000$uiSE8wOHiPOS$hc0u/cLqgoTevV6x/MJgV7hdvnTyBdkGVJYwbWB9rKs=",
+        "last_login": "2019-09-24T13:09:31.417Z",
         "is_superuser": true,
         "username": "admin",
         "first_name": "",
@@ -20,7 +20,7 @@
     "model": "auth.user",
     "fields": {
         "password": "pbkdf2_sha256$120000$Eu7BNgiZUkcq$qBCrytSpsOGGclS08CvL8lhFds7QVFaqdas+Xz3E77Q=",
-        "last_login": "2019-06-14T08:14:37.888Z",
+        "last_login": "2019-09-27T07:14:13.551Z",
         "is_superuser": true,
         "username": "guest",
         "first_name": "",
@@ -31,6 +31,14 @@
         "date_joined": "2019-02-20T13:14:23.901Z",
         "groups": [],
         "user_permissions": []
+    }
+},
+{
+    "model": "sessions.session",
+    "pk": "2gsgqlkoapz9xlij245h9pn9qamabcnk",
+    "fields": {
+        "session_data": "NzY4MWYxYTdhNDE0NTcyOTFkMTIwNjU5ZGQ5OTUzZDBmNzE4OWY0MTp7Il9hdXRoX3VzZXJfaWQiOiIyIiwiX2F1dGhfdXNlcl9iYWNrZW5kIjoiZGphbmdvLmNvbnRyaWIuYXV0aC5iYWNrZW5kcy5Nb2RlbEJhY2tlbmQiLCJfYXV0aF91c2VyX2hhc2giOiI2MzkwNjMyZGNjNDI1N2ExZDA5ZDcwYmUzNGU3ZDY4N2YyNmIwNzY5In0=",
+        "expire_date": "2019-10-11T07:14:13.558Z"
     }
 },
 {
@@ -182,7 +190,7 @@
     "pk": 16,
     "fields": {
         "field_name": "field_conductivity",
-        "description": "Unit of measurement: μS/cm"
+        "description": "Unit of measurement: \u03bcS/cm"
     }
 },
 {
@@ -410,68 +418,83 @@
     }
 },
 {
-    "model": "EcoAlpsWater.biologicalelement",
-    "pk": 1,
+    "model": "EcoAlpsWater.fielddescription",
+    "pk": 45,
     "fields": {
-        "name": "Bacteria"
+        "field_name": "dna_quantity",
+        "description": "Unit of measurement: ng/\u03bcL"
     }
 },
 {
-    "model": "EcoAlpsWater.biologicalelement",
-    "pk": 2,
+    "model": "EcoAlpsWater.fielddescription",
+    "pk": 46,
     "fields": {
-        "name": "Phytoplankton"
+        "field_name": "dna_quality_a260_230",
+        "description": "Unit of measurement: ng/\u03bcL"
     }
 },
 {
-    "model": "EcoAlpsWater.biologicalelement",
-    "pk": 3,
+    "model": "EcoAlpsWater.fielddescription",
+    "pk": 47,
     "fields": {
-        "name": "Diatoms"
+        "field_name": "dna_quality_a260_280",
+        "description": "Unit of measurement: ng/\u03bcL"
     }
 },
 {
-    "model": "EcoAlpsWater.biologicalelement",
-    "pk": 4,
+    "model": "EcoAlpsWater.fielddescription",
+    "pk": 48,
     "fields": {
-        "name": "Biofilm"
+        "field_name": "sample_id",
+        "description": "Sample ID"
     }
 },
 {
-    "model": "EcoAlpsWater.biologicalelement",
-    "pk": 5,
+    "model": "EcoAlpsWater.fielddescription",
+    "pk": 49,
     "fields": {
-        "name": "Fish"
+        "field_name": "sample_code",
+        "description": "Sample code"
     }
 },
 {
-    "model": "EcoAlpsWater.depthtype",
-    "pk": 1,
+    "model": "EcoAlpsWater.fielddescription",
+    "pk": 50,
     "fields": {
-        "name": "Euphotic"
+        "field_name": "sampling_matrix",
+        "description": "Sampling matrix"
     }
 },
 {
-    "model": "EcoAlpsWater.depthtype",
-    "pk": 2,
+    "model": "EcoAlpsWater.fielddescription",
+    "pk": 51,
     "fields": {
-        "name": "Discrete"
+        "field_name": "sampling_strategy",
+        "description": "Sampling strategy"
     }
 },
 {
-    "model": "EcoAlpsWater.depthtype",
-    "pk": 3,
+    "model": "EcoAlpsWater.fielddescription",
+    "pk": 52,
     "fields": {
-        "name": "Substrata"
+        "field_name": "sampling_depth_min",
+        "description": "Sampling depth (min value)"
     }
 },
 {
-    "model": "EcoAlpsWater.drainagebasin",
-    "pk": 1,
+    "model": "EcoAlpsWater.fielddescription",
+    "pk": 53,
     "fields": {
-        "name": "Garda",
-        "type": "Lake",
-        "country": "Italy"
+        "field_name": "sampling_depth_max",
+        "description": "Sampling depth (max value)"
+    }
+},
+{
+    "model": "EcoAlpsWater.fielddescription",
+    "pk": 54,
+    "fields": {
+        "field_name": "sampling_volume",
+        "description": "Sampling volume"
     }
 },
 {
@@ -486,6 +509,193 @@
     "pk": 2,
     "fields": {
         "name": "18S"
+    }
+},
+{
+    "model": "EcoAlpsWater.ednamarker",
+    "pk": 3,
+    "fields": {
+        "name": "12S"
+    }
+},
+{
+    "model": "EcoAlpsWater.ednamarker",
+    "pk": 4,
+    "fields": {
+        "name": "rbcl"
+    }
+},
+{
+    "model": "EcoAlpsWater.biologicalelement",
+    "pk": 1,
+    "fields": {
+        "name": "Bacteria",
+        "code": "B",
+        "edna_marker": 1
+    }
+},
+{
+    "model": "EcoAlpsWater.biologicalelement",
+    "pk": 2,
+    "fields": {
+        "name": "Fish",
+        "code": "F",
+        "edna_marker": 3
+    }
+},
+{
+    "model": "EcoAlpsWater.biologicalelement",
+    "pk": 3,
+    "fields": {
+        "name": "Diatoms",
+        "code": "D",
+        "edna_marker": 4
+    }
+},
+{
+    "model": "EcoAlpsWater.biologicalelement",
+    "pk": 4,
+    "fields": {
+        "name": "Micro-eukaryotes",
+        "code": "M",
+        "edna_marker": 2
+    }
+},
+{
+    "model": "EcoAlpsWater.depthtype",
+    "pk": 1,
+    "fields": {
+        "name": "Euphotic layer",
+        "code": "E"
+    }
+},
+{
+    "model": "EcoAlpsWater.depthtype",
+    "pk": 2,
+    "fields": {
+        "name": "Discrete point",
+        "code": "D"
+    }
+},
+{
+    "model": "EcoAlpsWater.depthtype",
+    "pk": 3,
+    "fields": {
+        "name": "Substrata",
+        "code": "S"
+    }
+},
+{
+    "model": "EcoAlpsWater.depthtype",
+    "pk": 4,
+    "fields": {
+        "name": "Integrated",
+        "code": "I"
+    }
+},
+{
+    "model": "EcoAlpsWater.dnaextractionkit",
+    "pk": 1,
+    "fields": {
+        "name": "NucleoSpin Soil kit (Macherey-Nagel)"
+    }
+},
+{
+    "model": "EcoAlpsWater.dnaextractionkit",
+    "pk": 2,
+    "fields": {
+        "name": "PowerWater Sterivex kit (Qiagen)"
+    }
+},
+{
+    "model": "EcoAlpsWater.mixingtype",
+    "pk": 1,
+    "fields": {
+        "name": "Holomictic"
+    }
+},
+{
+    "model": "EcoAlpsWater.mixingtype",
+    "pk": 2,
+    "fields": {
+        "name": "Monomictic"
+    }
+},
+{
+    "model": "EcoAlpsWater.mixingtype",
+    "pk": 3,
+    "fields": {
+        "name": "Dimictic"
+    }
+},
+{
+    "model": "EcoAlpsWater.mixingtype",
+    "pk": 4,
+    "fields": {
+        "name": "Polymictic"
+    }
+},
+{
+    "model": "EcoAlpsWater.mixingtype",
+    "pk": 5,
+    "fields": {
+        "name": "Meromictic"
+    }
+},
+{
+    "model": "EcoAlpsWater.mixingtype",
+    "pk": 6,
+    "fields": {
+        "name": "Amictic"
+    }
+},
+{
+    "model": "EcoAlpsWater.samplingmatrix",
+    "pk": 1,
+    "fields": {
+        "name": "Water",
+        "code": "W"
+    }
+},
+{
+    "model": "EcoAlpsWater.samplingmatrix",
+    "pk": 2,
+    "fields": {
+        "name": "Biofilm",
+        "code": "B"
+    }
+},
+{
+    "model": "EcoAlpsWater.samplingstrategy",
+    "pk": 1,
+    "fields": {
+        "name": "Discrete point sample",
+        "code": "P"
+    }
+},
+{
+    "model": "EcoAlpsWater.samplingstrategy",
+    "pk": 2,
+    "fields": {
+        "name": "Depth integrated point sample",
+        "code": "D"
+    }
+},
+{
+    "model": "EcoAlpsWater.samplingstrategy",
+    "pk": 3,
+    "fields": {
+        "name": "Spatially integrated sample",
+        "code": "S"
+    }
+},
+{
+    "model": "EcoAlpsWater.drainagebasin",
+    "pk": 1,
+    "fields": {
+        "name": "Garda",
+        "type": "Lake",
+        "country": "Italy"
     }
 },
 {
@@ -537,7 +747,7 @@
             "guest"
         ],
         "group": 1,
-        "last_login": "2019-03-21T08:57:55.211Z",
+        "last_login": "2019-09-27T07:26:32.184Z",
         "home_dir": "/app/ftp-data"
     }
 }
