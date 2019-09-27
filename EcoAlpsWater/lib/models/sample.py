@@ -134,7 +134,7 @@ class Sample(models.Model):
             'depth_type': self.depth_type_id,
             'edna_marker': self.edna_marker_id,
             'mean_river_outflow': self.mean_river_outflow,
-            'mixing_type': self.mixing_type.name,
+            'mixing_type': self.mixing_type_id,
             'catchment_area': self.catchment_area,
             'temperature': self.temperature,
             'field_ph': self.field_ph,

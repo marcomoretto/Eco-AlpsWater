@@ -325,34 +325,38 @@ Ext.define('EcoAlpsWater.view.main.SamplesController', {
         var c = main.down('new_sample').controller;
         var grid = me.up('samples');
         var params = {'id': grid.getSelection()[0].id};
-        Ext.Ajax.request({
-            url: '/get_samples_complete/',
-            params: params,
-            success: function (response) {
-                var station = main.down('#station').getStore().reload();
-                var resData = Ext.decode(response.responseText);
-                main.down('#sampling_matrix').suspendEvents();
-                EcoAlpsWater.current.showPanel('new_sample');
-                var _old_function = c.updateIDs;
-                c.updateIDs = function() {  }
-                for (i = 0; i <= cardNum; i++) {
-                    panel = main.down('new_sample_step_' + i.toString());
-                    form = panel.getForm();
-                    form.setValues(resData.rows[0]);
+        var station = main.down('#station');
+        station.getStore().on('load', function() {
+            Ext.Ajax.request({
+                url: '/get_samples_complete/',
+                params: params,
+                success: function (response) {
+                    var resData = Ext.decode(response.responseText);
+                    main.down('#sampling_matrix').suspendEvents();
+                    EcoAlpsWater.current.showPanel('new_sample');
+                    var _old_function = c.updateIDs;
+                    c.updateIDs = function() {  }
+                    for (i = 0; i <= cardNum; i++) {
+                        panel = main.down('new_sample_step_' + i.toString());
+                        form = panel.getForm();
+                        form.setValues(resData.rows[0]);
+                    }
+                    c.updateIDs = _old_function;
+                    main.down('#sampling_matrix').resumeEvents();
+                    var sampling_volume = main.down('#sampling_volume');
+                    if (sampling_volume.getValue()) {
+                        sampling_volume.setDisabled(false);
+                    }
+                    var newSamplePanel = viewport.down('new_sample').controller.__cloneSampleWarning();
+                    main.down('#archives_fieldset').setDisabled(false);
+                    station.getStore().clearListeners();
+                },
+                failure: function (response) {
+                    console.log('Server error', reponse);
                 }
-                c.updateIDs = _old_function;
-                main.down('#sampling_matrix').resumeEvents();
-                var sampling_volume = main.down('#sampling_volume');
-                if (sampling_volume.getValue()) {
-                    sampling_volume.setDisabled(false);
-                }
-                var newSamplePanel = viewport.down('new_sample').controller.__cloneSampleWarning();
-                main.down('#archives_fieldset').setDisabled(false);
-            },
-            failure: function (response) {
-                console.log('Server error', reponse);
-            }
+            });
         });
+        station.getStore().reload();
     },
 
     onItemSelect: function (me, selected, eOpts) {

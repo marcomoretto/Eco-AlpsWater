@@ -79,27 +79,6 @@ class send_email_to_admin(object):
         return wrapped_f
 
 
-def _send_email_to_admin(argument):
-    def send_email_to_admin(function):
-        def wrapper(*args, **kwargs):
-            request = args[0]
-            user = request.user.username
-            admin_mail = ''
-            sample_code = ''
-            send_email(admin_mail,
-               'Eco-AlpsWater sample updated: ' + sample_code,
-               '''
-               Dear admin,
-               user {user} just performed an operation on sample {sample_code}
-               '''.format(
-
-               )
-            )
-            return function(*args, **kwargs)
-        return wrapper
-    return decorator
-
-
 def forward_exception_to_http(func):
     def func_wrapper(*args, **kwargs):
         try:
