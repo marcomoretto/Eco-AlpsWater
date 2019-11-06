@@ -31,4 +31,6 @@ urlpatterns = [
     url(r'^download_template/$', views.download_template, name='download_template'),
     url(r'^upload_excel_profile_file/$', views.upload_excel_profile_file, name='upload_excel_profile_file'),
     url(r'^update_sample/$', views.update_sample, name='update_sample'),
+    url(r'^get_institutes_short_names/$', views.get_institutes_short_names, name='get_institutes_short_names'),
+    url(r'^add_tracking_comment/$', views.add_tracking_comment, name='add_tracking_comment'),
 ]

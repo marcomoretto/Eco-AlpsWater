@@ -105,8 +105,8 @@ Ext.define('EcoAlpsWater.view.main.NewSampleController', {
                 var resData = Ext.decode(response.responseText);
                 sample_id.setValue(resData['ids']['sample_id']);
                 sample_code.setValue(resData['ids']['sample_code']);
-                water_body_code.setValue(resData['ids']['water_body_code']);
-                cap_code.setValue(resData['ids']['cap_code']);
+                //water_body_code.setValue(resData['ids']['water_body_code']);
+                //cap_code.setValue(resData['ids']['cap_code']);
 
                 if (upload_vertical_temperature_profiles.getValue() ||
                     upload_phytoplankton_countings.getValue() ||

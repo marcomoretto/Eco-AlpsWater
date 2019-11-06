@@ -7,6 +7,7 @@ from django.dispatch import receiver
 class EAWUser(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
     institute = models.TextField(blank=True, null=True)
+    institute_short = models.TextField(blank=True, null=True)
 
 
 @receiver(post_save, sender=User)

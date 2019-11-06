@@ -8,8 +8,134 @@ Ext.define('EcoAlpsWater.view.main.SamplesController', {
         viewport.down('new_sample').controller.onProfileTemplateChange(me);
     },
 
+    onTrackingCommentsValueChange: function(me) {
+        var panel = me.up('panel');
+        var type = panel.down('#type');
+        var amount = panel.down('#amount');
+        var keeper_sender = panel.down('#keeper_sender');
+        var receiver = panel.down('#receiver');
+        var date = panel.down('#date');
+        var ship_temperature = panel.down('#shipping_temperature');
+        var storage_period = panel.down('#storage_period');
+        var quantity_unit = panel.down('#quantity_unit');
+        var quantity = panel.down('#quantity');
+        var temperature = panel.down('#temperature');
+        var tracking_comment = panel.down('#tracking_comment');
+
+        switch (type.getValue()) {
+            case 'send':
+                keeper_sender.setDisabled(false);
+                amount.setDisabled(false);
+                receiver.setDisabled(false);
+                date.setDisabled(false);
+                ship_temperature.setDisabled(false);
+                storage_period.setDisabled(true);
+                quantity_unit.setDisabled(true);
+                quantity.setDisabled(true);
+                temperature.setDisabled(true);
+                break;
+            case 'receive':
+                keeper_sender.setDisabled(false);
+                amount.setDisabled(true);
+                receiver.setDisabled(false);
+                date.setDisabled(false);
+                ship_temperature.setDisabled(true);
+                storage_period.setDisabled(true);
+                quantity_unit.setDisabled(true);
+                quantity.setDisabled(true);
+                temperature.setDisabled(true);
+                break;
+            case 'store':
+                keeper_sender.setDisabled(false);
+                amount.setDisabled(false);
+                receiver.setDisabled(true);
+                date.setDisabled(true);
+                ship_temperature.setDisabled(true);
+                storage_period.setDisabled(false);
+                quantity_unit.setDisabled(true);
+                quantity.setDisabled(true);
+                temperature.setDisabled(false);
+                break;
+        };
+
+        if (amount.getValue() == 'aliquot' && !amount.disabled) {
+            quantity_unit.setDisabled(false);
+            quantity.setDisabled(false);
+        } else {
+            quantity_unit.setDisabled(true);
+            quantity.setDisabled(true);
+        }
+
+        var text = "";
+        if (type.getValue() == 'send' && amount.getValue() == 'whole') {
+            var ship_temp = ship_temperature.getValue();
+            var send = keeper_sender.getValue();
+            var rec = receiver.getValue();
+            var day = Ext.Date.format(date.getValue(), 'm/d/Y');
+            text = `The sample was shipped ${ship_temp} from ${send} to ${rec} on ${day}`
+        }
+        if (type.getValue() == 'send' && amount.getValue() == 'aliquot') {
+            var qua = quantity_unit.getValue();
+            var ship_temp = ship_temperature.getValue();
+            var send = keeper_sender.getValue();
+            var rec = receiver.getValue();
+            var day = Ext.Date.format(date.getValue(), 'm/d/Y');
+            var val = quantity.getValue();
+            text = `A ${val} ${qua} aliquot of the sample was shipped ${ship_temp} from ${send} to ${rec} on ${day}`
+        }
+        if (type.getValue() == 'receive') {
+            var send = keeper_sender.getValue();
+            var rec = receiver.getValue();
+            var day = Ext.Date.format(date.getValue(), 'm/d/Y');
+            text = `The sample/aliquot was received by ${send} from ${rec} on ${day}`
+        }
+        if (type.getValue() == 'store' && amount.getValue() == 'whole') {
+            var send = keeper_sender.getValue();
+            var per = storage_period.getValue();
+            var tem = temperature.getValue();
+            text = `The sample was stored at ${tem} °C at ${send} for ${per} term storage`
+        }
+        if (type.getValue() == 'store' && amount.getValue() == 'aliquot') {
+            var qua = quantity_unit.getValue();
+            var send = keeper_sender.getValue();
+            var per = storage_period.getValue();
+            var tem = temperature.getValue();
+            var val = quantity.getValue();
+            text = `A ${val} ${qua} aliquot of the sample was stored at ${tem} °C at ${send} for ${per} term storage`
+        }
+        tracking_comment.setValue(text);
+    },
+
+    onAddComment: function(me) {
+        var panel = me.up('add_tracking_comment_window');
+        var sample_id = panel.sample_id;
+        var tracking_comment = panel.down('#tracking_comment');
+        var comment = tracking_comment.getValue();
+        var params = {'params': JSON.stringify({'id': sample_id, 'comment': comment})};
+        var viewport = Ext.ComponentQuery.query('viewport')[0];
+        var main = viewport.down('#main');
+        var grid = main.down('samples');
+        Ext.Ajax.request({
+            url: '/add_tracking_comment/',
+            params: params,
+            success: function (response) {
+                grid.getStore().reload();
+                panel.close();
+            },
+            failure: function (response) {
+                console.log('Server error', reponse);
+                panel.close();
+            }
+        });
+    },
+
     onSamplesGridAfterRender: function(me) {
         me.getStore().reload();
+        me.plugins.forEach(function(e) {
+            if (e.ptype == "rowwidget") {
+                e.expanderColumn.setText('Comments');
+            }
+        });
     },
 
     onAdvancedSearchCollapse: function(me) {
@@ -359,26 +485,46 @@ Ext.define('EcoAlpsWater.view.main.SamplesController', {
         station.getStore().reload();
     },
 
+    onAddTrackingComment: function(me) {
+        var sample_id = me.up('grid').getSelection()[0].id;
+        Ext.create({
+            xtype: 'add_tracking_comment_window',
+            sample_id: sample_id
+        });
+    },
+
     onItemSelect: function (me, selected, eOpts) {
         var grid = me.view.up('samples');
         var selection = grid.getSelection().length == 0;
         var selection2 = grid.getSelection().length != 1;
-        grid.down('#barcode').setDisabled(selection);
-        grid.down('#env_meta_data').setDisabled(selection);
-        grid.down('#sequence_file').setDisabled(selection);
-        grid.down('#clone_sample').setDisabled(selection2);
-        grid.down('#view_details').setDisabled(selection2);
+        var canEdit = true;
+        grid.getSelection().forEach(function(e) {
+            canEdit = canEdit && e['data']['can_edit'];
+        });
+        grid.down('#barcode').setDisabled(selection || !canEdit);
+        grid.down('#env_meta_data').setDisabled(selection || !canEdit);
+        grid.down('#sequence_file').setDisabled(selection || !canEdit);
+        grid.down('#clone_sample').setDisabled(selection2 || !canEdit);
+        grid.down('#view_details').setDisabled(selection2 || !canEdit);
+
+        grid.down('#add_tracking_comment').setDisabled(selection2);
     },
 
     onItemDeselect: function (me, selected, eOpts) {
         var grid = me.view.up('samples');
         var selection = grid.getSelection().length == 0;
         var selection2 = grid.getSelection().length != 1;
-        grid.down('#barcode').setDisabled(selection);
-        grid.down('#env_meta_data').setDisabled(selection);
-        grid.down('#sequence_file').setDisabled(selection);
-        grid.down('#clone_sample').setDisabled(selection2);
-        grid.down('#view_details').setDisabled(selection2);
+        var canEdit = true;
+        grid.getSelection().forEach(function(e) {
+            canEdit = canEdit && e['data']['can_edit'];
+        });
+        grid.down('#barcode').setDisabled(selection || !canEdit);
+        grid.down('#env_meta_data').setDisabled(selection || !canEdit);
+        grid.down('#sequence_file').setDisabled(selection || !canEdit);
+        grid.down('#clone_sample').setDisabled(selection2 || !canEdit);
+        grid.down('#view_details').setDisabled(selection2 || !canEdit);
+
+        grid.down('#add_tracking_comment').setDisabled(selection2);
     },
 
     showNext: function () {

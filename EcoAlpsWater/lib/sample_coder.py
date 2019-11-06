@@ -1,7 +1,7 @@
 import math
 import datetime
 
-from EcoAlpsWater.lib.models.biological_element import BiologicalElement
+#from EcoAlpsWater.lib.models.biological_element import BiologicalElement
 from EcoAlpsWater.lib.models.depth_type import DepthType
 from EcoAlpsWater.lib.models.drainage_basin import DrainageBasin
 from EcoAlpsWater.lib.models.sampling_matrix import SamplingMatrix
@@ -12,7 +12,7 @@ from EcoAlpsWater.lib.models.station import Station
 class SampleCoder:
 
     def __init__(self, biological_element_id, station_id, depth_min, depth_max, depth_type_id, sampling_date, sampling_matrix_id, sampling_strategy_id):
-        self.biological_element_id = biological_element_id
+        #self.biological_element_id = biological_element_id
         self.station_id = station_id
         self.depth_min = depth_min
         self.depth_max = depth_max
@@ -55,9 +55,9 @@ class SampleCoder:
         if self.depth_max:
             depth_max = '%03d' % int(self.depth_max)
 
-        be = '0'
-        if self.biological_element_id:
-            be = str(self.biological_element_id)
+        #be = '0'
+        #if self.biological_element_id:
+        #    be = str(self.biological_element_id)
 
         sm = '0'
         if self.sampling_matrix_id:
@@ -71,7 +71,7 @@ class SampleCoder:
         if self.station_id:
             st = '%02d' % int(self.station_id)
 
-        return sample_id + year + sampling_month + sampling_day + dt + depth_min + depth_max + be + sm + ss + st
+        return sample_id + year + sampling_month + sampling_day + dt + depth_min + depth_max + sm + ss + st
 
     def get_sample_code(self):
         sampling_month = ''
@@ -87,7 +87,7 @@ class SampleCoder:
 
         station = Station.objects.filter(id=self.station_id).first() or Station()
         drainage_basin = station.drainage_basin if self.station_id else DrainageBasin()
-        biological_element = BiologicalElement.objects.filter(id=self.biological_element_id).first() or BiologicalElement()
+        #biological_element = BiologicalElement.objects.filter(id=self.biological_element_id).first() or BiologicalElement()
         depth_type = DepthType.objects.filter(id=self.depth_type_id).first() or DepthType()
         sampling_matrix = SamplingMatrix.objects.filter(id=self.sampling_matrix_id).first() or SamplingMatrix()
         sampling_strategy = SamplingStrategy.objects.filter(id=self.sampling_strategy_id).first() or SamplingStrategy()
@@ -100,12 +100,12 @@ class SampleCoder:
             name = drainage_basin.name[:5]
         else:
             name = drainage_basin.name + ''.join(['x'] * (5 - len(drainage_basin.name)))
-        be = biological_element.code
+        #be = biological_element.code
         st = '%02d' % int(self.station_id) if self.station_id else '00'
         sm = sampling_matrix.code
         ss = sampling_strategy.code
 
-        sample_code = '{country}_{db}_{name}_{year}_{month}_{day}_{layer}_{depth_min}_{depth_max}_{be}_{sm}_{ss}_{st}'.format(
+        sample_code = '{country}_{db}_{name}_{year}_{month}_{day}_{layer}_{depth_min}_{depth_max}_{sm}_{ss}_{st}'.format(
             country=country,
             db=db,
             name=name,
@@ -115,7 +115,6 @@ class SampleCoder:
             layer=dt,
             depth_min=self.depth_min,
             depth_max=self.depth_max,
-            be=be,
             sm=sm,
             ss=ss,
             st=st

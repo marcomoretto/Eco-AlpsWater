@@ -1,3 +1,400 @@
+Ext.define('EcoAlpsWater.view.main.AddTrackingCommentsWindow', {
+    extend: 'Ext.window.Window',
+    xtype: 'add_tracking_comment_window',
+
+    requires: [
+        'Ext.window.Window',
+        'Ext.form.Panel'
+    ],
+
+    controller: 'samples',
+    bodyPadding: 10,
+    title: 'New tracking comment',
+    closable: true,
+    autoShow: true,
+    modal: true,
+    width: 900,
+    height: 800,
+    layout: 'fit',
+
+    items: [
+        {
+            id: 'new_tracking_comment',
+            itemId: 'new_tracking_comment',
+            xtype: 'form',
+            frame: false,
+            bodyPadding: 0,
+            scrollable:false,
+            border: false,
+            layout: {
+                type: 'vbox',
+                pack: 'start',
+                align: 'stretch'
+            },
+
+            items: [{
+            xtype: 'fieldset',
+            title: 'Comment template fields',
+            defaultType: 'textfield',
+            defaults: {
+                anchor: '100%'
+            },
+
+            items: [{
+                xtype: 'container',
+                layout: {
+                    type: 'hbox',
+                    pack: 'start',
+                    align: 'stretch'
+                },
+                margin: '0 0 5 0',
+                items: [
+                    {
+                        xtype: 'combobox',
+                        fieldLabel: 'Type',
+                        name: 'type',
+                        itemId: 'type',
+                        valueField: 'id',
+                        displayField: 'name',
+                        editable: false,
+                        queryMode: 'local',
+                        emptyText: 'Select type ...',
+                        allowBlank: true,
+                        disabled: false,
+                        flex: 1,
+                        margin: '0 5 0 0',
+                        store: {
+                            autoLoad: true,
+                            fields: ['id', 'name'],
+                            data: [{
+                                'id': 'send',
+                                'name': 'Send sample'
+                            }, {
+                                'id': 'receive',
+                                'name': 'Receive sample'
+                            }, {
+                                'id': 'store',
+                                'name': 'Store sample'
+                            }]
+                        },
+                        listeners: {
+                            change: {
+                                fn: 'onTrackingCommentsValueChange',
+                            }
+                        }
+                    }, {
+                        xtype: 'combobox',
+                        fieldLabel: 'Amount',
+                        name: 'amount',
+                        itemId: 'amount',
+                        valueField: 'id',
+                        displayField: 'name',
+                        editable: false,
+                        disabled: false,
+                        queryMode: 'local',
+                        emptyText: 'Select amount ...',
+                        allowBlank: true,
+                        flex: 1,
+                        margin: '0 5 0 0',
+                        store: {
+                            autoLoad: true,
+                            fields: ['id', 'name'],
+                            data: [{
+                                'id': 'whole',
+                                'name': 'Whole'
+                            }, {
+                                'id': 'aliquot',
+                                'name': 'Aliquot'
+                            }]
+                        },
+                        listeners: {
+                            change: {
+                                fn: 'onTrackingCommentsValueChange',
+                            }
+                        }
+                    }
+                ]
+            }, {
+                xtype: 'container',
+                layout: {
+                    type: 'hbox',
+                    pack: 'start',
+                    align: 'stretch'
+                },
+                margin: '0 0 5 0',
+                items: [
+                    {
+                        xtype: 'combobox',
+                        fieldLabel: 'Keeper (sender)',
+                        name: 'keeper_sender',
+                        itemId: 'keeper_sender',
+                        valueField: 'id',
+                        displayField: 'name',
+                        editable: false,
+                        disabled: true,
+                        queryMode: 'local',
+                        emptyText: 'Select institute ...',
+                        allowBlank: true,
+                        flex: 1,
+                        margin: '0 5 0 0',
+                        store: {
+                            autoLoad: true,
+                            fields: ['id', 'name'],
+                            proxy: {
+                                type: 'ajax',
+                                url: '/get_institutes_short_names/',
+                                reader: {
+                                    type: 'json',
+                                    rootProperty: 'rows'
+                                }
+                            }
+                        },
+                        listeners: {
+                            change: {
+                                fn: 'onTrackingCommentsValueChange',
+                            }
+                        }
+                    }, {
+                        xtype: 'combobox',
+                        fieldLabel: 'Receiver',
+                        name: 'receiver',
+                        itemId: 'receiver',
+                        valueField: 'id',
+                        displayField: 'name',
+                        editable: false,
+                        disabled: true,
+                        queryMode: 'local',
+                        emptyText: 'Select institute ...',
+                        allowBlank: true,
+                        flex: 1,
+                        margin: '0 5 0 0',
+                        store: {
+                            autoLoad: true,
+                            fields: ['id', 'name'],
+                            proxy: {
+                                type: 'ajax',
+                                url: '/get_institutes_short_names/',
+                                reader: {
+                                    type: 'json',
+                                    rootProperty: 'rows'
+                                }
+                            }
+                        },
+                        listeners: {
+                            change: {
+                                fn: 'onTrackingCommentsValueChange',
+                            }
+                        }
+                    }
+                ]
+            }, {
+                xtype: 'container',
+                layout: {
+                    type: 'hbox',
+                    pack: 'start',
+                    align: 'stretch'
+                },
+                margin: '0 0 5 0',
+                items: [
+                    {
+                        xtype: 'datefield',
+                        fieldLabel: 'Date',
+                        name: 'date',
+                        itemId: 'date',
+                        allowBlank: true,
+                        disabled: true,
+                        flex: 1,
+                        margin: '0 5 0 0',
+                        listeners: {
+                            change: {
+                                fn: 'onTrackingCommentsValueChange',
+                            }
+                        }
+                    }, {
+                        xtype: 'combobox',
+                        fieldLabel: 'Shipping temp',
+                        name: 'shipping_temperature',
+                        itemId: 'shipping_temperature',
+                        valueField: 'id',
+                        displayField: 'name',
+                        editable: false,
+                        disabled: true,
+                        queryMode: 'local',
+                        emptyText: 'Select temperature ...',
+                        allowBlank: true,
+                        flex: 1,
+                        margin: '0 5 0 0',
+                        store: {
+                            autoLoad: true,
+                            fields: ['id', 'name'],
+                            data: [{
+                                'id': 'at room temperature',
+                                'name': 'Room temperature'
+                            }, {
+                                'id': 'cooled',
+                                'name': 'Cooled'
+                            }, {
+                                'id': 'frozen',
+                                'name': 'Frozen'
+                            }]
+                        },
+                        listeners: {
+                            change: {
+                                fn: 'onTrackingCommentsValueChange',
+                            }
+                        }
+                    }
+                ]
+            }, {
+                xtype: 'container',
+                layout: {
+                    type: 'hbox',
+                    pack: 'start',
+                    align: 'stretch'
+                },
+                margin: '0 0 5 0',
+                items: [
+                    {
+                        xtype: 'combobox',
+                        fieldLabel: 'Storage period',
+                        name: 'storage_period',
+                        itemId: 'storage_period',
+                        valueField: 'id',
+                        displayField: 'name',
+                        editable: false,
+                        disabled: true,
+                        queryMode: 'local',
+                        emptyText: 'Select period ...',
+                        allowBlank: true,
+                        flex: 1,
+                        margin: '0 5 0 0',
+                        store: {
+                            autoLoad: true,
+                            fields: ['id', 'name'],
+                            data: [{
+                                'id': 'short',
+                                'name': 'Short'
+                            }, {
+                                'id': 'long',
+                                'name': 'Long'
+                            }]
+                        },
+                        listeners: {
+                            change: {
+                                fn: 'onTrackingCommentsValueChange',
+                            }
+                        }
+                    }, {
+                        xtype: 'combobox',
+                        fieldLabel: 'Quantity unit',
+                        name: 'quantity_unit',
+                        itemId: 'quantity_unit',
+                        valueField: 'id',
+                        displayField: 'name',
+                        editable: false,
+                        disabled: true,
+                        queryMode: 'local',
+                        emptyText: 'Select unit ...',
+                        allowBlank: true,
+                        flex: 1,
+                        margin: '0 5 0 0',
+                        store: {
+                            autoLoad: true,
+                            fields: ['id', 'name'],
+                            data: [{
+                                'id': 'L',
+                                'name': 'L'
+                            }, {
+                                'id': 'mL',
+                                'name': 'mL'
+                            }, {
+                                'id': 'μL',
+                                'name': 'μL'
+                            }]
+                        },
+                        listeners: {
+                            change: {
+                                fn: 'onTrackingCommentsValueChange',
+                            }
+                        }
+                    }
+                ]
+            }, {
+                xtype: 'container',
+                layout: {
+                    type: 'hbox',
+                    pack: 'start',
+                    align: 'stretch'
+                },
+                margin: '0 0 5 0',
+                items: [
+                    {
+                        xtype: 'numberfield',
+                        fieldLabel: 'Temperature °C',
+                        name: 'temperature',
+                        itemId: 'temperature',
+                        emptyText: 'Select temperature ...',
+                        allowBlank: true,
+                        disabled: true,
+                        flex: 1,
+                        margin: '0 5 0 0',
+                        listeners: {
+                            change: {
+                                fn: 'onTrackingCommentsValueChange',
+                            }
+                        }
+                    }, {
+                        xtype: 'numberfield',
+                        fieldLabel: 'Quantity',
+                        name: 'quantity',
+                        itemId: 'quantity',
+                        emptyText: 'Select quantity ...',
+                        allowBlank: true,
+                        disabled: true,
+                        flex: 1,
+                        margin: '0 5 0 0',
+                        listeners: {
+                            change: {
+                                fn: 'onTrackingCommentsValueChange',
+                            }
+                        }
+                    }
+                ]
+            }]}, {
+                xtype: 'textareafield',
+                fieldLabel: 'Comment',
+                name: 'tracking_comment',
+                itemId: 'tracking_comment',
+                allowBlank: false,
+                flex: 5
+            }
+            ],
+            bbar: [
+                '->', {
+                    xtype: 'button',
+                    glyph: 'f086',
+                    itemId: 'add_comment',
+                    text: 'Add comment',
+                    formBind: true,
+                    listeners: {
+                        click: {
+                            fn: 'onAddComment'
+                        }
+                    }
+                }
+            ]
+        }
+    ],
+
+    listeners: {
+
+    },
+
+    initComponent: function() {
+        this.callParent();
+    }
+});
+
 Ext.define('EcoAlpsWater.view.main.ViewSampleDetailsWindow', {
     extend: 'Ext.window.Window',
     xtype: 'view_sample_details',
@@ -76,9 +473,14 @@ Ext.define('EcoAlpsWater.view.main.ViewSampleDetailsWindow', {
     }
 });
 
+var tooltipRenderer = function(value, metaData) {
+    metaData.tdAttr = Ext.String.format('data-qtip="{0}"', value);
+    return value;
+};
+
 var eawSamplesGridStore = new Ext.data.JsonStore({
     autoLoad: false,
-    pageSize: 10,
+    pageSize: 50,
     remoteSort: true,
     proxy: {
         type: 'ajax',
@@ -325,6 +727,17 @@ Ext.define('EcoAlpsWater.view.main.Samples', {
         overflowHandler: 'menu',
         dock: 'bottom',
         items: ['->', {
+            text: 'Add tracking comments',
+            glyph: 'f08d',
+            itemId: 'add_tracking_comment',
+            name: 'add_tracking_comment',
+            disabled: true,
+            listeners: {
+                click: {
+                    fn: 'onAddTrackingComment'
+                }
+            }
+        }, {
             text: 'View details',
             glyph: 'f06e',
             itemId: 'view_details',
@@ -424,11 +837,11 @@ Ext.define('EcoAlpsWater.view.main.Samples', {
         dataIndex: 'sample_code',
         flex: 3
     }, {
-        text: 'Biological element',
-        name: 'biological_element',
-        itemId: 'biological_element',
-        dataIndex: 'biological_element',
-        flex: 2
+        text: 'User',
+        name: 'username',
+        itemId: 'username',
+        dataIndex: 'username',
+        flex: 3
     }, {
         text: 'Water body',
         name: 'water_body',
@@ -458,21 +871,49 @@ Ext.define('EcoAlpsWater.view.main.Samples', {
         name: 'sampling_depth',
         itemId: 'sampling_depth',
         dataIndex: 'sampling_depth',
-        flex: 1
+        flex: 2
     }, {
         text: 'Depth type',
         name: 'depth_type',
         itemId: 'depth_type',
         dataIndex: 'depth_type',
         flex: 2
-    }, {
-        text: 'eDNA marker',
-        name: 'edna_marker',
-        itemId: 'edna_marker',
-        dataIndex: 'edna_marker',
-        flex: 1
     }
     ],
+
+    plugins: [{
+        ptype: 'rowwidget',
+        headerWidth: 100,
+        widget: {
+            xtype: 'grid',
+            selModel: 'rowmodel',
+            autoLoad: false,
+            bind: {
+                store: {
+                    data: '{record.tracking_comments}'
+                },
+                title: 'Tracking comments'
+            },
+            columns: {
+                defaults: {
+                    renderer: tooltipRenderer
+                },
+                items:[{
+                    header: 'Commenter',
+                    dataIndex: 'commenter',
+                    flex: 1
+                }, {
+                    header: 'Date',
+                    dataIndex: 'date',
+                    flex: 1
+                }, {
+                    header: 'Comment',
+                    dataIndex: 'comment',
+                    flex: 5
+                }]
+            }
+        }
+    }],
     
     listeners: {
         afterrender: 'onSamplesGridAfterRender',

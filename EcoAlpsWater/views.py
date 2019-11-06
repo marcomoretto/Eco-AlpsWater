@@ -26,6 +26,7 @@ from EcoAlpsWater.lib.models.comment import Comment
 from EcoAlpsWater.lib.models.depth_type import DepthType
 from EcoAlpsWater.lib.models.dna_extraction_kit import DNAExtractionKit
 from EcoAlpsWater.lib.models.drainage_basin import DrainageBasin
+from EcoAlpsWater.lib.models.eaw_user import EAWUser
 from EcoAlpsWater.lib.models.edna_marker import EDNAMarker
 from EcoAlpsWater.lib.models.field_description import FieldDescription
 from EcoAlpsWater.lib.models.geographical_point import GeographicalPoint
@@ -36,6 +37,7 @@ from EcoAlpsWater.lib.models.sampling_strategy import SamplingStrategy
 from EcoAlpsWater.lib.models.station import Station
 from EcoAlpsWater.lib.sample_coder import SampleCoder
 from EcoAlpsWater.lib.models.ftp_sample_directory import FTPSampleDirectory
+from EcoAlpsWater.lib.models.tracking_comment import TrackingComment
 
 import barcode
 from barcode.writer import ImageWriter
@@ -174,7 +176,7 @@ def get_user_info(request):
             json.dumps({
                 'user_info': {
                     'user_name': request.user.username,
-                    'institute': request.user.eawuser.institute,
+                    'institute': request.user.eawuser.institute + " ({short})".format(short=request.user.eawuser.institute_short),
                     'e_mail': request.user.email
                 }
             }), content_type="application/json")
@@ -386,6 +388,7 @@ def get_sequence(request):
     dirname = str(uuid.uuid4())
     os.mkdir(os.path.join(settings.FTP_SERVER_DOWNLOAD_DIRECTORY, dirname))
     ftp_samples = []
+    edna_files = []
     for sample_id in samples:
         sample = Sample.objects.get(id=sample_id)
         files = [fn for fn in os.listdir(settings.FTP_SERVER_VAULT_DIRECTORY) if fn.startswith(sample.sample_id)]
@@ -394,6 +397,7 @@ def get_sequence(request):
                 os.path.join(settings.FTP_SERVER_VAULT_DIRECTORY, file),
                 os.path.join(settings.FTP_SERVER_DOWNLOAD_DIRECTORY, dirname, file)
             )
+            edna_files.append(os.path.join(dirname, file))
         ftp_sample = FTPSampleDirectory(
             base_dirname=dirname,
             full_dirname=os.path.join(settings.FTP_SERVER_DOWNLOAD_DIRECTORY, dirname),
@@ -405,7 +409,7 @@ def get_sequence(request):
         '''
 Dear {user},
 the sequence file(s) you requested are ready to be downloaded from the Eco-AlpsWater FTP server using your credentials.
-Please note that all downloadable files get removed every day.
+Please note that all downloadable files get removed every day at midnight.
 
 host: ftp://eco-alpswater.fmach.it
 port: 21
@@ -413,12 +417,20 @@ username: {user}
 password: <your_password>
 directory: {dirname}
 
-With WGET you can use the command line:
+With WGET you can use the following command line to download all sequencing file:
 
 wget -c -r -np --no-passive-ftp ftp://{user}:<your_password>@eco-alpswater.fmach.it/download/{dirname}
+
+Otherwise if you just want one specific eDNA marker file, use one of the following command line:
+
+{edna_file_command_lines}
                                                          
 This e-mail has been automatically sent from the Eco-AlpsWater website.
-        '''.format(user=request.user.username, dirname=dirname)
+        '''.format(user=request.user.username, dirname=dirname, edna_file_command_lines='\n'.join(
+            [
+                "wget -c -r -np --no-passive-ftp ftp://{user}:<your_password>@eco-alpswater.fmach.it/download/" + x for x in edna_files
+            ]
+        ))
     )
     FTPSampleDirectory.objects.bulk_create(ftp_samples)
     return HttpResponse(
@@ -427,12 +439,35 @@ This e-mail has been automatically sent from the Eco-AlpsWater website.
             }), content_type="application/json")
 
 
+@send_email_to_admin('add_tracking_comment')
+@forward_exception_to_http
+def add_tracking_comment(request):
+    params = json.loads(request.POST['params'])
+    tracking_comment = TrackingComment(
+        user=request.user,
+        sample_id=params['id'],
+        comment=params['comment']
+    )
+    tracking_comment.save()
+    return HttpResponse(
+        json.dumps({
+            'success': True
+        }), content_type="application/json")
+
+
+@forward_exception_to_http
+def get_institutes_short_names(request):
+    fields = [{'id': name, 'name': name} for name in EAWUser.objects.values_list('institute_short', flat=True).distinct()]
+    return HttpResponse(
+        json.dumps({
+            'success': True,
+            'rows': fields,
+            'total': len(fields)
+        }), content_type="application/json")
+
 @forward_exception_to_http
 def get_samples(request):
-    if not request.user.is_superuser:
-        rs = Sample.objects.order_by('id').filter(user=request.user)
-    else:
-        rs = Sample.objects.order_by('id').all()
+    rs = Sample.objects.order_by('id').all()
     page = request.POST.get('page', 1)
     start = request.POST.get('start', 0)
     limit = request.POST.get('limit', rs.count())
@@ -477,7 +512,16 @@ def get_samples(request):
                     _d = {f['field_name'] + '__lte': f['field_value']}
                     rs_filter.add(Q(**_d), conn)
             rs = rs.filter(rs_filter)
-    rows = [s.to_dict() for s in rs[st:en]]
+    rows = []
+    for s in rs[st:en]:
+        v = s.to_dict()
+        v['username'] = s.user.username + " ({institute})".format(institute=s.user.eawuser.institute)
+        v['can_edit'] = request.user.is_superuser or s.user == request.user
+        v['tracking_comments'] = [{'commenter': c.user.username + " ({institute})".format(institute=c.user.eawuser.institute_short),
+                                   'date': c.date.strftime('%m-%d-%Y') if c.date else None,
+                                   'comment': c.comment
+                                   } for c in s.trackingcomment_set.all()]
+        rows.append(v)
     total = rs.count()
     return HttpResponse(
             json.dumps({

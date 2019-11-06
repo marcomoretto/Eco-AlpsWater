@@ -190,7 +190,7 @@ Ext.define('EcoAlpsWater.view.main.NewStationWindow', {
                 }, {
                     xtype: 'fieldset',
                     itemId: 'geo_points',
-                    title: 'Geographic points',
+                    title: 'Geographic points (in decimal degrees)',
                     defaultType: 'textfield',
                     defaults: {
                         anchor: '100%'
@@ -257,7 +257,7 @@ Ext.define('EcoAlpsWater.view.main.NewStationWindow', {
 
 var eawStationsGridStore = new Ext.data.JsonStore({
     autoLoad: false,
-    pageSize: 2,
+    pageSize: 50,
     remoteSort: true,
     proxy: {
         type: 'ajax',

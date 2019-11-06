@@ -86,12 +86,13 @@ Ext.define('EcoAlpsWater.view.main.NewSampleStep0', {
         items: [
             { allowBlank:true, fieldLabel: 'Sample ID', name: 'sample_id', itemId: 'sample_id', emptyText: 'Automatically generated', readOnly: true},
             { allowBlank:true, fieldLabel: 'Sample code', name: 'sample_code', itemId: 'sample_code', emptyText: 'Automatically generated', readOnly: true },
-            { allowBlank:true, fieldLabel: 'Water body code', name: 'water_body_code', itemId: 'water_body_code', emptyText: 'Automatically generated', readOnly: true },
-            { allowBlank:true, fieldLabel: 'Security cap code', name: 'cap_code', itemId: 'cap_code', emptyText: 'Automatically generated', readOnly: true },
+            //{ allowBlank:true, fieldLabel: 'Water body code', name: 'water_body_code', itemId: 'water_body_code', emptyText: 'Automatically generated', readOnly: true },
+            //{ allowBlank:true, fieldLabel: 'Security cap code', name: 'cap_code', itemId: 'cap_code', emptyText: 'Automatically generated', readOnly: true },
             {
                 xtype: 'container',
                 layout: 'hbox',
                 margin: '0 0 5 0',
+                hidden: true,
                 items: [
                     {
                         xtype: 'combobox',
@@ -103,7 +104,7 @@ Ext.define('EcoAlpsWater.view.main.NewSampleStep0', {
                         editable: false,
                         queryMode: 'local',
                         emptyText: 'Select a biological element...',
-                        allowBlank: false,
+                        allowBlank: true,
                         flex: 15,
                         margin: '0 5 0 0',
                         store: Ext.data.Store(),
@@ -384,6 +385,7 @@ Ext.define('EcoAlpsWater.view.main.NewSampleStep0', {
                 xtype: 'container',
                 layout: 'hbox',
                 margin: '0 0 5 0',
+                hidden: true,
                 items: [
                     {
                         xtype: 'combobox',
@@ -396,7 +398,7 @@ Ext.define('EcoAlpsWater.view.main.NewSampleStep0', {
                         readOnly: true,
                         queryMode: 'local',
                         emptyText: 'eDNA marker depends on Biological element field',
-                        allowBlank: false,
+                        allowBlank: true,
                         flex: 15,
                         margin: '0 5 0 0',
                         store: Ext.data.Store()
@@ -447,36 +449,7 @@ Ext.define('EcoAlpsWater.view.main.NewSampleStep0', {
                         }
                     }
                 ]
-            }
-        ]
-    }]
-});
-
-Ext.define('EcoAlpsWater.view.main.NewSampleStep1', {
-    extend: 'Ext.form.Panel',
-    xtype: 'new_sample_step_1',
-
-    frame: false,
-    bodyPadding: 0,
-    scrollable:true,
-    border: false,
-
-    fieldDefaults: {
-        labelAlign: 'right',
-        labelWidth: 180,
-        msgTarget: 'side'
-    },
-
-    items: [{
-        xtype: 'fieldset',
-        title: 'General data',
-        defaultType: 'textfield',
-        defaults: {
-            anchor: '100%'
-        },
-
-        items: [
-            , {
+            }, {
                 xtype: 'container',
                 layout: 'hbox',
                 margin: '0 0 5 0',
@@ -569,7 +542,25 @@ Ext.define('EcoAlpsWater.view.main.NewSampleStep1', {
                 ]
             }
         ]
-    }, {
+    }]
+});
+
+Ext.define('EcoAlpsWater.view.main.NewSampleStep1', {
+    extend: 'Ext.form.Panel',
+    xtype: 'new_sample_step_1',
+
+    frame: false,
+    bodyPadding: 0,
+    scrollable:true,
+    border: false,
+
+    fieldDefaults: {
+        labelAlign: 'right',
+        labelWidth: 180,
+        msgTarget: 'side'
+    },
+
+    items: [{
         xtype: 'fieldset',
         title: 'Field data',
         defaultType: 'textfield',
@@ -957,7 +948,7 @@ Ext.define('EcoAlpsWater.view.main.NewSampleStep2', {
                 items: [
                     {
                         xtype: 'numberfield',
-                        fieldLabel: 'Nitrate nitrogen',
+                        fieldLabel: 'Nitrate nitrogen (NO3-N)',
                         name: 'nitrate_nitrogen',
                         itemId: 'nitrate_nitrogen',
                         decimalPrecision: 5,
@@ -1154,7 +1145,7 @@ Ext.define('EcoAlpsWater.view.main.NewSampleStep2', {
                 items: [
                     {
                         xtype: 'numberfield',
-                        fieldLabel: 'Ammonium',
+                        fieldLabel: 'Ammonium nitrogen (NH4-N)',
                         name: 'ammonium',
                         itemId: 'ammonium',
                         decimalPrecision: 5,

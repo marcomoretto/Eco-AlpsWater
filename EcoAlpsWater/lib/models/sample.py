@@ -22,8 +22,8 @@ class Sample(models.Model):
     sampling_depth_max = models.FloatField(null=False, blank=False)
     sampling_volume = models.FloatField(null=True, blank=True)
     depth_type = models.ForeignKey(DepthType, on_delete=models.CASCADE, null=False, default=1)
-    edna_marker = models.ForeignKey(EDNAMarker, on_delete=models.CASCADE, null=False, default=1)
-    biological_element = models.ForeignKey(BiologicalElement, on_delete=models.CASCADE, null=False, default=1)
+    edna_marker = models.ForeignKey(EDNAMarker, on_delete=models.CASCADE, null=True, default=1)
+    biological_element = models.ForeignKey(BiologicalElement, on_delete=models.CASCADE, null=True, default=1)
     sampling_matrix = models.ForeignKey(SamplingMatrix, on_delete=models.CASCADE, null=False, default=1)
     sampling_strategy = models.ForeignKey(SamplingStrategy, on_delete=models.CASCADE, null=False, default=1)
     mean_river_outflow = models.FloatField(null=True, blank=True)
@@ -69,16 +69,16 @@ class Sample(models.Model):
             #'id': self.id,
             'sample_id': self.sample_id,
             'sample_code': self.sample_code,
-            'biological_element': self.biological_element.name if self.biological_element else None,
+            #'biological_element': self.biological_element.name if self.biological_element else None,
             'sampling_matrix': self.sampling_matrix.name if self.sampling_matrix else None,
             'sampling_strategy': self.sampling_strategy.name if self.sampling_strategy else None,
             'station': self.station.name if self.station else None,
-            'sampling_date': self.sampling_date.strftime('%Y-%m-%d'),
+            'sampling_date': self.sampling_date.strftime('%m-%d-%Y'),
             'sampling_depth_min': self.sampling_depth_min,
             'sampling_depth_max': self.sampling_depth_max,
             'sampling_volume': self.sampling_volume,
             'depth_type': self.depth_type.name if self.depth_type else None,
-            'edna_marker': self.edna_marker.name if self.edna_marker else None,
+            #'edna_marker': self.edna_marker.name if self.edna_marker else None,
             'mean_river_outflow': self.mean_river_outflow,
             'mixing_type': self.mixing_type.name if self.mixing_type else None,
             'catchment_area': self.catchment_area,
@@ -109,7 +109,7 @@ class Sample(models.Model):
             'dry_weight': self.dry_weight,
             'chlorophyll_a': self.chlorophyll_a,
             'dna_extraction_kit': self.dna_extraction_kit.name if self.dna_extraction_kit else None,
-            'dna_extraction_date': self.dna_extraction_date.strftime('%Y-%m-%d') if self.dna_extraction_date else None,
+            'dna_extraction_date': self.dna_extraction_date.strftime('%m-%d-%Y') if self.dna_extraction_date else None,
             'dna_quantity': self.dna_quantity,
             'dna_quality_a260_230': self.dna_quality_a260_230,
             'dna_quality_a260_280': self.dna_quality_a260_280
@@ -123,16 +123,16 @@ class Sample(models.Model):
             #'id': self.id,
             'sample_id': self.sample_id,
             'sample_code': self.sample_code,
-            'biological_element': self.biological_element_id,
+            #'biological_element': self.biological_element_id,
             'sampling_matrix': self.sampling_matrix_id,
             'sampling_strategy': self.sampling_strategy_id,
             'station': self.station_id,
-            'sampling_date': self.sampling_date.strftime('%Y-%m-%d'),
+            'sampling_date': self.sampling_date.strftime('%m-%d-%Y'),
             'sampling_depth_min': self.sampling_depth_min,
             'sampling_depth_max': self.sampling_depth_max,
             'sampling_volume': self.sampling_volume,
             'depth_type': self.depth_type_id,
-            'edna_marker': self.edna_marker_id,
+            #'edna_marker': self.edna_marker_id,
             'mean_river_outflow': self.mean_river_outflow,
             'mixing_type': self.mixing_type_id,
             'catchment_area': self.catchment_area,
@@ -163,7 +163,7 @@ class Sample(models.Model):
             'dry_weight': self.dry_weight,
             'chlorophyll_a': self.chlorophyll_a,
             'dna_extraction_kit': self.dna_extraction_kit_id,
-            'dna_extraction_date': self.dna_extraction_date.strftime('%Y-%m-%d') if self.dna_extraction_date else None,
+            'dna_extraction_date': self.dna_extraction_date.strftime('%m-%d-%Y') if self.dna_extraction_date else None,
             'dna_quantity': self.dna_quantity,
             'dna_quality_a260_230': self.dna_quality_a260_230,
             'dna_quality_a260_280': self.dna_quality_a260_280
@@ -174,14 +174,14 @@ class Sample(models.Model):
             'id': self.id,
             'sample_id': self.sample_id,
             'sample_code': self.sample_code,
-            'biological_element': self.biological_element.name,
+            #'biological_element': self.biological_element.name,
             'station': self.station.name,
             'water_body': self.station.drainage_basin.type,
             'water_body_name': self.station.drainage_basin.name,
-            'sampling_date': self.sampling_date.strftime('%Y-%m-%d'),
+            'sampling_date': self.sampling_date.strftime('%m-%d-%Y'),
             'sampling_depth': str(self.sampling_depth_min) + ' - ' + str(self.sampling_depth_max),
             'sampling_volume': self.sampling_volume,
             'depth_type': self.depth_type.name,
-            'edna_marker': self.edna_marker.name
+            #'edna_marker': self.edna_marker.name
         }
 
