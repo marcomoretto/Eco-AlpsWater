@@ -8,6 +8,7 @@ from django.conf import settings
 
 from EcoAlpsWater.lib.decorator import send_email_to_admin
 from EcoAlpsWater.lib.email import send_email
+from EcoAlpsWater.lib.models.biological_element import BiologicalElement
 from EcoAlpsWater.lib.models.edna_marker import EDNAMarker
 from EcoAlpsWater.lib.models.ftp_sample_directory import FTPSampleDirectory
 from EcoAlpsWater.lib.models.sample import Sample
@@ -21,10 +22,13 @@ def file_invalid(filename, mode, user):
     if mode == 'wb':
         full_code = os.path.basename(filename).split('.')[0]
         sample_code_id = full_code.split('_')[0]
-        sample_code_edna = full_code.split('_')[1]
+        sample_code_be = full_code.split('_')[1]
+        sample_code_edna = full_code.split('_')[2]
         sample_exists = Sample.objects.filter(sample_id=sample_code_id).count() > 0
+        be_code_valid = BiologicalElement.objects.filter(code__iexact=sample_code_be).count() > 0
         edna_code_valid = EDNAMarker.objects.filter(name__iexact=sample_code_edna).count() > 0
-        invalid = not sample_exists or not edna_code_valid or (os.path.isfile(filename) and os.path.exists(filename)) or \
+        invalid = not sample_exists or not edna_code_valid or not be_code_valid or \
+                  (os.path.isfile(filename) and os.path.exists(filename)) or \
                   os.path.dirname(filename) == settings.FTP_SERVER_DOWNLOAD_DIRECTORY or \
                   os.path.dirname(filename) == settings.FTP_SERVER_VAULT_DIRECTORY
     elif mode == 'rb':
