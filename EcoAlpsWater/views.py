@@ -241,6 +241,12 @@ def get_search_field_name(request):
         'id': 'sample_code',
         'name': 'Sample code'
     }, {
+        'id': 'user__username',
+        'name': 'User'
+    }, {
+        'id': 'user__eawuser__institute_short',
+        'name': 'Institute'
+    }, {
         'id': 'station__drainage_basin__type',
         'name': 'Water body type'
     }, {
@@ -268,9 +274,6 @@ def get_search_field_name(request):
         'id': 'depth_type__name',
         'name': 'Depth type'
     }, {
-        'id': 'edna_marker__name',
-        'name': 'eDNA marker'
-    }, {
         'id': 'mean_river_outflow',
         'name': 'Mean river outflow'
     }, {
@@ -279,9 +282,6 @@ def get_search_field_name(request):
     }, {
         'id': 'catchment_area',
         'name': 'Catchment area'
-    }, {
-        'id': 'biological_element__name',
-        'name': 'Biological element'
     }, {
         'id': 'sampling_matrix',
         'name': 'Sampling matrix'
@@ -326,7 +326,7 @@ def get_search_field_name(request):
         'name': 'Bicarbonates'
     }, {
         'id': 'nitrate_nitrogen',
-        'name': 'Nitrate nitrogen'
+        'name': 'Nitrate nitrogen (NO3-N)'
     }, {
         'id': 'sulphates',
         'name': 'Sulphates'
@@ -347,7 +347,7 @@ def get_search_field_name(request):
         'name': 'Potassium'
     }, {
         'id': 'ammonium',
-        'name': 'Ammonium'
+        'name': 'Ammonium nitrogen (NH4-N)'
     }, {
         'id': 'total_nitrogen',
         'name': 'Total nitrogen'
@@ -481,12 +481,13 @@ def get_samples(request):
     if filter:
         if type(filter) == str:
             rs = rs.filter(
-                Q(biological_element__name__icontains=filter) |
-                Q(drainage_basin__type__icontains=filter) |
-                Q(drainage_basin__name__icontains=filter) |
+                Q(sample_code__icontains=filter) |
+                Q(user__username__icontains=filter) |
+                Q(user__eawuser__institute_short__icontains=filter) |
+                Q(station__drainage_basin__type__icontains=filter) |
+                Q(station__drainage_basin__name__icontains=filter) |
                 Q(station__name__icontains=filter) |
-                Q(depth_type__name__icontains=filter) |
-                Q(edna_marker__name__icontains=filter)
+                Q(depth_type__name__icontains=filter)
             )
         elif type(filter) == dict and len(filter['advanced']) > 0:
             rs_filter = Q()
@@ -515,7 +516,7 @@ def get_samples(request):
     rows = []
     for s in rs[st:en]:
         v = s.to_dict()
-        v['username'] = s.user.username + " ({institute})".format(institute=s.user.eawuser.institute)
+        v['username'] = s.user.username + " ({institute})".format(institute=s.user.eawuser.institute_short)
         v['can_edit'] = request.user.is_superuser or s.user == request.user
         v['tracking_comments'] = [{'commenter': c.user.username + " ({institute})".format(institute=c.user.eawuser.institute_short),
                                    'date': c.date.strftime('%m-%d-%Y') if c.date else None,
@@ -645,7 +646,7 @@ def __create_env_metadata(samples):
                 value = ''
             comments = Comment.objects.filter(sample=sample, field_name=field)
             if len(comments) == 1:
-                comments = comments[0].comment
+                comments = comments[0].comment.strip()
             if not comments:
                 comments = ''
             worksheet.write(row, col, field)

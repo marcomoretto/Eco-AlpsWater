@@ -71,14 +71,13 @@ class send_email_to_admin(object):
                 user {user} has just sent a file named {file_name} to the FTP server.
                 '''.format(user=user, file_name=os.path.basename(file))
             elif self.operation == 'add_tracking_comment':
-                ftp_obj = request
-                user = ftp_obj.username
-                params = json.loads(request.POST['params'])
-                sample = Sample.objects.get(id=params['id']).sample_code
+                user = request.user.username
+                params = json.loads(request.POST.get('params', None))
+                sample = Sample.objects.get(id=params['id'])
                 message = '''
                 Dear admin,
                 user {user} has just added a tracking comment for sample {sample}. The comment is: {comment}.
-                '''.format(user=user, sample=sample, comment=params['comment'])
+                '''.format(user=user, sample=sample.sample_code, comment=params['comment'])
             for admin in User.objects.filter(is_superuser=True):
                 try:
                     send_email(admin.email, title, message)
