@@ -404,6 +404,7 @@ def get_sequence(request):
             sample=sample
         )
         ftp_samples.append(ftp_sample)
+
     send_email(request.user.email,
         'Eco-AlpsWater sequence file(s) ready',
         '''
