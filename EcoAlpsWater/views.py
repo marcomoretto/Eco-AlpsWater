@@ -404,7 +404,7 @@ def get_sequence(request):
             sample=sample
         )
         ftp_samples.append(ftp_sample)
-
+    FTPSampleDirectory.objects.bulk_create(ftp_samples)
     send_email(request.user.email,
         'Eco-AlpsWater sequence file(s) ready',
         '''
@@ -433,7 +433,6 @@ This e-mail has been automatically sent from the Eco-AlpsWater website.
             ]
         ))
     )
-    FTPSampleDirectory.objects.bulk_create(ftp_samples)
     return HttpResponse(
             json.dumps({
                 'success': True
