@@ -1,4 +1,4 @@
-Django==2.1.7
+Django==2.2.10
 django-ftpserver==0.6.0
 gunicorn==19.9.0
 Pillow==5.4.1
