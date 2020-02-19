@@ -57,7 +57,12 @@ Ext.define('EcoAlpsWater.Application', {
                 }
             },
             failure: function (response) {
-                Ext.Msg.alert('Server problem', 'Server Problem');
+                var resData = Ext.decode(response.responseText);
+                if (!resData.login) {
+                    Ext.create({
+                        xtype: 'login'
+                    });
+                }
             }
         });
     },

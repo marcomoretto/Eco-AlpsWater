@@ -103,6 +103,7 @@ Ext.define('EcoAlpsWater.view.main.NewSampleController', {
             params: values,
             success: function (response) {
                 var resData = Ext.decode(response.responseText);
+                console.log(resData);
                 sample_id.setValue(resData['ids']['sample_id']);
                 sample_code.setValue(resData['ids']['sample_code']);
                 //water_body_code.setValue(resData['ids']['water_body_code']);

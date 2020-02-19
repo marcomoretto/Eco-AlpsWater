@@ -51,11 +51,24 @@ Ext.define('EcoAlpsWater.view.main.Main', {
             xtype: 'tbfill'
         }, {
             xtype: 'button',
+            html: 'User manual',
+            glyph: 'f02d',
+            listeners: {
+                click: 'onDocumentation'
+            }
+        }, {
+            xtype: 'container',
+            height: 20
+        }, {
+            xtype: 'button',
             html: 'Logout',
             glyph: 'xf08b',
             listeners: {
                 click: 'onLogout'
             }
+        }, {
+            xtype: 'container',
+            height: 10
         }]
     },
 

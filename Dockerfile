@@ -1,6 +1,6 @@
 FROM python:3.6.8-stretch
 
-EXPOSE 80
+EXPOSE 8888
 
 RUN mkdir /app
 WORKDIR /app

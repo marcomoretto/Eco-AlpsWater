@@ -36,7 +36,7 @@ class SampleCoder:
 
         year = '0'
         if sampling_year:
-            year = self._starting_year - sampling_year
+            year = sampling_year - self._starting_year
             year = '%02d' % year
 
         sample_id = '00'
@@ -49,11 +49,11 @@ class SampleCoder:
 
         depth_min = '000'
         if self.depth_min:
-            depth_min = '%03d' % int(self.depth_min)
+            depth_min = '%03d' % float(self.depth_min)
 
         depth_max = '000'
         if self.depth_max:
-            depth_max = '%03d' % int(self.depth_max)
+            depth_max = '%03d' % float(self.depth_max)
 
         #be = '0'
         #if self.biological_element_id:

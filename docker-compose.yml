@@ -7,6 +7,7 @@ services:
       - "8000:80"
     volumes_from:
       - web
+      - nginx_data
     links:
       - web:web
     networks:
@@ -33,36 +34,17 @@ services:
     build: .
     env_file: env
     expose:
-      - "80"
+      - "8888"
     links:
       - postgres:postgres
     volumes_from:
       - web_data
     volumes:
       - .:/app
-    command: gunicorn EcoAlpsWater_.wsgi:application -w 2 -b :8000
+    command: gunicorn EcoAlpsWater_.wsgi:application -w 2 -b :8888
     networks:
       static-network:
         ipv4_address: 172.25.0.4
-
-  ftp:
-    build: .
-    env_file: env
-    ports:
-      - "21:21"
-    expose:
-      - "21"
-      - "30000-30009"
-    links:
-      - postgres:postgres
-    volumes_from:
-      - ftp_data
-    volumes:
-      - .:/app
-    command: python manage.py eaw_ftp_server 0.0.0.0:21 --passive-ports 30000-30009
-    networks:
-      static-network:
-        ipv4_address: 172.25.0.5
 
   pg_data:
     restart: always
@@ -74,25 +56,30 @@ services:
       static-network:
         ipv4_address: 172.25.0.11
 
-  ftp_data:
-    restart: always
-    image: alpine
-    volumes:
-      - ./ftp-data:/home
-    command: "true"
-    networks:
-      static-network:
-        ipv4_address: 172.25.0.13
-
   web_data:
     restart: always
     image: alpine
     volumes:
       - /app
+      - ./sequence_upload:/var/www/upload
+      - ./sequence_vault:/var/www/vault
+      - ./sequence_download:/var/www/download
     command: "true"
     networks:
       static-network:
         ipv4_address: 172.25.0.12
+
+  nginx_data:
+    restart: always
+    image: alpine
+    volumes:
+      - ./sequence_upload:/var/www/upload
+      - ./sequence_vault:/var/www/vault
+      - ./sequence_download:/var/www/download
+    command: "true"
+    networks:
+      static-network:
+        ipv4_address: 172.25.0.14
 
 networks:
   static-network:

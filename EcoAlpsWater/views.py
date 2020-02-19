@@ -6,6 +6,8 @@ import zipfile
 import io
 from json import JSONDecodeError
 import pytz
+import shutil
+from stat import S_IREAD, S_IRGRP, S_IROTH
 
 from PIL import Image
 import datetime
@@ -17,6 +19,7 @@ from django.contrib.auth import authenticate, login, logout
 from django.db.models import Q
 from django.http import HttpResponse, Http404
 from django.shortcuts import render
+from django.contrib.auth.models import User
 
 # Create your views here.
 from EcoAlpsWater.lib.decorator import forward_exception_to_http, send_email_to_admin
@@ -25,6 +28,7 @@ from EcoAlpsWater.lib.models.biological_element import BiologicalElement
 from EcoAlpsWater.lib.models.comment import Comment
 from EcoAlpsWater.lib.models.depth_type import DepthType
 from EcoAlpsWater.lib.models.dna_extraction_kit import DNAExtractionKit
+from EcoAlpsWater.lib.models.dna_quantification_method import DNAQuantificationMethod
 from EcoAlpsWater.lib.models.drainage_basin import DrainageBasin
 from EcoAlpsWater.lib.models.eaw_user import EAWUser
 from EcoAlpsWater.lib.models.edna_marker import EDNAMarker
@@ -36,12 +40,13 @@ from EcoAlpsWater.lib.models.sampling_matrix import SamplingMatrix
 from EcoAlpsWater.lib.models.sampling_strategy import SamplingStrategy
 from EcoAlpsWater.lib.models.station import Station
 from EcoAlpsWater.lib.sample_coder import SampleCoder
-from EcoAlpsWater.lib.models.ftp_sample_directory import FTPSampleDirectory
 from EcoAlpsWater.lib.models.tracking_comment import TrackingComment
+from EcoAlpsWater.lib.models.sequence import Sequence
 
 import barcode
 from barcode.writer import ImageWriter
 import xlsxwriter
+import uuid
 
 
 def request_logout(request):
@@ -60,12 +65,12 @@ def check_login(request):
         return HttpResponse(
             json.dumps({
                 'login': True
-            }), content_type="application/json")
+            }), content_type="application/json", status=200)
     else:
         return HttpResponse(
             json.dumps({
                 'login': False
-            }), content_type="application/json")
+            }), content_type="application/json", status=401)
 
 
 def send_verification_email(request):
@@ -146,6 +151,7 @@ def get_combo_field_values(request):
     bio_element = [be.to_dict() for be in BiologicalElement.objects.all()]
     mixing_type = [m.to_dict() for m in MixingType.objects.all()]
     dna_extraction_kit = [ek.to_dict() for ek in DNAExtractionKit.objects.all()]
+    dna_quantification_method = [qm.to_dict() for qm in DNAQuantificationMethod.objects.all()]
     sampling_matrix = [sm.to_dict() for sm in SamplingMatrix.objects.all()]
     sampling_strategy = [ss.to_dict() for ss in SamplingStrategy.objects.all()]
     values = {
@@ -156,7 +162,8 @@ def get_combo_field_values(request):
         'sampling_matrix': sampling_matrix,
         'sampling_strategy': sampling_strategy,
         'mixing_type': mixing_type,
-        'dna_extraction_kit': dna_extraction_kit
+        'dna_extraction_kit': dna_extraction_kit,
+        'dna_quantification_method': dna_quantification_method
     }
     return HttpResponse(
             json.dumps({
@@ -370,6 +377,9 @@ def get_search_field_name(request):
         'id': 'dna_extraction_kit__name',
         'name': 'DNA extraction kit'
     }, {
+        'id': 'dna_quantification_method__name',
+        'name': 'DNA quantification method'
+    }, {
         'id': 'dna_extraction_date',
         'name': 'DNA extraction date'
     }]
@@ -381,62 +391,104 @@ def get_search_field_name(request):
             }), content_type="application/json")
 
 
-@send_email_to_admin('get_sequence')
+def get_sequence(request, id, file=None):
+    download_dir = os.path.join(os.environ['EAW_DOWNLOAD_DIRECTORY'], id)
+    status_code = 401
+    for (dirpath, dirnames, filenames) in os.walk(download_dir):
+        for file in filenames:
+            seq = Sequence.objects.filter(filename=file).first()
+            if seq and (seq.sample.user.username == request.user.username or request.user.is_superuser):
+                status_code = 200
+                try:
+                    user = request.user.username
+                    title = 'Eco-AlpsWater admin notification'
+                    message = '''
+                        Dear admin,
+                        user {user} has just downloaded sequence files from directory {dir}.
+                        '''.format(user=user, dir=download_dir)
+                    for admin in User.objects.filter(is_superuser=True):
+                        send_email(admin.email, title, message)
+                except Exception as e:
+                    pass
+                break
+    return HttpResponse(json.dumps({}), status=status_code)
+
+
+@send_email_to_admin('request_sequence')
 @forward_exception_to_http
-def get_sequence(request):
+def request_sequence(request):
     samples = json.loads(request.POST['samples'])
-    dirname = str(uuid.uuid4())
-    os.mkdir(os.path.join(settings.FTP_SERVER_DOWNLOAD_DIRECTORY, dirname))
-    ftp_samples = []
-    edna_files = []
+    dirname = str(uuid.uuid1().int>>64)
+    os.mkdir(os.path.join(os.environ['EAW_DOWNLOAD_DIRECTORY'], dirname))
+    outdir = os.environ['EAW_DOWNLOAD_DIRECTORY']
+    indir = os.environ['EAW_VAULT_DIRECTORY']
+    login = 'https://eco-alpswater.fmach.it/check_login/'
+    location = 'https://eco-alpswater.fmach.it/download/{dirname}/'.format(dirname=dirname)
     for sample_id in samples:
         sample = Sample.objects.get(id=sample_id)
-        files = [fn for fn in os.listdir(settings.FTP_SERVER_VAULT_DIRECTORY) if fn.startswith(sample.sample_id)]
-        for file in files:
+        for seq in sample.sequence_set.all():
             copyfile(
-                os.path.join(settings.FTP_SERVER_VAULT_DIRECTORY, file),
-                os.path.join(settings.FTP_SERVER_DOWNLOAD_DIRECTORY, dirname, file)
+                os.path.join(indir, seq.filename),
+                os.path.join(outdir, dirname, seq.filename)
             )
-            edna_files.append(os.path.join(dirname, file))
-        ftp_sample = FTPSampleDirectory(
-            base_dirname=dirname,
-            full_dirname=os.path.join(settings.FTP_SERVER_DOWNLOAD_DIRECTORY, dirname),
-            sample=sample
-        )
-        ftp_samples.append(ftp_sample)
-    FTPSampleDirectory.objects.bulk_create(ftp_samples)
     send_email(request.user.email,
-        'Eco-AlpsWater sequence file(s) ready',
-        '''
-Dear {user},
-the sequence file(s) you requested are ready to be downloaded from the Eco-AlpsWater FTP server using your credentials.
-Please note that all downloadable files get removed every day at midnight.
+               'Eco-AlpsWater sequence file(s) ready',
+               '''
+        Dear {user},
+        the sequence file(s) you requested are ready to be downloaded from the Eco-AlpsWater server using your credentials.
+        Please note that all downloadable files get removed every day at midnight.
+        
+        You can user your browser to download files from {location}.
+        
+        If you prefer to use WGET you'll need to first login and save the cookie with your credentials
+        
+        wget -qO- --keep-session-cookies --save-cookies cookies.txt --post-data 'username={user}&password=<password>' {login}
+        
+        And then download files passing the cookie file
+        
+        wget -c -r --load-cookies cookies.txt {location}
 
-host: ftp://eco-alpswater.fmach.it
-port: 21
-username: {user}
-password: <your_password>
-directory: {dirname}
-
-With WGET you can use the following command line to download all sequencing file:
-
-wget -c -r -np --no-passive-ftp ftp://{user}:<your_password>@eco-alpswater.fmach.it/download/{dirname}
-
-Otherwise if you just want one specific eDNA marker file, use one of the following command line:
-
-{edna_file_command_lines}
-                                                         
-This e-mail has been automatically sent from the Eco-AlpsWater website.
-        '''.format(user=request.user.username, dirname=dirname, edna_file_command_lines='\n'.join(
-            [
-                "wget -c -r -np --no-passive-ftp ftp://{user}:<your_password>@eco-alpswater.fmach.it/download/" + x for x in edna_files
-            ]
-        ))
-    )
+        This e-mail has been automatically sent from the Eco-AlpsWater website.
+               '''.format(user=request.user.username,
+                          location=location,
+                          login=login)
+        )
     return HttpResponse(
-            json.dumps({
-                'success': True
-            }), content_type="application/json")
+        json.dumps({
+            'success': True
+        }), content_type="application/json")
+
+
+@forward_exception_to_http
+def upload_complete(request):
+    md5 = ''
+    sample = Sample.objects.get(id=request.POST.get('sample_id', None))
+    be = BiologicalElement.objects.get(id=request.POST.get('biological_element', None))
+    edna = EDNAMarker.objects.get(id=request.POST.get('edna_marker', None))
+    with open(request.POST['md5_checksum_file.path']) as f:
+        md5 = f.read().strip().split()[0]
+    if request.POST['sequence_file.md5'] != md5:
+        raise Exception('MD5SUM mismatch, sequence file corrupted or wrong MD5')
+    file_unique_id = uuid.uuid4()
+    new_file_name = '{sample_code}_{be}_{edna}_{file_unique_id}_{org_name}'.format(
+        sample_code=sample.sample_code,
+        be=be.code,
+        edna=edna.name,
+        file_unique_id=file_unique_id,
+        org_name=request.POST['sequence_file.name']
+    )
+    # move file
+    full_name = os.path.join(os.environ['EAW_VAULT_DIRECTORY'], new_file_name)
+    shutil.move(request.POST['sequence_file.path'], full_name)
+    os.chmod(full_name, S_IREAD | S_IRGRP | S_IROTH)
+    # add entry in db
+    Sequence.objects.create(
+        sample=sample,
+        filename=new_file_name,
+        md5sum=md5
+    )
+    return HttpResponse(json.dumps({'success': True}),
+                        content_type="application/json")
 
 
 @send_email_to_admin('add_tracking_comment')
@@ -464,6 +516,7 @@ def get_institutes_short_names(request):
             'rows': fields,
             'total': len(fields)
         }), content_type="application/json")
+
 
 @forward_exception_to_http
 def get_samples(request):
@@ -557,6 +610,7 @@ def update_sample(request):
     sample.dna_extraction_kit_id = request.POST.get('dna_extraction_kit', None) or None
     sample.dna_extraction_date = request.POST.get('dna_extraction_date', None) or None
     sample.dna_quantity = request.POST.get('dna_quantity', None) or None
+    sample.dna_quantification_method_id = request.POST.get('dna_quantification_method', None) or None
     sample.dna_quality_a260_280 = request.POST.get('dna_quality_a260_280', None) or None
     sample.dna_quality_a260_230 = request.POST.get('dna_quality_a260_230', None) or None
 
@@ -575,7 +629,18 @@ def update_sample(request):
                 setattr(sample, f, fi.read())
             os.remove(full_path)
     sample.save()
-
+    for k, v in request.POST.items():
+        if k.endswith('_comment') and v:
+            field_name = k.replace('_comment', '')
+            value = v
+            comment = Comment.objects.filter(Q(sample=sample) & Q(field_name=field_name)).first()
+            if not comment:
+                comment = Comment(
+                    sample=sample,
+                    field_name=field_name
+                )
+            comment.comment = value
+            comment.save()
     barcode_buffer = __create_barcode_file([sample.id])
     excel_buffer = __create_env_metadata([sample.id])
     send_email(request.user.email,
@@ -608,9 +673,10 @@ def get_samples_complete(request):
     if not request.user.is_superuser:
         rs = rs.filter(user=request.user)
     if description:
-        rows = [s.to_dict_description(dna_extraction_kit='dna_extraction_kit_id') for s in rs]
+        rows = [s.to_dict_description(dna_extraction_kit='dna_extraction_kit_id', dna_quantification_method='dna_quantification_method_id') for s in rs]
     else:
         rows = [s.to_dict_complete() for s in rs]
+    rows.append(dict(Comment.objects.filter(sample_id=id).values_list('field_name', 'comment')))
     total = rs.count()
     return HttpResponse(
             json.dumps({
@@ -796,6 +862,7 @@ def save_sample(request):
         dna_extraction_kit_id=request.POST.get('dna_extraction_kit', None) or None,
         dna_extraction_date=request.POST.get('dna_extraction_date', None) or None,
         dna_quantity=request.POST.get('dna_quantity', None) or None,
+        dna_quantification_method_id=request.POST.get('dna_quantification_method', None) or None,
         dna_quality_a260_280=request.POST.get('dna_quality_a260_280', None) or None,
         dna_quality_a260_230=request.POST.get('dna_quality_a260_230', None) or None
     )

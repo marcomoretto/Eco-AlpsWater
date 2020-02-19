@@ -427,6 +427,7 @@ Ext.define('EcoAlpsWater.view.main.NewSampleStep0', {
                         fieldLabel: 'Sampling date',
                         name: 'sampling_date',
                         itemId: 'sampling_date',
+                        editable: false,
                         allowBlank: false,
                         flex: 15,
                         margin: '0 5 0 0',
@@ -1222,6 +1223,34 @@ Ext.define('EcoAlpsWater.view.main.NewSampleStep2', {
                         }
                     }
                 ]
+            }, {
+                xtype: 'container',
+                layout: 'hbox',
+                margin: '0 0 5 0',
+                items: [
+                    {
+                        xtype: 'numberfield',
+                        fieldLabel: 'Total phosphorus',
+                        name: 'total_phosphorus',
+                        itemId: 'total_phosphorus',
+                        decimalPrecision: 5,
+                        allowBlank: true,
+                        flex: 15,
+                        margin: '0 5 0 0'
+                        },
+                    {
+                        xtype: 'button',
+                        flex: 1,
+                        glyph: 'xf27a',
+                        tooltip: 'Add comment',
+                        tooltipType: 'title',
+                        listeners: {
+                            click: {
+                                fn: 'onAddComment',
+                            }
+                        }
+                    }
+                ]
             }
             ]
     }],
@@ -1254,7 +1283,7 @@ Ext.define('EcoAlpsWater.view.main.NewSampleStep3', {
         },
 
         items: [
-            {
+            /*{
                 xtype: 'container',
                 layout: 'hbox',
                 margin: '0 0 5 0',
@@ -1282,7 +1311,7 @@ Ext.define('EcoAlpsWater.view.main.NewSampleStep3', {
                         }
                     }
                 ]
-            }, {
+            },*/ {
                 xtype: 'container',
                 layout: 'hbox',
                 margin: '0 0 5 0',
@@ -1410,6 +1439,7 @@ Ext.define('EcoAlpsWater.view.main.NewSampleStep3', {
                         name: 'dna_extraction_date',
                         itemId: 'dna_extraction_date',
                         allowBlank: true,
+                        editable: false,
                         flex: 15,
                         margin: '0 5 0 0',
                         listeners: {
@@ -1446,6 +1476,44 @@ Ext.define('EcoAlpsWater.view.main.NewSampleStep3', {
                         minValue: 0,
                         flex: 15,
                         margin: '0 5 0 0'
+                        },
+                    {
+                        xtype: 'button',
+                        flex: 1,
+                        glyph: 'xf27a',
+                        tooltip: 'Add comment',
+                        tooltipType: 'title',
+                        listeners: {
+                            click: {
+                                fn: 'onAddComment',
+                            }
+                        }
+                    }
+                ]
+            }, {
+                xtype: 'container',
+                layout: 'hbox',
+                margin: '0 0 5 0',
+                items: [
+                    {
+                        xtype: 'combobox',
+                        fieldLabel: 'DNA quantification method',
+                        name: 'dna_quantification_method',
+                        itemId: 'dna_quantification_method',
+                        valueField: 'id',
+                        displayField: 'name',
+                        editable: false,
+                        queryMode: 'local',
+                        emptyText: 'Select a dna quantification method...',
+                        allowBlank: true,
+                        flex: 15,
+                        margin: '0 5 0 0',
+                        store: Ext.data.Store(),
+                        listeners: {
+                            /*change: {
+                                fn: 'onBioElementFieldChange'
+                            }*/
+                        }
                         },
                     {
                         xtype: 'button',

@@ -25,7 +25,9 @@ urlpatterns = [
     url(r'^get_env_metadata/$', views.get_env_metadata, name='get_env_metadata'),
     url(r'^get_search_field_names/$', views.get_search_field_name, name='get_search_field_names'),
     url(r'^send_verification_email/$', views.send_verification_email, name='send_verification_email'),
-    url(r'^get_sequence/$', views.get_sequence, name='get_sequence'),
+    url(r'^request_sequence/$', views.request_sequence, name='get_sequence'),
+    url(r'^get_sequence/(?P<id>(\d+))/$', views.get_sequence, name='get_sequence'),
+    url(r'^get_sequence/(?P<id>(\d+))/(?P<file>(.*))$', views.get_sequence, name='get_sequence'),
     url(r'^save_station/$', views.save_station, name='save_station'),
     url(r'^get_stations/$', views.get_stations, name='get_stations'),
     url(r'^download_template/$', views.download_template, name='download_template'),
@@ -33,4 +35,5 @@ urlpatterns = [
     url(r'^update_sample/$', views.update_sample, name='update_sample'),
     url(r'^get_institutes_short_names/$', views.get_institutes_short_names, name='get_institutes_short_names'),
     url(r'^add_tracking_comment/$', views.add_tracking_comment, name='add_tracking_comment'),
+    url(r'^complete/?$', views.upload_complete, name='upload_complete'),
 ]

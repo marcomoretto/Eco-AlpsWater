@@ -15,7 +15,12 @@ Ext.define('EcoAlpsWater.view.main.SingleGeoPoint', {
         decimalPrecision: 6,
         allowBlank: false,
         margin: 10,
-        flex: 10
+        flex: 10,
+        listeners: {
+            change: {
+                fn: 'onLatLongChange'
+            }
+        }
     },{
         xtype: 'numberfield',
         name: 'longitude',
@@ -25,7 +30,12 @@ Ext.define('EcoAlpsWater.view.main.SingleGeoPoint', {
         decimalPrecision: 6,
         allowBlank: false,
         margin: 10,
-        flex: 10
+        flex: 10,
+        listeners: {
+            change: {
+                fn: 'onLatLongChange'
+            }
+        }
     }, {
         xtype: 'button',
         itemId: 'remove_button',
@@ -42,6 +52,32 @@ Ext.define('EcoAlpsWater.view.main.SingleGeoPoint', {
             }
         }
     }],
+});
+
+Ext.define('EcoAlpsWater.view.main.SuggestedNamesWindow', {
+    extend: 'Ext.window.Window',
+    xtype: 'suggested_names_window',
+
+    requires: [
+        'Ext.window.Window',
+        'Ext.form.Panel'
+    ],
+
+    controller: 'stations',
+    bodyPadding: 10,
+    title: 'Suggested names',
+    closable: true,
+    autoShow: true,
+    modal: true,
+    width: 500,
+    height: 400,
+    layout: 'card',
+
+    items: [{
+        xtype: 'panel',
+        itemId: 'fields',
+        layout: 'anchor'
+    }]
 });
 
 Ext.define('EcoAlpsWater.view.main.NewStationWindow', {
@@ -188,9 +224,25 @@ Ext.define('EcoAlpsWater.view.main.NewStationWindow', {
                         }
                     ]
                 }, {
+                    xtype: 'container',
+                    layout: 'hbox',
+                    margin: '0 0 5 0',
+                    items: [
+                        {
+                            xtype: 'checkbox',
+                            fieldLabel: 'Show geographic location suggested names',
+                            labelWidth: 300,
+                            name: 'suggested_names',
+                            itemId: 'suggested_names',
+                            flex: 15,
+                            margin: '0 5 0 0',
+                            checked: true
+                        }
+                    ]
+                }, {
                     xtype: 'fieldset',
                     itemId: 'geo_points',
-                    title: 'Geographic points (in decimal degrees)',
+                    title: 'Geographic points (WGS84 decimal degrees)',
                     defaultType: 'textfield',
                     defaults: {
                         anchor: '100%'

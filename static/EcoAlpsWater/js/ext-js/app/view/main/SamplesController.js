@@ -107,6 +107,22 @@ Ext.define('EcoAlpsWater.view.main.SamplesController', {
     },
 
     onAddComment: function(me) {
+        var field = me.up('container').down('field');
+        var fieldLabel = field.fieldLabel;
+        Ext.MessageBox.show({
+            title: 'Comment',
+            msg: 'Add a comment for the field ' + fieldLabel,
+            width:300,
+            buttons: Ext.MessageBox.OKCANCEL,
+            multiline: true,
+            value: field.comment,
+            fn: function (value, text) {
+                field.comment = text;
+            }
+        });
+    },
+
+    onAddCommentTrackingComment: function(me) {
         var panel = me.up('add_tracking_comment_window');
         var sample_id = panel.sample_id;
         var tracking_comment = panel.down('#tracking_comment');
@@ -260,7 +276,7 @@ Ext.define('EcoAlpsWater.view.main.SamplesController', {
         samples['samples'] = JSON.stringify(samples.samples),
         Ext.Ajax.request({
             binary: true,
-            url: '/get_sequence/',
+            url: '/request_sequence/',
             params: samples,
             success: function (response) {
                 var resData = Ext.decode(response.responseText);
@@ -341,30 +357,19 @@ Ext.define('EcoAlpsWater.view.main.SamplesController', {
             fn: function (a) {
                 if (a == 'yes') {
                     panel.down('#card-update').setHidden(false);
-                    panel.down('#laboratory_ph').setReadOnly(false);
-                    panel.down('#laboratory_conductivity').setReadOnly(false);
-                    panel.down('#total_alkalinity').setReadOnly(false);
-                    panel.down('#bicarbonates').setReadOnly(false);
-                    panel.down('#nitrate_nitrogen').setReadOnly(false);
-                    panel.down('#sulphates').setReadOnly(false);
-                    panel.down('#chloride').setReadOnly(false);
-                    panel.down('#calcium').setReadOnly(false);
-                    panel.down('#magnesium').setReadOnly(false);
-                    panel.down('#sodium').setReadOnly(false);
-                    panel.down('#potassium').setReadOnly(false);
-                    panel.down('#ammonium').setReadOnly(false);
-                    panel.down('#total_nitrogen').setReadOnly(false);
-                    panel.down('#soluble_reactive_phosphorus').setReadOnly(false);
-                    panel.down('#total_phosphorus').setReadOnly(false);
-                    panel.down('#reactive_silica').setReadOnly(false);
-                    panel.down('#dry_weight').setReadOnly(false);
-                    panel.down('#chlorophyll_a').setReadOnly(false);
-                    panel.down('#dna_extraction_kit').setReadOnly(false);
-                    panel.down('#dna_extraction_date').setReadOnly(false);
-                    panel.down('#dna_quantity').setReadOnly(false);
-                    panel.down('#dna_quality_a260_280').setReadOnly(false);
-                    panel.down('#dna_quality_a260_230').setReadOnly(false);
-                    panel.down('#archives_fieldset').setHidden(false);
+
+                    var fields = ['laboratory_ph', 'laboratory_conductivity', 'total_alkalinity', 'bicarbonates',
+                    'nitrate_nitrogen', 'sulphates', 'chloride', 'calcium', 'magnesium', 'sodium', 'potassium',
+                    'ammonium', 'total_nitrogen', 'soluble_reactive_phosphorus', 'total_phosphorus', 'reactive_silica',
+                    'dry_weight', 'chlorophyll_a', 'dna_extraction_kit', 'dna_extraction_date', 'dna_quantity',
+                    'dna_quantification_method', 'dna_quality_a260_280', 'dna_quality_a260_230', 'archives_fieldset'];
+                    fields.forEach(function (f) {
+                        try {
+                            panel.down('#' + f).setReadOnly(false);
+                        } catch (e) {
+
+                        }
+                    });
                 }
             }
         });
@@ -395,13 +400,16 @@ Ext.define('EcoAlpsWater.view.main.SamplesController', {
 
     },
 
-    onSampleDetailWindowAfterRender: function(me) {
-        var buttons = me.query('button');
-        Ext.Array.each(buttons, function(button) {
-            if (!(button.itemId && button.itemId.startsWith('card-'))) {
-                button.setVisible(false);
-            }
+    onUploadSequence: function(btn) {
+        var me = this;
+        var sample = btn.up('grid').getSelection()[0];
+        Ext.create({
+            xtype: 'upload',
+            sample: sample
         });
+    },
+
+    onSampleDetailWindowAfterRender: function(me) {
         var viewport = Ext.ComponentQuery.query('viewport')[0];
         var main = viewport.down('#main');
         var grid = main.down('samples');
@@ -414,9 +422,13 @@ Ext.define('EcoAlpsWater.view.main.SamplesController', {
             success: function (response) {
                 var resData = Ext.decode(response.responseText);
                 var obj = resData.rows[0];
+                var comments = resData.rows[1];
                 var fields = me.query('textfield');
                 Ext.Array.each(fields, function(field) {
                     field.setEmptyText('');
+                    if (comments.hasOwnProperty(field.itemId)) {
+                        field.comment = comments[field.itemId];
+                    }
                 });
                 me.down('#archives_fieldset').setHidden(true);
                 for (var property in obj) {
@@ -426,7 +438,7 @@ Ext.define('EcoAlpsWater.view.main.SamplesController', {
                             field.setReadOnly(true);
                             field.allowBlank = true;
                             field.suspendEvents();
-                            if (property == 'dna_extraction_kit') {
+                            if (property == 'dna_extraction_kit' || property == 'dna_quantification_method') {
                                 field.setValue(obj[property]);
                             } else {
                                 field.setRawValue(obj[property]);
@@ -506,6 +518,7 @@ Ext.define('EcoAlpsWater.view.main.SamplesController', {
         grid.down('#sequence_file').setDisabled(selection || !canEdit);
         grid.down('#clone_sample').setDisabled(selection2 || !canEdit);
         grid.down('#view_details').setDisabled(selection2 || !canEdit);
+        grid.down('#upload_sequences').setDisabled(selection2 || !canEdit);
 
         grid.down('#add_tracking_comment').setDisabled(selection2);
     },
@@ -523,6 +536,7 @@ Ext.define('EcoAlpsWater.view.main.SamplesController', {
         grid.down('#sequence_file').setDisabled(selection || !canEdit);
         grid.down('#clone_sample').setDisabled(selection2 || !canEdit);
         grid.down('#view_details').setDisabled(selection2 || !canEdit);
+        grid.down('#upload_sequences').setDisabled(selection2 || !canEdit);
 
         grid.down('#add_tracking_comment').setDisabled(selection2);
     },

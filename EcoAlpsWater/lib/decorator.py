@@ -34,7 +34,7 @@ class send_email_to_admin(object):
                 Dear admin,
                 user {user} has just performed a create new sample operation with code {sample_code}.
                 '''.format(user=user, sample_code=sample_code)
-            elif self.operation == 'get_sequence':
+            elif self.operation == 'request_sequence':
                 user = request.user.username
                 samples = json.loads(request.POST['samples'])
                 message = '''

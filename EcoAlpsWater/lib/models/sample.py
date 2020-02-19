@@ -3,6 +3,7 @@ from django.db import models
 from EcoAlpsWater.lib.models.biological_element import BiologicalElement
 from EcoAlpsWater.lib.models.depth_type import DepthType
 from EcoAlpsWater.lib.models.dna_extraction_kit import DNAExtractionKit
+from EcoAlpsWater.lib.models.dna_quantification_method import DNAQuantificationMethod
 from EcoAlpsWater.lib.models.edna_marker import EDNAMarker
 from EcoAlpsWater.lib.models.mixing_type import MixingType
 from EcoAlpsWater.lib.models.sampling_matrix import SamplingMatrix
@@ -58,6 +59,7 @@ class Sample(models.Model):
     dna_extraction_kit = models.ForeignKey(DNAExtractionKit, on_delete=models.CASCADE, null=True, blank=True)
     dna_extraction_date = models.DateTimeField(auto_now_add=False, blank=True, null=True)
     dna_quantity = models.FloatField(null=True, blank=True)
+    dna_quantification_method = models.ForeignKey(DNAQuantificationMethod, on_delete=models.CASCADE, null=True, blank=True)
     dna_quality_a260_280 = models.FloatField(null=True, blank=True)
     dna_quality_a260_230 = models.FloatField(null=True, blank=True)
     vertical_temperature_profiles = models.BinaryField()
@@ -111,6 +113,7 @@ class Sample(models.Model):
             'dna_extraction_kit': self.dna_extraction_kit.name if self.dna_extraction_kit else None,
             'dna_extraction_date': self.dna_extraction_date.strftime('%m-%d-%Y') if self.dna_extraction_date else None,
             'dna_quantity': self.dna_quantity,
+            'dna_quantification_method': self.dna_quantification_method.name if self.dna_quantification_method else None,
             'dna_quality_a260_230': self.dna_quality_a260_230,
             'dna_quality_a260_280': self.dna_quality_a260_280
         }
@@ -165,6 +168,7 @@ class Sample(models.Model):
             'dna_extraction_kit': self.dna_extraction_kit_id,
             'dna_extraction_date': self.dna_extraction_date.strftime('%m-%d-%Y') if self.dna_extraction_date else None,
             'dna_quantity': self.dna_quantity,
+            'dna_quantification_method': self.dna_quantification_method_id,
             'dna_quality_a260_230': self.dna_quality_a260_230,
             'dna_quality_a260_280': self.dna_quality_a260_280
         }

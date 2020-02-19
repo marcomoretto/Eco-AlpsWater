@@ -9,6 +9,10 @@ Ext.define('EcoAlpsWater.view.main.MainController', {
 
     alias: 'controller.main',
 
+    onDocumentation: function(me) {
+        window.open('https://docs.google.com/document/d/1Qk-eReszlOpV-fSZDHhr8lwdoazp1CLSDtWM7WEbjjU')
+    },
+
     onLogout: function(me) {
         Ext.Ajax.request({
             url: '/logout/',

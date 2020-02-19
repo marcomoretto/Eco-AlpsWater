@@ -3,6 +3,49 @@ Ext.define('EcoAlpsWater.view.main.StationsController', {
 
     alias: 'controller.stations',
 
+    onLatLongChange: function(oldVal, newVal) {
+        var me = this;
+        var suggested_name_win = undefined;
+        var check = me.getView().down('#suggested_names').getValue();
+        var lat = me.getView().down('#latitude').getValue();
+        var lon = me.getView().down('#longitude').getValue();
+        if (check && lat && lon && lat.toString().length > 4 && lon.toString().length > 4) {
+            Ext.Ajax.request({
+                url: 'https://nominatim.openstreetmap.org/reverse?format=json&lat=' + lat + '&lon=' + lon + '&zoom=18&addressdetails=1',
+                method: 'GET',
+                success: function (response) {
+                    var resData = Ext.decode(response.responseText);
+                    if (suggested_name_win) {
+                        suggested_name_win.close();
+                    }
+                    suggested_name_win = Ext.create({
+                        xtype: 'suggested_names_window',
+                    });
+                    var obj = resData.address;
+                    var tot = 0;
+                    Object.keys(obj).forEach(function(key,index) {
+                        var f = Ext.create({
+                            xtype: 'textfield',
+                            fieldLabel: key,
+                            name: 'field_value' + key,
+                            itemId: 'field_value' + key,
+                            value: obj[key],
+                            anchor: '100%',
+                            margin: '5 5 5 5',
+                            editable: false,
+                        });
+                        tot += 1;
+                        suggested_name_win.down('#fields').add(f);
+                    });
+                    suggested_name_win.setHeight(65 + (tot * 40));
+                },
+                failure: function (response) {
+                    console.log('Server error', reponse);
+                }
+            });
+        }
+    },
+
     onStationLiveFilterChange: function(me, text, old, event) {
         if (text.length < 3) {
             me.up('stations').getStore().proxy.extraParams.filter = '';

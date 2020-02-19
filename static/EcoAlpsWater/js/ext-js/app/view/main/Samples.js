@@ -378,7 +378,7 @@ Ext.define('EcoAlpsWater.view.main.AddTrackingCommentsWindow', {
                     formBind: true,
                     listeners: {
                         click: {
-                            fn: 'onAddComment'
+                            fn: 'onAddCommentTrackingComment'
                         }
                     }
                 }
@@ -757,6 +757,17 @@ Ext.define('EcoAlpsWater.view.main.Samples', {
             listeners: {
                 click: {
                     fn: 'onCloneSample'
+                }
+            }
+        }, {
+            text: 'Upload sequences',
+            itemId: 'upload_sequences',
+            name: 'upload_sequences',
+            glyph: 'f093',
+            disabled: true,
+            listeners: {
+                click: {
+                    fn: 'onUploadSequence'
                 }
             }
         }, {
