@@ -111,7 +111,7 @@ def get_stations(request):
 
 
 @forward_exception_to_http
-def upload_excel_profile_file(request):
+def excel_profile_file_upload(request):
     req = json.loads(request.POST['request'])
     sample_code = req['sample_code']
     file = request.FILES[req['template']]
@@ -418,6 +418,12 @@ def get_sequence(request, id, file=None):
 @forward_exception_to_http
 def request_sequence(request):
     samples = json.loads(request.POST['samples'])
+    tot_files = 0
+    for sample_id in samples:
+        sample = Sample.objects.get(id=sample_id)
+        tot_files += sample.sequence_set.all().count()
+    if tot_files == 0:
+        raise Exception('There are no files associated')
     dirname = str(uuid.uuid1().int>>64)
     os.mkdir(os.path.join(os.environ['EAW_DOWNLOAD_DIRECTORY'], dirname))
     outdir = os.environ['EAW_DOWNLOAD_DIRECTORY']

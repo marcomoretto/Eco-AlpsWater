@@ -275,12 +275,12 @@ Ext.define('EcoAlpsWater.view.main.SamplesController', {
         });
         samples['samples'] = JSON.stringify(samples.samples),
         Ext.Ajax.request({
-            binary: true,
             url: '/request_sequence/',
             params: samples,
             success: function (response) {
-                var resData = Ext.decode(response.responseText);
-                EcoAlpsWater.current.showMessage('info', 'Sequence file ready', 'An e-mail with instructions has been sent to your e-mail account!');
+                if (EcoAlpsWater.current.checkHttpResponse(response)) {
+                    EcoAlpsWater.current.showMessage('info', 'Sequence file ready', 'An e-mail with instructions has been sent to your e-mail account!');
+                }
             },
             failure: function (response) {
                 console.log('Server error', reponse);
