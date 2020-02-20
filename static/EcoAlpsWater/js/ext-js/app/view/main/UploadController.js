@@ -45,6 +45,7 @@ Ext.define('EcoAlpsWater.view.main.UploadController', {
             url: '/progress?X-Progress-ID=' + id,
             success: function (response) {
                 var resData = Ext.decode(response.responseText);
+                console.log(resData);
                 if (resData.state == 'done') {
                     me.stopPollingUploadStatus(me._pol);
                     bar.updateText('Done');
@@ -56,6 +57,7 @@ Ext.define('EcoAlpsWater.view.main.UploadController', {
                 }
             },
             failure: function (response) {
+                console.log('POLL FAILURE', response);
                 //me.stopPollingUploadStatus(me._pol);
             }
         });
@@ -91,7 +93,9 @@ Ext.define('EcoAlpsWater.view.main.UploadController', {
                 },
                 failure: function (fp, o) {
                     console.log('FAILURE');
-                    EcoAlpsWater.current.checkHttpResponse(o.response);
+                    console.log(fp, o);
+                    EcoAlpsWater.current.showMessage('error', 'Upload', 'Error during sequence file upload!')
+                    //EcoAlpsWater.current.checkHttpResponse(o.response);
                 }
             });
         }

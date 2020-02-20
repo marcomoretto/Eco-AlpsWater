@@ -4,7 +4,7 @@ services:
   nginx:
     build: ./nginx/
     ports:
-      - "8000:80"
+      - "8000:443"
     volumes_from:
       - web
       - nginx_data

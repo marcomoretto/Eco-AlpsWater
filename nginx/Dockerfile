@@ -24,6 +24,6 @@ RUN mkdir -p /var/www/upload/0 && \
 	mkdir -p /var/www/download/ && \
     chmod 777 -R /var/www/upload
 
-EXPOSE 80 443
+EXPOSE 443
 
 CMD ["nginx", "-g", "daemon off;"]
