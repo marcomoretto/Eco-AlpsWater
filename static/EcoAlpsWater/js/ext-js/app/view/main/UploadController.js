@@ -67,7 +67,7 @@ Ext.define('EcoAlpsWater.view.main.UploadController', {
     },
 
     startPollingUploadStatus: function(f) {
-        return window.setInterval(f, 5000);
+        return window.setInterval(f, 1000);
     },
 
     stopPollingUploadStatus: function(f) {

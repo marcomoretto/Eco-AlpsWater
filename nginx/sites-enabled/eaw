@@ -3,10 +3,10 @@ map $http_upgrade $connection_upgrade {
 	''        close;
 }
 
-upload_progress uploads 1m;
+upload_progress uploads 5m;
 
 server {
-    client_max_body_size 0;
+	client_max_body_size 0;
     proxy_request_buffering off;
 
 	#listen 80;
@@ -40,7 +40,7 @@ server {
 
         # Upload form should be submitted to this location
   		location /upload {
-
+  			upload_limit_rate 100M;
   			proxy_request_buffering off;
 
   			# use django for authenticating request
@@ -65,7 +65,7 @@ server {
 			upload_pass_form_field "^edna_marker$";
 			upload_cleanup 400-599;
 
-			track_uploads uploads 60s;
+			track_uploads uploads 5s;
     	}
 
     	location ^~ /progress {

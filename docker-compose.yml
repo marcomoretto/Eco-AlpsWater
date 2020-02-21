@@ -41,7 +41,7 @@ services:
       - web_data
     volumes:
       - .:/app
-    command: gunicorn EcoAlpsWater_.wsgi:application -w 2 -b :8888
+    command: gunicorn EcoAlpsWater_.wsgi:application -w 2 -b :8888 --timeout 1200
     networks:
       static-network:
         ipv4_address: 172.25.0.4
