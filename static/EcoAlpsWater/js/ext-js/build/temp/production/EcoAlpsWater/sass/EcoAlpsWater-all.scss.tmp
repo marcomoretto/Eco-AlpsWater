@@ -27,6 +27,7 @@ $include-ecoalpswater-view-main-newsamplestep3: dynamic(true);;
 $include-ecoalpswater-view-main-newstationwindow: dynamic(true);;
 $include-ecoalpswater-view-main-samples: dynamic(true);;
 $include-ecoalpswater-view-main-samplescontroller: dynamic(true);;
+$include-ecoalpswater-view-main-sequencefile: dynamic(true);;
 $include-ecoalpswater-view-main-singlegeopoint: dynamic(true);;
 $include-ecoalpswater-view-main-stations: dynamic(true);;
 $include-ecoalpswater-view-main-stationscontroller: dynamic(true);;

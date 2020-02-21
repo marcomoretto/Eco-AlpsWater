@@ -1,3 +1,69 @@
+var eawSequenceFileUploadGridStore = new Ext.data.JsonStore({
+    autoLoad: false,
+    pageSize: 5,
+    remoteSort: true,
+    proxy: {
+        type: 'ajax',
+        timeout: 120000,
+        url: '/get_sample_sequence_file/',
+        reader: {
+            type: 'json',
+            rootProperty: 'rows',
+            totalProperty: 'total'
+        },
+        actionMethods: {
+            read: 'POST'
+        }
+    },
+    fields: ['id', 'original_filename', 'upload_date']
+});
+
+Ext.define('EcoAlpsWater.view.main.SequenceFile', {
+    extend: 'Ext.grid.Panel',
+    xtype: 'sequence_files',
+
+    requires: [],
+
+    title: false,
+
+    controller: 'upload',
+
+    store: eawSequenceFileUploadGridStore,
+
+    dockedItems: [{
+            xtype: 'eaw_station_paging',
+            store: eawSequenceFileUploadGridStore,
+            dock: 'bottom',
+            displayInfo: true
+        }],
+
+    columns: [{
+        text: 'ID',
+        name: 'id',
+        itemId: 'id',
+        dataIndex: 'id',
+        flex: 1,
+        hidden:true,
+    }, {
+        text: 'Uploaded file name',
+        name: 'original_filename',
+        itemId: 'original_filename',
+        dataIndex: 'original_filename',
+        align:'center',
+        flex: 5
+    }, {
+        text: 'Upload date',
+        name: 'upload_date',
+        itemId: 'upload_date',
+        dataIndex: 'upload_date',
+        flex: 2
+    }],
+
+    listeners: {
+        afterrender: 'onSequenceFileUploadAfterRender',
+    }
+});
+
 Ext.define('EcoAlpsWater.view.main.Upload', {
     extend: 'Ext.window.Window',
     requires: [
@@ -11,7 +77,7 @@ Ext.define('EcoAlpsWater.view.main.Upload', {
     autoShow: true,
     modal: true,
     width: 600,
-    height: 400,
+    height: 600,
     layout: 'fit',
     controller: 'upload',
 
@@ -92,6 +158,11 @@ Ext.define('EcoAlpsWater.view.main.Upload', {
             name: 'upload_progress',
             itemId: 'upload_progress',
             hidden: true
+        }, {
+            xtype: 'container',
+            height: 50,
+        },{
+            xtype: 'sequence_files'
         }],
         buttons: [{
             text: 'Upload',

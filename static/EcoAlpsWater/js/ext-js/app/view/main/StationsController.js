@@ -57,7 +57,11 @@ Ext.define('EcoAlpsWater.view.main.StationsController', {
     },
 
     onStationsGridAfterRender: function(me) {
-        me.getStore().reload();
+        me.getStore().reload({
+            params: {
+                data: 'ciao'
+            }
+        });
     },
 
     onItemSelect: function (me, selected, eOpts) {

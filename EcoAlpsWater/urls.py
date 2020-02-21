@@ -36,4 +36,5 @@ urlpatterns = [
     url(r'^get_institutes_short_names/$', views.get_institutes_short_names, name='get_institutes_short_names'),
     url(r'^add_tracking_comment/$', views.add_tracking_comment, name='add_tracking_comment'),
     url(r'^complete/?$', views.upload_complete, name='upload_complete'),
+    url(r'^get_sample_sequence_file/?$', views.get_sample_sequence_file, name='get_sample_sequence_file'),
 ]

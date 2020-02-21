@@ -10,7 +10,7 @@ server {
     proxy_request_buffering off;
 
 	#listen 80;
-	#charset utf-8;
+	charset utf-8;
 
 	listen 443 ssl;
     ssl_certificate /app/star_fmach_it.crt;
@@ -41,6 +41,8 @@ server {
         # Upload form should be submitted to this location
   		location /upload {
 
+  			proxy_request_buffering off;
+
   			# use django for authenticating request
         	auth_request /auth;
 
@@ -56,10 +58,6 @@ server {
 			upload_set_form_field $upload_field_name.name "$upload_file_name";
 			upload_set_form_field $upload_field_name.content_type "$upload_content_type";
 			upload_set_form_field $upload_field_name.path "$upload_tmp_path";
-
-			# Inform backend about hash and size of a file
-			upload_aggregate_form_field "$upload_field_name.md5" "$upload_file_md5";
-			upload_aggregate_form_field "$upload_field_name.size" "$upload_file_size";
 
 			# Here is where you define additional fields to pass through to upload_complete
 			upload_pass_form_field "^sample_id$";

@@ -8,6 +8,7 @@ from json import JSONDecodeError
 import pytz
 import shutil
 from stat import S_IREAD, S_IRGRP, S_IROTH
+import hashlib
 
 from PIL import Image
 import datetime
@@ -465,15 +466,40 @@ def request_sequence(request):
         }), content_type="application/json")
 
 
+def get_sample_sequence_file(request):
+    sample = Sample.objects.get(id=request.POST['sample_id'][0])
+    rs = sample.sequence_set.order_by('id').all()
+    page = request.POST.get('page', 1)
+    start = request.POST.get('start', 0)
+    limit = request.POST.get('limit', rs.count())
+    st = int(start)
+    en = st + int(limit)
+    rows = []
+    for s in rs[st:en]:
+        v = s.to_dict()
+        rows.append(v)
+    total = rs.count()
+    return HttpResponse(
+        json.dumps({
+            'success': True,
+            'rows': rows,
+            'total': total
+        }), content_type="application/json")
+
+
 @forward_exception_to_http
 def upload_complete(request):
-    md5 = ''
     sample = Sample.objects.get(id=request.POST.get('sample_id', None))
     be = BiologicalElement.objects.get(id=request.POST.get('biological_element', None))
     edna = EDNAMarker.objects.get(id=request.POST.get('edna_marker', None))
+    hash_md5 = hashlib.md5()
+    with open(request.POST['sequence_file.path'], "rb") as f:
+        for chunk in iter(lambda: f.read(4096), b""):
+            hash_md5.update(chunk)
+    md5 = hash_md5.hexdigest()
     with open(request.POST['md5_checksum_file.path']) as f:
-        md5 = f.read().strip().split()[0]
-    if request.POST['sequence_file.md5'] != md5:
+        file_md5 = f.read().strip().split()[0]
+    if file_md5 != md5:
         raise Exception('MD5SUM mismatch, sequence file corrupted or wrong MD5')
     file_unique_id = uuid.uuid4()
     new_file_name = '{sample_code}_{be}_{edna}_{file_unique_id}_{org_name}'.format(
@@ -491,6 +517,7 @@ def upload_complete(request):
     Sequence.objects.create(
         sample=sample,
         filename=new_file_name,
+        original_filename=request.POST['sequence_file.name'],
         md5sum=md5
     )
     return HttpResponse(json.dumps({'success': True}),

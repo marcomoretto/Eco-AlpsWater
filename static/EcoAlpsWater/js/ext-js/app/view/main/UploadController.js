@@ -54,6 +54,9 @@ Ext.define('EcoAlpsWater.view.main.UploadController', {
                     bar.updateText('Uploading...');
                     var ratio = resData.received / resData.size;
                     bar.updateProgress(ratio);
+                    if (resData.received == resData.size) {
+                        bar.updateText('Checking file integrity ...');
+                    }
                 }
             },
             failure: function (response) {
@@ -64,11 +67,16 @@ Ext.define('EcoAlpsWater.view.main.UploadController', {
     },
 
     startPollingUploadStatus: function(f) {
-        return window.setInterval(f, 2000);
+        return window.setInterval(f, 5000);
     },
 
     stopPollingUploadStatus: function(f) {
         window.clearInterval(f)
+    },
+
+    onSequenceFileUploadAfterRender: function(me) {
+        me.getStore().proxy.extraParams = {sample_id: me.up('upload').sample.id};
+        me.getStore().reload();
     },
 
     onUploadSequenceFile: function(btn) {
@@ -82,6 +90,7 @@ Ext.define('EcoAlpsWater.view.main.UploadController', {
         var form = btn.up('form').getForm();
         var params = form.getValues();
         params['sample_id'] = sample_id;
+        var progressBar = btn.up('form').down('#upload_progress');
         if(form.isValid()) {
             form.submit({
                 url: '/upload?X-Progress-ID=' + uuid,
@@ -89,17 +98,23 @@ Ext.define('EcoAlpsWater.view.main.UploadController', {
                 baseParams: params,
                 success: function (fp, o) {
                     console.log('SUCCESS');
-                    EcoAlpsWater.current.showMessage('info', 'Upload', 'Sequence file uploaded successfully!')
+                    EcoAlpsWater.current.showMessage('info', 'Upload', 'Sequence file uploaded successfully!');
+                    panel.down('sequence_files').getStore().proxy.extraParams = {
+                        sample_id: sample_id
+                    };
+                    panel.down('sequence_files').getStore().reload();
                 },
                 failure: function (fp, o) {
                     console.log('FAILURE');
                     console.log(fp, o);
                     EcoAlpsWater.current.showMessage('error', 'Upload', 'Error during sequence file upload!')
                     //EcoAlpsWater.current.checkHttpResponse(o.response);
+                    progressBar.setHidden(false);
+                    progressBar.updateText('Initializing...');
+                    progressBar.updateProgress(0.0);
                 }
             });
         }
-        var progressBar = btn.up('form').down('#upload_progress');
         progressBar.setHidden(false);
         progressBar.updateText('Initializing...');
         progressBar.updateProgress(0.0);
