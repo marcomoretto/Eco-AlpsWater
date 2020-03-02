@@ -449,11 +449,11 @@ def request_sequence(request):
         
         If you prefer to use WGET you'll need to first login and save the cookie with your credentials
         
-        wget -qO- --keep-session-cookies --save-cookies cookies.txt --post-data 'username={user}&password=<password>' {login}
+        wget -qO- --no-check-certificate --keep-session-cookies --save-cookies cookies.txt --post-data 'username={user}&password=<password>' {login}
         
         And then download files passing the cookie file
         
-        wget -c -r --load-cookies cookies.txt {location}
+        wget -c -r --no-check-certificate --load-cookies cookies.txt {location}
 
         This e-mail has been automatically sent from the Eco-AlpsWater website.
                '''.format(user=request.user.username,
