@@ -3,7 +3,6 @@ import sys
 from django.contrib.auth import get_user_model
 from django.contrib.auth.models import User
 from django.core.management import BaseCommand, CommandError
-from django_ftpserver import models
 
 from EcoAlpsWater.lib.models.eaw_user import EAWUser
 
@@ -31,10 +30,6 @@ class Command(BaseCommand):
         user.eawuser.institute = options['institute']
         user.eawuser.institute_short = options['institute-short']
         user.save()
-
-        home_dir = '/app/ftp-data'
-        group = models.FTPUserGroup.objects.get(name='ftp-eaw')
-        account = models.FTPUserAccount.objects.create(user=user, group=group, home_dir=home_dir)
 
         sys.stdout.write('User account pk={pk}, "{username}" was created.\n'.format(pk=account.pk, username=options['username']))
 
