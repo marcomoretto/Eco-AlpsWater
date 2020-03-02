@@ -278,14 +278,13 @@ Ext.define('EcoAlpsWater.view.main.SamplesController', {
             url: '/request_sequence/',
             params: samples,
             success: function (response) {
-                if (EcoAlpsWater.current.checkHttpResponse(response)) {
-                    EcoAlpsWater.current.showMessage('info', 'Sequence file ready', 'An e-mail with instructions has been sent to your e-mail account!');
-                }
+                EcoAlpsWater.current.checkHttpResponse(response);
             },
             failure: function (response) {
                 console.log('Server error', reponse);
             }
         });
+        EcoAlpsWater.current.showMessage('info', 'Download sequence file(s)', 'An e-mail with instructions will be sent to your e-mail account!');
     },
 
     onViewSampleDetails: function(me) {
