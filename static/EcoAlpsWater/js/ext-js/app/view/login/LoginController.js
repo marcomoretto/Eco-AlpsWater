@@ -2,10 +2,6 @@ Ext.define('EcoAlpsWater.view.login.LoginController', {
     extend: 'Ext.app.ViewController',
     alias: 'controller.login',
 
-    onEAWPageClick: function (me) {
-        window.location.replace("https://www.alpine-space.eu/projects/eco-alpswater/");
-    },
-
     submitOnEnter(field, event) {
         if (event.getKey() == event.ENTER) {
             var view = this.getView();

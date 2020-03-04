@@ -13,7 +13,7 @@ Ext.define('EcoAlpsWater.view.login.Login', {
     closable: false,
     autoShow: true,
     modal: true,
-    height: 500,
+    height: 550,
     width: 600,
 
     items: [{
@@ -51,14 +51,7 @@ Ext.define('EcoAlpsWater.view.login.Login', {
                 specialkey: 'submitOnEnter'
             }
         }],
-        buttons: [{
-            text: 'Visit EAW project page',
-            itemId: 'eaw_project_page',
-            formBind: false,
-            listeners: {
-                click: 'onEAWPageClick'
-            }
-        }, '->', {
+        buttons: ['->', {
             text: 'Login',
             itemId: 'login',
             formBind: true,
@@ -66,6 +59,53 @@ Ext.define('EcoAlpsWater.view.login.Login', {
                 click: 'onLoginClick'
             }
         }]
+    }, {
+        xtype: 'panel',
+        border: false,
+        height: 100,
+        margin: '10 10 10 10',
+        layout: 'hbox',
+        align: 'top',
+        items: [{
+            xtype: 'image',
+            src: '/static/EcoAlpsWater/images/logo-small-2.jpg',
+            autoEl: {
+                tag: 'a',
+                href: 'https://www.alpine-space.eu/projects/eco-alpswater/'
+            },
+            margin: '10 10 10 10',
+        }, {
+            xtype: 'image',
+            src: '/static/EcoAlpsWater/images/fb.jpg',
+            autoEl: {
+                tag: 'a',
+                href: 'https://www.facebook.com/ecoalpswater/'
+            },
+            margin: '10 10 10 10',
+        }, {
+            xtype: 'image',
+            src: '/static/EcoAlpsWater/images/tw.jpg',
+            autoEl: {
+                tag: 'a',
+                href: 'https://twitter.com/EcoAlpsWater'
+            },
+            margin: '10 10 10 10',
+        }, /*{
+            xtype: 'image',
+            src: '/static/EcoAlpsWater/images/in.jpg',
+            autoEl: {
+                tag: 'a',
+                href: 'https://www.alpine-space.eu/projects/eco-alpswater/'
+            }
+        }, {
+            xtype: 'image',
+            cursor: 'pointer',
+            src: '/static/EcoAlpsWater/images/yt.jpg',
+            autoEl: {
+                tag: 'a',
+                href: 'https://www.alpine-space.eu/projects/eco-alpswater/'
+            }
+        }*/]
     }],
 
     initComponent: function() {
