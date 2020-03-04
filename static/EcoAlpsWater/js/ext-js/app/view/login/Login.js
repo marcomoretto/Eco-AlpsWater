@@ -64,48 +64,11 @@ Ext.define('EcoAlpsWater.view.login.Login', {
         border: false,
         height: 100,
         margin: '10 10 10 10',
-        layout: 'hbox',
-        align: 'top',
-        items: [{
-            xtype: 'image',
-            src: '/static/EcoAlpsWater/images/logo-small-2.jpg',
-            autoEl: {
-                tag: 'a',
-                href: 'https://www.alpine-space.eu/projects/eco-alpswater/'
-            },
-            margin: '10 10 10 10',
-        }, {
-            xtype: 'image',
-            src: '/static/EcoAlpsWater/images/fb.jpg',
-            autoEl: {
-                tag: 'a',
-                href: 'https://www.facebook.com/ecoalpswater/'
-            },
-            margin: '10 10 10 10',
-        }, {
-            xtype: 'image',
-            src: '/static/EcoAlpsWater/images/tw.jpg',
-            autoEl: {
-                tag: 'a',
-                href: 'https://twitter.com/EcoAlpsWater'
-            },
-            margin: '10 10 10 10',
-        }, /*{
-            xtype: 'image',
-            src: '/static/EcoAlpsWater/images/in.jpg',
-            autoEl: {
-                tag: 'a',
-                href: 'https://www.alpine-space.eu/projects/eco-alpswater/'
-            }
-        }, {
-            xtype: 'image',
-            cursor: 'pointer',
-            src: '/static/EcoAlpsWater/images/yt.jpg',
-            autoEl: {
-                tag: 'a',
-                href: 'https://www.alpine-space.eu/projects/eco-alpswater/'
-            }
-        }*/]
+        html: '<table style="width:50%">' +
+            '<tr><td><a href="https://www.alpine-space.eu/projects/eco-alpswater/"><img src="/static/EcoAlpsWater/images/logo-small-2.jpg"/></a></td>' +
+            '<td><a href="https://www.facebook.com/ecoalpswater/"><img src="/static/EcoAlpsWater/images/fb.jpg"/></a></td>' +
+            '<td><a href="https://twitter.com/EcoAlpsWater"><img src="/static/EcoAlpsWater/images/tw.jpg"/></a></td></tr>' +
+            '</table>'
     }],
 
     initComponent: function() {
