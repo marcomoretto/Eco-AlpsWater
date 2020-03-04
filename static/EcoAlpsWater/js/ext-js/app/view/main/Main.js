@@ -38,7 +38,7 @@ Ext.define('EcoAlpsWater.view.main.Main', {
             },
             flex: 0
         },
-        iconCls: 'fa-flask'
+        iconCls: 'eaw-logo'
     },
 
     tabBar: {

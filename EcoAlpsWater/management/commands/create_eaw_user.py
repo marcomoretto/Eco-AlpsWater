@@ -31,7 +31,7 @@ class Command(BaseCommand):
         user.eawuser.institute_short = options['institute-short']
         user.save()
 
-        sys.stdout.write('User account pk={pk}, "{username}" was created.\n'.format(pk=account.pk, username=options['username']))
+        sys.stdout.write('User account pk={pk}, "{username}" was created.\n'.format(pk=user.id, username=user.username))
 
     @staticmethod
     def _create_bled_user(user_filename):

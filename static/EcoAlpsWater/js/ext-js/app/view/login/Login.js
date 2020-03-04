@@ -22,7 +22,7 @@ Ext.define('EcoAlpsWater.view.login.Login', {
         height: 290,
         margin: '0 0 10 0',
         bodyStyle:{
-            "background":"url('/static/EcoAlpsWater/images/garda_lake_3.jpg') no-repeat",
+            "background":"url('/static/EcoAlpsWater/images/logo-simple.jpg') no-repeat",
             "background-size":"contain",
             "opacity": "0.8"
         }
@@ -51,7 +51,14 @@ Ext.define('EcoAlpsWater.view.login.Login', {
                 specialkey: 'submitOnEnter'
             }
         }],
-        buttons: ['->',{
+        buttons: [{
+            text: 'Visit EAW project page',
+            itemId: 'eaw_project_page',
+            formBind: false,
+            listeners: {
+                click: 'onEAWPageClick'
+            }
+        }, '->', {
             text: 'Login',
             itemId: 'login',
             formBind: true,

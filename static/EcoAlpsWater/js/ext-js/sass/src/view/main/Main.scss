@@ -48,12 +48,12 @@
     $ui-header-font-size: 20px,
     $ui-header-line-height: 24px,
     $ui-header-font-weight: bold,
-    $ui-header-icon-height: 24px,
-    $ui-header-icon-width: 24px,
+    $ui-header-icon-height: 64px,
+    $ui-header-icon-width: 131px,
     $ui-header-icon-spacing: 15px,
     $ui-header-background-color: $base-color,
     $ui-header-padding: 0,
-    $ui-header-text-margin: 36px,
+    $ui-header-text-margin: 18px,
     $ui-header-noborder-adjust: false
 );
 
@@ -82,11 +82,8 @@
     right: -24px;
 }
 
-.ecoalpswater-login-background {
-    padding: 40px 0px 0px 0px;
-    background: $base-color url(/static/EcoAlpsWater/images/garda_lake.jpg) no-repeat 0px -30px;
-    font-size: 18px;
-    font-weight: bold;
+.eaw-logo {
+    background-image: url(/static/EcoAlpsWater/images/logo-simple-small.jpg) !important;
 }
 
 
