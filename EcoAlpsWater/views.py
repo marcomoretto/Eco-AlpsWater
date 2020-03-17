@@ -900,6 +900,10 @@ def save_sample(request):
         dna_quality_a260_230=request.POST.get('dna_quality_a260_230', None) or None
     )
 
+    if sample.sampling_date:
+        dt = datetime.datetime.strptime(sample.sampling_date, '%m/%d/%Y')
+        sample.sampling_date = datetime.datetime(dt.year, dt.month, dt.day, tzinfo=pytz.UTC)
+
     if sample.dna_extraction_date:
         dt = datetime.datetime.strptime(sample.dna_extraction_date, '%m/%d/%Y')
         sample.dna_extraction_date = datetime.datetime(dt.year, dt.month, dt.day, tzinfo=pytz.UTC)

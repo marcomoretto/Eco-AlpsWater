@@ -18,7 +18,7 @@ class Sample(models.Model):
     sample_code = models.TextField(blank=False, null=False, unique=True)
     cap_code = models.TextField(blank=True, null=True)
     station = models.ForeignKey(Station, on_delete=models.CASCADE, null=False, default=1)
-    sampling_date = models.DateTimeField(auto_now_add=True, blank=False, null=False)
+    sampling_date = models.DateTimeField(auto_now_add=False, blank=True, null=True)
     sampling_depth_min = models.FloatField(null=False, blank=False)
     sampling_depth_max = models.FloatField(null=False, blank=False)
     sampling_volume = models.FloatField(null=True, blank=True)
