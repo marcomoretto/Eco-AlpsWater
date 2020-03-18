@@ -759,7 +759,7 @@ def update_sample(request):
                'Eco-AlpsWater sample updated: ' + sample.sample_code,
                '''
        Dear {user},
-       sample with code {sample_code} has just been succesfully updated to the Eco-AlpsWater database.
+       sample with code {sample_code} has just been successfully updated to the Eco-AlpsWater database.
        Please find attached to this e-mail a PNG file with the sample barcode and an Excel file with all the sample information.
        Both files are ZIP-compressed.
        
@@ -1015,7 +1015,7 @@ def save_sample(request):
         'Eco-AlpsWater new sample added: ' + sample.sample_code,
         '''
 Dear {user},
-a new sample with code {sample_code} has just been succesfully added to the Eco-AlpsWater database.
+a new sample with code {sample_code} has just been successfully added to the Eco-AlpsWater database.
 Please find attached to this e-mail a PNG file with the sample barcode and an Excel file with all the sample information.
 Both files are ZIP-compressed.
                                                          

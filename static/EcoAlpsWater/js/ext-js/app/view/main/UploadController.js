@@ -46,7 +46,6 @@ Ext.define('EcoAlpsWater.view.main.UploadController', {
             url: '/progress?X-Progress-ID=' + id,
             success: function (response) {
                 var resData = Ext.decode(response.responseText);
-                EcoAlpsWater.current.showMessage('info', 'Upload', 'Sequence file upload sarted ...');
                 button.setDisabled(true);
                 if (resData.state == 'done') {
                     me.stopPollingUploadStatus(me._pol);
@@ -122,6 +121,7 @@ Ext.define('EcoAlpsWater.view.main.UploadController', {
         progressBar.setHidden(false);
         progressBar.updateText('Initializing...');
         progressBar.updateProgress(0.0);
+        EcoAlpsWater.current.showMessage('info', 'Upload', 'Sequence file upload sarted ...');
         this._pol = this.startPollingUploadStatus(function() { me._pollUploadStatus(uuid, progressBar) });
     }
 
