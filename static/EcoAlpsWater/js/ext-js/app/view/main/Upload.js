@@ -166,6 +166,8 @@ Ext.define('EcoAlpsWater.view.main.Upload', {
         }],
         buttons: [{
             text: 'Upload',
+            name: 'button_upload',
+            itemId: 'button_upload',
             formBind: true,
             handler: 'onUploadSequenceFile'
         }]

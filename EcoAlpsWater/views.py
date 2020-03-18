@@ -99,8 +99,10 @@ def get_stations(request):
             sort_property = 'drainage_basin__name'
         elif sort_property == 'station_type':
             sort_property = 'type'
-
-    rs = Station.objects.filter(drainage_basin__country=request.user.eawuser.country).order_by('id').all()
+    if request.user.is_superuser:
+        rs = Station.objects.order_by('id').all()
+    else:
+        rs = Station.objects.filter(drainage_basin__country=request.user.eawuser.country).order_by('id').all()
     page = request.POST.get('page', 1)
     start = request.POST.get('start', 0)
     limit = request.POST.get('limit', rs.count())
@@ -549,6 +551,26 @@ def upload_complete(request):
         original_filename=request.POST['sequence_file.name'],
         md5sum=md5
     )
+    try:
+        user = request.user.username
+        title = 'Eco-AlpsWater admin notification'
+        message = '''
+            Dear admin,
+            user {user} has just uploaded the sequence file {file} for sample {sample}.
+            '''.format(user=user, file=request.POST['sequence_file.name'], sample=sample.sample_code)
+        for admin in User.objects.filter(is_superuser=True):
+            send_email(admin.email, title, message)
+        send_email(request.user.email,
+                   'Eco-AlpsWater sequence uploaded',
+                   '''
+           Dear {user},
+           sequence file named {file} has been successfully uploaded for sample with code {sample_code}.
+
+           This e-mail has been automatically sent from the Eco-AlpsWater website.
+                   '''.format(user=request.user.username, file=request.POST['sequence_file.name'], sample_code=sample.sample_code)
+                   )
+    except Exception as e:
+        pass
     return HttpResponse(json.dumps({'success': True}),
                         content_type="application/json")
 
@@ -591,9 +613,9 @@ def get_samples(request):
         if sort_property == 'username':
             sort_property = 'user__username'
         elif sort_property == 'water_body':
-            sort_property = 'drainage_basin__type'
+            sort_property = 'station__drainage_basin__type'
         elif sort_property == 'water_body_name':
-            sort_property = 'drainage_basin__name'
+            sort_property = 'station__drainage_basin__name'
         elif sort_property == 'station':
             sort_property = 'station__name'
         elif sort_property == 'sampling_depth':
