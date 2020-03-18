@@ -214,7 +214,7 @@ Ext.define('EcoAlpsWater.view.main.NewSampleStep0', {
                         name: 'station',
                         itemId: 'station',
                         valueField: 'id',
-                        displayField: 'name',
+                        displayField: 'full_name',
                         editable: false,
                         queryMode: 'local',
                         emptyText: 'Select a station...',
@@ -231,7 +231,7 @@ Ext.define('EcoAlpsWater.view.main.NewSampleStep0', {
                         },
                         store: {
                             autoLoad: false,
-                            fields: ['id', 'name'],
+                            fields: ['id', 'full_name'],
                             proxy: {
                                 type: 'ajax',
                                 url: '/get_stations/',

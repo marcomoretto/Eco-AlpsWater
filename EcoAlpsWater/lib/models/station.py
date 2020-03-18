@@ -20,6 +20,7 @@ class Station(models.Model):
     def to_dict(self):
         return {'id': self.id,
                 'name': self.name,
+                'full_name': self.name + ' ({wb}, {wb_name})'.format(wb=self.drainage_basin.type, wb_name=self.drainage_basin.name),
                 'water_body': self.drainage_basin.type,
                 'water_body_name': self.drainage_basin.name,
                 'station_type': self.type.capitalize(),

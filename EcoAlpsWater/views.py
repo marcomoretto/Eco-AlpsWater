@@ -21,6 +21,7 @@ from django.db.models import Q
 from django.http import HttpResponse, Http404
 from django.shortcuts import render
 from django.contrib.auth.models import User
+from django.db.models import Min
 
 # Create your views here.
 from EcoAlpsWater.lib.decorator import forward_exception_to_http, send_email_to_admin
@@ -86,7 +87,20 @@ def send_verification_email(request):
 
 
 def get_stations(request):
-    rs = Station.objects.order_by('id').all()
+    sort_property = 'id'
+    sort_dir = 'ASC'
+    if 'sort' in request.POST:
+        sort = json.loads(request.POST.get('sort', '[{}]'))[0]
+        sort_property = sort.get('property', 'id')
+        sort_dir = sort.get('direction', 'ASC')
+        if sort_property == 'water_body':
+            sort_property = 'drainage_basin__type'
+        elif sort_property == 'water_body_name':
+            sort_property = 'drainage_basin__name'
+        elif sort_property == 'station_type':
+            sort_property = 'type'
+
+    rs = Station.objects.filter(drainage_basin__country=request.user.eawuser.country).order_by('id').all()
     page = request.POST.get('page', 1)
     start = request.POST.get('start', 0)
     limit = request.POST.get('limit', rs.count())
@@ -101,6 +115,14 @@ def get_stations(request):
             Q(name__icontains=filter) |
             Q(type__icontains=filter)
         )
+    order = ''
+    if sort_dir == 'DESC':
+        order = '-'
+    rs = rs.order_by(order + sort_property)
+    if sort_property == 'latitude':
+        rs = rs.annotate(cc=Min('geographicalpoint__latitude')).order_by(order + 'cc')
+    if sort_property == 'longitude':
+        rs = rs.annotate(cc=Min('geographicalpoint__longitude')).order_by(order + 'cc')
     rows = [s.to_dict() for s in rs[st:en]]
     total = rs.count()
     return HttpResponse(
@@ -143,7 +165,7 @@ def get_combo_field_values(request):
     water_bodies = []
     for ty in DrainageBasin.TYPE:
         water_body = {'id': ty[0], 'name': ty[0], 'water_body_name': []}
-        for db in DrainageBasin.objects.filter(type=ty[0]):
+        for db in DrainageBasin.objects.filter(country=request.user.eawuser.country, type=ty[0]):
             wb = db.to_dict()
             water_body['water_body_name'].append(wb)
         water_bodies.append(water_body)
@@ -497,9 +519,16 @@ def upload_complete(request):
         for chunk in iter(lambda: f.read(4096), b""):
             hash_md5.update(chunk)
     md5 = hash_md5.hexdigest()
+    file_md5 = False
     with open(request.POST['md5_checksum_file.path']) as f:
-        file_md5 = f.read().strip().split()[0]
-    if file_md5 != md5:
+        for l in f:
+            if l.startswith('#'):
+                continue
+            for s in l.strip().split():
+                if s == md5:
+                    file_md5 = True
+                    break
+    if not file_md5:
         raise Exception('MD5SUM mismatch, sequence file corrupted or wrong MD5')
     file_unique_id = uuid.uuid4()
     new_file_name = '{sample_code}_{be}_{edna}_{file_unique_id}_{org_name}'.format(
@@ -553,6 +582,24 @@ def get_institutes_short_names(request):
 
 @forward_exception_to_http
 def get_samples(request):
+    sort_property = 'id'
+    sort_dir = 'ASC'
+    if 'sort' in request.POST:
+        sort = json.loads(request.POST.get('sort', '[{}]'))[0]
+        sort_property = sort.get('property', 'id')
+        sort_dir = sort.get('direction', 'ASC')
+        if sort_property == 'username':
+            sort_property = 'user__username'
+        elif sort_property == 'water_body':
+            sort_property = 'drainage_basin__type'
+        elif sort_property == 'water_body_name':
+            sort_property = 'drainage_basin__name'
+        elif sort_property == 'station':
+            sort_property = 'station__name'
+        elif sort_property == 'sampling_depth':
+            sort_property = 'sampling_depth_min'
+        elif sort_property == 'depth_type':
+            sort_property = 'depth_type__name'
     rs = Sample.objects.order_by('id').all()
     page = request.POST.get('page', 1)
     start = request.POST.get('start', 0)
@@ -599,6 +646,16 @@ def get_samples(request):
                     _d = {f['field_name'] + '__lte': f['field_value']}
                     rs_filter.add(Q(**_d), conn)
             rs = rs.filter(rs_filter)
+
+    order = ''
+    if sort_dir == 'DESC':
+        order = '-'
+    rs = rs.order_by(order + sort_property)
+    #if sort_property == 'latitude':
+    #    rs = rs.annotate(cc=Min('geographicalpoint__latitude')).order_by(order + 'cc')
+    #if sort_property == 'longitude':
+    #    rs = rs.annotate(cc=Min('geographicalpoint__longitude')).order_by(order + 'cc')
+
     rows = []
     for s in rs[st:en]:
         v = s.to_dict()
