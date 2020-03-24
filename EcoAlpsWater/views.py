@@ -802,8 +802,18 @@ def __create_env_metadata(samples):
     buffer = io.BytesIO()
     zf = zipfile.ZipFile(buffer, "w", zipfile.ZIP_DEFLATED)
     files = []
+    aggregated_workbook = xlsxwriter.Workbook('eaw_aggregated.xlsx')
+    aggregated_worksheet = aggregated_workbook.add_worksheet()
+    a_row = 0
+    a_col = 0
+    a_bold = aggregated_workbook.add_format({'bold': True})
+    aggregated_worksheet.write(a_row, a_col, 'Field', a_bold)
+    sample_idx = 0
     for sample_id in samples:
+        sample_idx += 1
+        a_row = 0
         sample = Sample.objects.get(id=sample_id)
+        aggregated_worksheet.write(a_row, sample_idx, sample.sample_code, a_bold)
         workbook = xlsxwriter.Workbook(sample.sample_code + '.xlsx')
         worksheet = workbook.add_worksheet()
         row = 0
@@ -813,6 +823,7 @@ def __create_env_metadata(samples):
         for i, h in enumerate(['Field', 'Field Description', 'Field Value', 'Comments']):
             worksheet.write(row, col + i, h, bold)
         row += 1
+        a_row += 1
         for field in s.keys():
             desc = FieldDescription.objects.filter(field_name=field)
             if len(desc) == 1:
@@ -831,7 +842,10 @@ def __create_env_metadata(samples):
             worksheet.write(row, col + 1, desc)
             worksheet.write(row, col + 2, value)
             worksheet.write(row, col + 3, comments)
+            aggregated_worksheet.write(a_row, a_col, field)
+            aggregated_worksheet.write(a_row, sample_idx, value)
             row += 1
+            a_row += 1
         workbook.close()
         zf.write(sample.sample_code + '.xlsx')
         if sample.vertical_temperature_profiles:
@@ -847,6 +861,9 @@ def __create_env_metadata(samples):
                 f.write(sample.cyanotoxin_samples)
                 zf.write(f.name)
         files.append(sample.sample_code + '.xlsx')
+    aggregated_workbook.close()
+    zf.write('eaw_aggregated.xlsx')
+    files.append('eaw_aggregated.xlsx')
     zf.close()
     for f in files:
         os.remove(f)
