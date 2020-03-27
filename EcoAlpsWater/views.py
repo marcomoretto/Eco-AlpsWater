@@ -309,6 +309,9 @@ def get_search_field_name(request):
         'id': 'mean_river_outflow',
         'name': 'Mean river outflow'
     }, {
+        'id': 'water_renewal_time',
+        'name': 'Water renewal time'
+    }, {
         'id': 'mixing_type__name',
         'name': 'Mixing type'
     }, {
@@ -960,6 +963,7 @@ def save_sample(request):
         sampling_matrix_id=request.POST.get('sampling_matrix', None) or None,
         sampling_strategy_id=request.POST.get('sampling_strategy', None) or None,
         mean_river_outflow=request.POST.get('mean_river_outflow', None) or None,
+        water_renewal_time=request.POST.get('water_renewal_time', None) or None,
         mixing_type_id=request.POST.get('mixing_type', None) or None,
         catchment_area=request.POST.get('catchment_area', None) or None,
         temperature=request.POST.get('temperature', None) or None,

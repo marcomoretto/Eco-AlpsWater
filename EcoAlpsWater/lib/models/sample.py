@@ -28,6 +28,7 @@ class Sample(models.Model):
     sampling_matrix = models.ForeignKey(SamplingMatrix, on_delete=models.CASCADE, null=False, default=1)
     sampling_strategy = models.ForeignKey(SamplingStrategy, on_delete=models.CASCADE, null=False, default=1)
     mean_river_outflow = models.FloatField(null=True, blank=True)
+    water_renewal_time = models.FloatField(null=True, blank=True)
     mixing_type = models.ForeignKey(MixingType, on_delete=models.CASCADE, null=True, blank=True)
     catchment_area = models.FloatField(null=True, blank=True)
     temperature = models.FloatField(null=True, blank=True)
@@ -82,6 +83,7 @@ class Sample(models.Model):
             'depth_type': self.depth_type.name if self.depth_type else None,
             #'edna_marker': self.edna_marker.name if self.edna_marker else None,
             'mean_river_outflow': self.mean_river_outflow,
+            'water_renewal_time': self.water_renewal_time,
             'mixing_type': self.mixing_type.name if self.mixing_type else None,
             'catchment_area': self.catchment_area,
             'temperature': self.temperature,
@@ -137,6 +139,7 @@ class Sample(models.Model):
             'depth_type': self.depth_type_id,
             #'edna_marker': self.edna_marker_id,
             'mean_river_outflow': self.mean_river_outflow,
+            'water_renewal_time': self.water_renewal_time,
             'mixing_type': self.mixing_type_id,
             'catchment_area': self.catchment_area,
             'temperature': self.temperature,

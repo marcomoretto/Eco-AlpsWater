@@ -76,8 +76,10 @@ Ext.define('EcoAlpsWater.view.main.NewSampleController', {
     onFieldChange: function(obj) {
         this.updateIDs();
         if (obj.itemId == 'station') {
-            var dis = obj.getSelectedRecord().data.water_body == 'Lake';
+            var dis = obj.getSelectedRecord().data.water_body == 'River';
             obj.up('new_sample_step_0').down('#mixing_type').setDisabled(dis);
+            obj.up('new_sample_step_0').down('#water_renewal_time').setDisabled(dis);
+            obj.up('new_sample_step_0').down('#mean_river_outflow').setDisabled(!dis);
         }
     },
 

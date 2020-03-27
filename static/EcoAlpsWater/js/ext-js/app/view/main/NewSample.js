@@ -485,6 +485,35 @@ Ext.define('EcoAlpsWater.view.main.NewSampleStep0', {
                 margin: '0 0 5 0',
                 items: [
                     {
+                        xtype: 'numberfield',
+                        fieldLabel: 'Water renewal time ',
+                        name: 'water_renewal_time',
+                        itemId: 'water_renewal_time',
+                        decimalPrecision: 5,
+                        allowBlank: true,
+                        flex: 15,
+                        margin: '0 5 0 0'
+                        },
+                    {
+                        xtype: 'button',
+                        flex: 1,
+                        glyph: 'xf27a',
+                        tooltip: 'Add comment',
+                        tooltipType: 'title',
+                        listeners: {
+                            click: {
+                                fn: 'onAddComment',
+                            }
+                        }
+                    }
+                ]
+            },
+            {
+                xtype: 'container',
+                layout: 'hbox',
+                margin: '0 0 5 0',
+                items: [
+                    {
                         xtype: 'combobox',
                         fieldLabel: 'Mixing type',
                         name: 'mixing_type',
