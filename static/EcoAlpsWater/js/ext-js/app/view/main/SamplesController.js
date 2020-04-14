@@ -357,7 +357,10 @@ Ext.define('EcoAlpsWater.view.main.SamplesController', {
                 if (a == 'yes') {
                     panel.down('#card-update').setHidden(false);
 
-                    var fields = ['laboratory_ph', 'laboratory_conductivity', 'total_alkalinity', 'bicarbonates',
+                    var fields = ['mean_river_outflow', 'water_renewal_time', 'mixing_type', 'catchment_area',
+                     'temperature', 'field_ph', 'field_conductivity', 'light_attenuation_coefficient',
+                     'secchi_disk_depth', 'euphotic_layer', 'oxygen_concentration', 'oxygen_percentage',
+                     'laboratory_ph', 'laboratory_conductivity', 'total_alkalinity', 'bicarbonates',
                     'nitrate_nitrogen', 'sulphates', 'chloride', 'calcium', 'magnesium', 'sodium', 'potassium',
                     'ammonium', 'total_nitrogen', 'soluble_reactive_phosphorus', 'total_phosphorus', 'reactive_silica',
                     'dry_weight', 'chlorophyll_a', 'dna_extraction_kit', 'dna_extraction_date', 'dna_quantity',

@@ -25,6 +25,7 @@ from django.db.models import Min
 
 # Create your views here.
 from EcoAlpsWater.lib.decorator import forward_exception_to_http, send_email_to_admin
+from EcoAlpsWater.lib.drainage_basin_user_exception import DrainageBasinUserException
 from EcoAlpsWater.lib.email import send_email
 from EcoAlpsWater.lib.models.biological_element import BiologicalElement
 from EcoAlpsWater.lib.models.comment import Comment
@@ -170,6 +171,8 @@ def get_combo_field_values(request):
         for db in DrainageBasin.objects.filter(country=request.user.eawuser.country, type=ty[0]):
             wb = db.to_dict()
             water_body['water_body_name'].append(wb)
+        for db in DrainageBasinUserException.get_exception(ty, request.user):
+            water_body['water_body_name'].append(db.to_dict())
         water_bodies.append(water_body)
     depth_type = [dt.to_dict() for dt in DepthType.objects.all()]
     edna_marker = [em.to_dict() for em in EDNAMarker.objects.all()]
@@ -704,6 +707,18 @@ def get_samples(request):
 @forward_exception_to_http
 def update_sample(request):
     sample = Sample.objects.get(id=request.POST.get('id', None))
+    sample.mean_river_outflow = request.POST.get('mean_river_outflow', None) or None
+    sample.water_renewal_time = request.POST.get('water_renewal_time', None) or None
+    sample.mixing_type_id = request.POST.get('mixing_type', None) or None
+    sample.catchment_area = request.POST.get('catchment_area', None) or None
+    sample.temperature = request.POST.get('temperature', None) or None
+    sample.field_ph = request.POST.get('field_ph', None) or None
+    sample.field_conductivity = request.POST.get('field_conductivity', None) or None
+    sample.light_attenuation_coefficient = request.POST.get('light_attenuation_coefficient', None) or None
+    sample.secchi_disk_depth = request.POST.get('secchi_disk_depth', None) or None
+    sample.euphotic_layer = request.POST.get('euphotic_layer', None) or None
+    sample.oxygen_concentration = request.POST.get('oxygen_concentration', None) or None
+    sample.oxygen_percentage = request.POST.get('oxygen_percentage', None) or None
     sample.laboratory_ph = request.POST.get('laboratory_ph', None) or None
     sample.laboratory_conductivity = request.POST.get('laboratory_conductivity', None) or None
     sample.total_alkalinity = request.POST.get('total_alkalinity', None) or None

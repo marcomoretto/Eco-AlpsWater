@@ -22,7 +22,6 @@ job = my_cron.new(command='rm -rf ' + os.environ['EAW_DOWNLOAD_DIRECTORY'] + '*'
 job.hour.on(0)
 my_cron.write()
 subprocess.run(['cron'])
-
 os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'EcoAlpsWater_.settings')
 
 application = get_wsgi_application()
