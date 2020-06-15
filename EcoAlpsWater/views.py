@@ -103,7 +103,11 @@ def get_stations(request):
     if request.user.is_superuser:
         rs = Station.objects.order_by('id').all()
     else:
-        rs = Station.objects.filter(drainage_basin__country=request.user.eawuser.country).order_by('id').all()
+        drainage_basins = list(DrainageBasin.objects.filter(country=request.user.eawuser.country).order_by('id').all())
+        for ty in DrainageBasin.TYPE:
+            for db in DrainageBasinUserException.get_exception(ty, request.user):
+                drainage_basins.extend(db)
+        rs = Station.objects.filter(drainage_basin__in=drainage_basins).order_by('id').all()
     page = request.POST.get('page', 1)
     start = request.POST.get('start', 0)
     limit = request.POST.get('limit', rs.count())
@@ -497,7 +501,7 @@ def request_sequence(request):
 
 
 def get_sample_sequence_file(request):
-    sample = Sample.objects.get(id=request.POST['sample_id'][0])
+    sample = Sample.objects.get(id=request.POST['sample_id'])
     rs = sample.sequence_set.order_by('id').all()
     page = request.POST.get('page', 1)
     start = request.POST.get('start', 0)
