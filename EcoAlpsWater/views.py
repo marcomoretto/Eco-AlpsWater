@@ -106,7 +106,7 @@ def get_stations(request):
         drainage_basins = list(DrainageBasin.objects.filter(country=request.user.eawuser.country).order_by('id').all())
         for ty in DrainageBasin.TYPE:
             for db in DrainageBasinUserException.get_exception(ty, request.user):
-                drainage_basins.extend(db)
+                drainage_basins.append(db)
         rs = Station.objects.filter(drainage_basin__in=drainage_basins).order_by('id').all()
     page = request.POST.get('page', 1)
     start = request.POST.get('start', 0)
@@ -807,7 +807,7 @@ def get_samples_complete(request):
     if not request.user.is_superuser:
         rs = rs.filter(user=request.user)
     if description:
-        rows = [s.to_dict_description(dna_extraction_kit='dna_extraction_kit_id', dna_quantification_method='dna_quantification_method_id') for s in rs]
+        rows = [s.to_dict_description(mixing_type='mixing_type_id', dna_extraction_kit='dna_extraction_kit_id', dna_quantification_method='dna_quantification_method_id') for s in rs]
     else:
         rows = [s.to_dict_complete() for s in rs]
     rows.append(dict(Comment.objects.filter(sample_id=id).values_list('field_name', 'comment')))

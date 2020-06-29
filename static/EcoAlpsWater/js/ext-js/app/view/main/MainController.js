@@ -20,7 +20,7 @@ Ext.define('EcoAlpsWater.view.main.MainController', {
                 window.location.reload();
             },
             failure: function (response) {
-                console.log('Server error', reponse);
+                console.log('Server error', response);
             }
         });
     },

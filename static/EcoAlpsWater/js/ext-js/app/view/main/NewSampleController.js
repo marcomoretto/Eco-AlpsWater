@@ -51,7 +51,7 @@ Ext.define('EcoAlpsWater.view.main.NewSampleController', {
                 document.body.removeChild(xlsx);
             },
             failure: function (response) {
-                console.log('Server error', reponse);
+                console.log('Server error', response);
             }
         });
     },
@@ -138,7 +138,7 @@ Ext.define('EcoAlpsWater.view.main.NewSampleController', {
                 }
             },
             failure: function (response) {
-                console.log('Server error', reponse);
+                console.log('Server error', response);
             }
         });
 
@@ -166,7 +166,7 @@ Ext.define('EcoAlpsWater.view.main.NewSampleController', {
                 }
             },
             failure: function (response) {
-                console.log('Server error', reponse);
+                console.log('Server error', response);
             }
         });
     },
@@ -208,7 +208,7 @@ Ext.define('EcoAlpsWater.view.main.NewSampleController', {
                 }
             },
             failure: function (response) {
-                console.log('Server error', reponse);
+                console.log('Server error', response);
             }
         });
 
@@ -231,7 +231,7 @@ Ext.define('EcoAlpsWater.view.main.NewSampleController', {
                 });
             },
             failure: function (response) {
-                console.log('Server error', reponse);
+                console.log('Server error', response);
             }
         });
     },

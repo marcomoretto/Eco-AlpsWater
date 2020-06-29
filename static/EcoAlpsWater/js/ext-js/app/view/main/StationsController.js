@@ -40,7 +40,7 @@ Ext.define('EcoAlpsWater.view.main.StationsController', {
                     suggested_name_win.setHeight(65 + (tot * 40));
                 },
                 failure: function (response) {
-                    console.log('Server error', reponse);
+                    console.log('Server error', response);
                 }
             });
         }
@@ -151,7 +151,7 @@ Ext.define('EcoAlpsWater.view.main.StationsController', {
                             }
                         },
                         failure: function (response) {
-                            console.log('Server error', reponse);
+                            console.log('Server error', response);
                         }
                     });
                 }
@@ -185,7 +185,7 @@ Ext.define('EcoAlpsWater.view.main.StationsController', {
                 }
             },
             failure: function (response) {
-                console.log('Server error', reponse);
+                console.log('Server error', response);
             }
         });
 

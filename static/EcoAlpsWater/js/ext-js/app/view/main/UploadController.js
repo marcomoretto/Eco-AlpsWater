@@ -32,7 +32,7 @@ Ext.define('EcoAlpsWater.view.main.UploadController', {
                 }
             },
             failure: function (response) {
-                console.log('Server error', reponse);
+                console.log('Server error', response);
             }
         });
 

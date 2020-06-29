@@ -139,7 +139,7 @@ Ext.define('EcoAlpsWater.view.main.SamplesController', {
                 panel.close();
             },
             failure: function (response) {
-                console.log('Server error', reponse);
+                console.log('Server error', response);
                 panel.close();
             }
         });
@@ -233,7 +233,7 @@ Ext.define('EcoAlpsWater.view.main.SamplesController', {
                 document.body.removeChild(zip);
             },
             failure: function (response) {
-                console.log('Server error', reponse);
+                console.log('Server error', response);
             }
         });
     },
@@ -261,7 +261,7 @@ Ext.define('EcoAlpsWater.view.main.SamplesController', {
                 document.body.removeChild(zip);
             },
             failure: function (response) {
-                console.log('Server error', reponse);
+                console.log('Server error', response);
             }
         });
     },
@@ -281,7 +281,7 @@ Ext.define('EcoAlpsWater.view.main.SamplesController', {
                 EcoAlpsWater.current.checkHttpResponse(response);
             },
             failure: function (response) {
-                console.log('Server error', reponse);
+                console.log('Server error', response);
             }
         });
         EcoAlpsWater.current.showMessage('info', 'Download sequence file(s)', 'An e-mail with instructions will be sent to your e-mail account!');
@@ -341,7 +341,7 @@ Ext.define('EcoAlpsWater.view.main.SamplesController', {
                 }
             },
             failure: function (response) {
-                console.log('Server error', reponse);
+                console.log('Server error', response);
             }
         });
     },
@@ -356,6 +356,7 @@ Ext.define('EcoAlpsWater.view.main.SamplesController', {
             fn: function (a) {
                 if (a == 'yes') {
                     panel.down('#card-update').setHidden(false);
+                    panel.down('#archives_fieldset').setHidden(false);
 
                     var fields = ['mean_river_outflow', 'water_renewal_time', 'mixing_type', 'catchment_area',
                      'temperature', 'field_ph', 'field_conductivity', 'light_attenuation_coefficient',
@@ -396,7 +397,7 @@ Ext.define('EcoAlpsWater.view.main.SamplesController', {
                 }
             },
             failure: function (response) {
-                console.log('Server error', reponse);
+                console.log('Server error', response);
             }
         });
 
@@ -440,7 +441,7 @@ Ext.define('EcoAlpsWater.view.main.SamplesController', {
                             field.setReadOnly(true);
                             field.allowBlank = true;
                             field.suspendEvents();
-                            if (property == 'dna_extraction_kit' || property == 'dna_quantification_method') {
+                            if (property == 'mixing_type' || property == 'dna_extraction_kit' || property == 'dna_quantification_method') {
                                 field.setValue(obj[property]);
                             } else {
                                 field.setRawValue(obj[property]);
@@ -453,7 +454,7 @@ Ext.define('EcoAlpsWater.view.main.SamplesController', {
                 }
             },
             failure: function (response) {
-                console.log('Server error', reponse);
+                console.log('Server error', response);
             }
         });
     },
@@ -492,7 +493,7 @@ Ext.define('EcoAlpsWater.view.main.SamplesController', {
                     station.getStore().clearListeners();
                 },
                 failure: function (response) {
-                    console.log('Server error', reponse);
+                    console.log('Server error', response);
                 }
             });
         });
