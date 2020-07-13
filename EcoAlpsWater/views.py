@@ -842,6 +842,9 @@ def __create_env_metadata(samples):
         col = 0
         bold = workbook.add_format({'bold': True})
         s = sample.to_dict_description()
+        lat_coords = ','.join([str(l) for l in sample.station.geographicalpoint_set.all().values_list('latitude', flat=True)])
+        lon_coords = ','.join([str(l) for l in sample.station.geographicalpoint_set.all().values_list('longitude', flat=True)])
+        s['station'] += ' (lat: {lat_coords}; lon: {lon_coords})'.format(lat_coords=lat_coords, lon_coords=lon_coords)
         for i, h in enumerate(['Field', 'Field Description', 'Field Value', 'Comments']):
             worksheet.write(row, col + i, h, bold)
         row += 1
