@@ -6,6 +6,9 @@ class DrainageBasinUserException:
     country_db = {
         ('Lake', 'Austria'): [
             DrainageBasin.objects.filter(type='Lake', country='Germany', name='Starnberger See').first()
+        ],
+        ('River', 'Austria'): [
+            DrainageBasin.objects.filter(type='River', country='Germany', name='Wertach').first()
         ]
     }
 
