@@ -149,6 +149,7 @@ Ext.define('EcoAlpsWater.view.main.SamplesController', {
         Ext.Ajax.request({
             binary: true,
             url: '/get_all_env_metadata/',
+            timeout: 1200000,
             success: function (response) {
                 var blob = new Blob([response.responseBytes], {type: 'base64'}),
                 url = window.URL.createObjectURL(blob),
