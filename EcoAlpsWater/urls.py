@@ -37,4 +37,6 @@ urlpatterns = [
     url(r'^add_tracking_comment/$', views.add_tracking_comment, name='add_tracking_comment'),
     url(r'^complete/?$', views.upload_complete, name='upload_complete'),
     url(r'^get_sample_sequence_file/?$', views.get_sample_sequence_file, name='get_sample_sequence_file'),
+    url(r'^is_operation_allowed/?$', views.is_operation_allowed, name='is_operation_allowed'),
+    url(r'^get_all_env_metadata/?$', views.get_all_env_metadata, name='get_all_env_metadata')
 ]

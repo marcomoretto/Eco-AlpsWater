@@ -49,11 +49,17 @@ class SampleCoder:
 
         depth_min = '000'
         if self.depth_min:
-            depth_min = '%03d' % float(self.depth_min)
+            if float(self.depth_min).is_integer():
+                depth_min = '%03d' % float(self.depth_min)
+            else:
+                depth_min = str(self.depth_min)[:3]
 
         depth_max = '000'
         if self.depth_max:
-            depth_max = '%03d' % float(self.depth_max)
+            if float(self.depth_max).is_integer():
+                depth_max = '%03d' % float(self.depth_max)
+            else:
+                depth_max = str(self.depth_max)[:3]
 
         #be = '0'
         #if self.biological_element_id:

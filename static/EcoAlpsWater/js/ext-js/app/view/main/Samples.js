@@ -811,6 +811,18 @@ Ext.define('EcoAlpsWater.view.main.Samples', {
                             fn: 'onDownloadSequence',
                         }
                     }
+                }, {
+                    text: 'Complete dataset',
+                    itemId: 'complete_dataset',
+                    iconCls: null,
+                    disabled: true,
+                    hidden: true,
+                    glyph: 'f15c',
+                    listeners: {
+                        click: {
+                            fn: 'onDownloadCompleteDataset',
+                        }
+                    }
                 }]
             }
         }]},{

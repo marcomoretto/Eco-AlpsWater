@@ -87,6 +87,18 @@ def send_verification_email(request):
             }), content_type="application/json")
 
 
+def is_operation_allowed(request):
+    operations = json.loads(request.POST['operations'])
+    allowed = False
+    if 'complete_dataset' in operations and request.user.is_superuser:
+        allowed = True
+    return HttpResponse(
+        json.dumps({
+            'success': True,
+            'allowed': allowed
+        }), content_type="application/json")
+
+
 def get_stations(request):
     sort_property = 'id'
     sort_dir = 'ASC'
@@ -820,6 +832,67 @@ def get_samples_complete(request):
             }), content_type="application/json")
 
 
+@forward_exception_to_http
+def __create_all_env_metadata():
+    buffer = io.BytesIO()
+    zf = zipfile.ZipFile(buffer, "w", zipfile.ZIP_DEFLATED)
+    files = []
+    aggregated_workbook = xlsxwriter.Workbook('eaw_aggregated.xlsx')
+    aggregated_worksheet = aggregated_workbook.add_worksheet()
+    a_row = 0
+    a_col = 0
+    a_bold = aggregated_workbook.add_format({'bold': True})
+    aggregated_worksheet.write(a_row, a_col, 'Field', a_bold)
+    sample_idx = 0
+    for sample in Sample.objects.all():
+        sample_idx += 1
+        a_row = 0
+        aggregated_worksheet.write(a_row, sample_idx, sample.sample_code, a_bold)
+        s = sample.to_dict_description()
+        lat_coords = ','.join(
+            [str(l) for l in sample.station.geographicalpoint_set.all().values_list('latitude', flat=True)])
+        lon_coords = ','.join(
+            [str(l) for l in sample.station.geographicalpoint_set.all().values_list('longitude', flat=True)])
+        s['station'] += ' (lat: {lat_coords}; lon: {lon_coords})'.format(lat_coords=lat_coords, lon_coords=lon_coords)
+        a_row += 1
+        for field in s.keys():
+            desc = FieldDescription.objects.filter(field_name=field)
+            if len(desc) == 1:
+                desc = desc[0].description
+            if not desc:
+                desc = ''
+            value = s[field]
+            if not value:
+                value = ''
+            comments = Comment.objects.filter(sample=sample, field_name=field)
+            if len(comments) == 1:
+                comments = comments[0].comment.strip()
+            if not comments:
+                comments = ''
+            aggregated_worksheet.write(a_row, a_col, field)
+            aggregated_worksheet.write(a_row, sample_idx, value)
+            a_row += 1
+        for field in ['vertical_temperature_profiles', 'phytoplankton_countings', 'cyanotoxin_samples', 'sequence_set']:
+            value = ''
+            if field == 'sequence_set':
+                if sample.sequence_set.exists():
+                    value = ', '.join([s.filename for s in sample.sequence_set.all()])
+            else:
+                value = 'No'
+                if getattr(sample, field).nbytes:
+                    value = 'Yes'
+            aggregated_worksheet.write(a_row, a_col, field)
+            aggregated_worksheet.write(a_row, sample_idx, value)
+            a_row += 1
+
+    aggregated_workbook.close()
+    zf.write('eaw_aggregated.xlsx')
+    files.append('eaw_aggregated.xlsx')
+    zf.close()
+    for f in files:
+        os.remove(f)
+    return buffer
+
 def __create_env_metadata(samples):
     buffer = io.BytesIO()
     zf = zipfile.ZipFile(buffer, "w", zipfile.ZIP_DEFLATED)
@@ -904,6 +977,16 @@ def get_env_metadata(request):
     response['Content-Type'] = 'application/x-zip-compressed'
     response['Content-Disposition'] = 'attachment; filename=samples.zip'
     return response
+
+
+@forward_exception_to_http
+def get_all_env_metadata(request):
+    buffer = __create_all_env_metadata()
+    response = HttpResponse(buffer.getvalue())
+    response['Content-Type'] = 'application/x-zip-compressed'
+    response['Content-Disposition'] = 'attachment; filename=samples.zip'
+    return response
+
 
 
 def __create_barcode_file(sample_ids):

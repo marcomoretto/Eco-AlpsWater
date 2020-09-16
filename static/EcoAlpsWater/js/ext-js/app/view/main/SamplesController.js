@@ -145,11 +145,45 @@ Ext.define('EcoAlpsWater.view.main.SamplesController', {
         });
     },
 
+    onDownloadCompleteDataset: function(me) {
+        Ext.Ajax.request({
+            binary: true,
+            url: '/get_all_env_metadata/',
+            success: function (response) {
+                var blob = new Blob([response.responseBytes], {type: 'base64'}),
+                url = window.URL.createObjectURL(blob),
+                zip = document.createElement('a');
+                zip.href = url;
+                zip.download = 'environment_metadata.zip';
+                document.body.appendChild(zip);
+                zip.click();
+                document.body.removeChild(zip);
+            },
+            failure: function (response) {
+                console.log('Server error', response);
+            }
+        });
+    },
+
     onSamplesGridAfterRender: function(me) {
         me.getStore().reload();
         me.plugins.forEach(function(e) {
             if (e.ptype == "rowwidget") {
                 e.expanderColumn.setText('Comments');
+            }
+        });
+        Ext.Ajax.request({
+            binary: false,
+            url: '/is_operation_allowed/',
+            params: {'operations': JSON.stringify(['complete_dataset'])},
+            success: function (response) {
+                var resData = Ext.decode(response.responseText);
+                var disabled = ! resData['allowed'];
+                me.down('#complete_dataset').setDisabled(disabled);
+                me.down('#complete_dataset').setHidden(disabled);
+            },
+            failure: function (response) {
+                console.log('Server error', response);
             }
         });
     },
