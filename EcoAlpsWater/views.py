@@ -872,6 +872,18 @@ def __create_all_env_metadata():
             aggregated_worksheet.write(a_row, a_col, field)
             aggregated_worksheet.write(a_row, sample_idx, value)
             a_row += 1
+        if sample.vertical_temperature_profiles:
+            with tempfile.NamedTemporaryFile(prefix=sample.sample_code + '_vertical_temperature_profiles', suffix='.xlsx', mode='wb+') as f:
+                f.write(sample.vertical_temperature_profiles)
+                zf.write(f.name)
+        if sample.phytoplankton_countings:
+            with tempfile.NamedTemporaryFile(prefix=sample.sample_code + '_phytoplankton_countings', suffix='.xlsx', mode='wb+') as f:
+                f.write(sample.phytoplankton_countings)
+                zf.write(f.name)
+        if sample.cyanotoxin_samples:
+            with tempfile.NamedTemporaryFile(prefix=sample.sample_code + '_cyanotoxin_samples', suffix='.xlsx', mode='wb+') as f:
+                f.write(sample.cyanotoxin_samples)
+                zf.write(f.name)
         for field in ['vertical_temperature_profiles', 'phytoplankton_countings', 'cyanotoxin_samples', 'sequence_set']:
             value = ''
             if field == 'sequence_set':
